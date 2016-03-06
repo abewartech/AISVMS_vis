@@ -53,14 +53,14 @@ function loadPage() {
   });
 
   // Toast event
-  $('btnReplay').click(toast);
+  $('#btnReplay').click(toast);
+
+  //Tooltip
+  $('.tooltipped').tooltip({delay: 50});
 
 }
 
 // Materialize.toast(message, displayLength, className, completeCallback);
-$('btnReplay').click(toast);
-
 function toast() {
-  alert("hola");
-  return Materialize.toast('xxxx puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
+  return Materialize.toast('10.000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
 }
