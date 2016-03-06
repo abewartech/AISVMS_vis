@@ -1,8 +1,26 @@
 # Visualización de datos de AIS y VMS
 
-Aplicación web interactiva de R con la librería Shiny y el estilo Material Design de Google.
+Aplicación web interactiva de R con la librería Shiny, mapas de Leaflet y con estilo Material Design de Google.
 
 #### **Resumen**
+
+## Ejecutar aplicación
+
+```R
+shiny::runGitHub(repo = 'AISVMS_vis', username = 'guzmanlopez')
+```
+
+### Dependencias
+
+```R
+library('shiny')
+```
+
+#### Para instalar las dependencias requeridas
+
+```R
+install.packages('shiny')
+```
 
 ## Capturas de pantalla
 
