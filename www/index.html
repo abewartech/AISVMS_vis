@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Mapas de AIS/VMS | Laboratorio de Tecnología Pesquera | DINARA</title>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--Import Google Icon Font-->
+  <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+  <!-- Personalized style -->
+  <link type="text/css" rel="stylesheet" href="css/personalized.css" media="screen,projection" />
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="js/jquery-2.2.1.min.js"></script>
+  <script type="text/javascript" src="js/materialize.min.js"></script>
+
+  <!-- noUiSlider -->
+  <link type="text/css" rel="stylesheet" href="css/nouislider.min.css">
+  <script type="text/javascript" src="js/nouislider.min.js"></script>
+
+  <!-- Personalized js -->
+  <script type="text/javascript" src="js/personalized.js"></script>
+
+</head>
+
+<body>
+
+  <!-- Navigation bar -->
+  <nav>
+    <div class="navbar-fixed blue darken-4">
+      <a href="http://www.dinara.gub.uy" class="brand-logo" target="_blank"> DINARA </a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="index.html">AIVM-S_vis</a></li>
+      </ul>
+      <ul class="side-nav" id="mobile">
+        <li><a href="index.html">AIVM-S_vis</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Page Layout here -->
+  <div class="row">
+    <!-- Sidebar panel -->
+    <div class="col s12 m4 l3">
+      <section>
+        <br>
+        <h6>Datos</h6>
+        <div class="row">
+          <div class="col s12">
+            <div class="switch">
+              <label>
+                <img src="img/ais.png" alt="ais logo" width="30px">
+                <input id="aisData" type="checkbox" checked>
+                <span class="lever"></span>
+                <label for="aisData">AIS</label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s12">
+            <div class="switch">
+              <label>
+                <img src="img/vms.png" alt="ais logo" width="30px">
+                <input id="vmsData" type="checkbox" checked>
+                <span class="lever"></span>
+                <label for="vmsData">VMS</label>
+              </label>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <h6>Tiempo</h6>
+          <div class="col s6">
+            <input id="dateFrom" type="date" class="datepicker">
+            <label for="dateFrom">Desde</label>
+          </div>
+          <div class="col s6">
+            <input id="dateUntil" type="date" class="datepicker">
+            <label for="dateUntil">Hasta</label>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h6>Barcos</h6>
+        <div class="row">
+          <div class="col s12">
+            <div id="selectVesselType" class="input-field col s12">
+              <select multiple>
+                <option value="" disabled>Tipo de barco</option>
+                <option value="fishingVesselType" selected>Pesquero</option>
+                <option value="cargoVesselType">Carga</option>
+              </select>
+              <label for="selectVesselType">Tipo</label>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <div class="row">
+          <div class="col s12">
+            <div id="selectVesselName" class="input-field col s12">
+              <select multiple>
+                <option value="" disabled>Nombre del barco</option>
+                <option value="VesselName1" selected>Nombre1</option>
+                <option value="VesselName2">Nombre2</option>
+              </select>
+              <label for="selectVesselName">Nombre</label>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h6>Operativa</h6>
+        <div class="row">
+          <div class="col s12">
+            <form action="#">
+              <p class="range-field">
+                <label for="vesselSpeed">Velocidad (kn)</label>
+                <input type="range" id="vesselSpeed" min="0" max="100" />
+              </p>
+            </form>
+          </div>
+          <div class="col s12">
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Main Panel -->
+    <div class="col s12 m8 l9">
+      <section>
+        <br>
+        <section>
+          <div class="row">
+            <div class="cols 12">
+              <div id="plot" class="shiny-plot-output" style="width:100%; height:500px"></div>
+            </div>
+          </div>
+        </section>
+
+      </section>
+
+
+    </div>
+  </div>
+
+  <!-- noUiSlider -->
+  <script type="text/javascript" src="js/nouislider.min.js"></script>
+</body>
+
+</html>
