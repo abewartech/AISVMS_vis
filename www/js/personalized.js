@@ -52,5 +52,15 @@ function loadPage() {
     accordion: false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
   });
 
+  // Toast event
+  $('btnReplay').click(toast);
 
+}
+
+// Materialize.toast(message, displayLength, className, completeCallback);
+$('btnReplay').click(toast);
+
+function toast() {
+  alert("hola");
+  return Materialize.toast('xxxx puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
 }
