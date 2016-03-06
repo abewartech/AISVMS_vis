@@ -1,14 +1,15 @@
 library("shiny")
 
 # Load data
-ais <- readRDS("data/ais.rds")
-vms <- readRDS("data/vms.rds")
+# ais <- readRDS("data/ais.rds")
+# vms <- readRDS("data/vms.rds")
 
 shinyServer(function(input, output) {
   
   output$plot <- renderPlot({
     
-    plot(1:100)
+    plot <- plot(x = 1:100, y = 1:100)
+    return(plot)
     
   })
   
