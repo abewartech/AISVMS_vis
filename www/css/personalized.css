@@ -13,3 +13,16 @@ nav {
   line-height: 56px;
 }
 */
+
+
+/*** leaflet map ***/
+
+#map {
+  width: 100%;
+  height: 495px;
+}
+.ghbtns {
+  position: relative;
+  top: 4px;
+  margin-left: 5px;
+}

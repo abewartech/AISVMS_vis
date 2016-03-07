@@ -47,6 +47,40 @@ function loadPage() {
     }
   });
 
+  var sliderOpacity = document.getElementById('opacity');
+  noUiSlider.create(sliderOpacity, {
+    start: [0.5],
+    connect: false,
+    step: 0.1,
+    range: {
+      'min': 0,
+      'max': 1
+    }
+  });
+
+  var sliderRadius = document.getElementById('radius');
+  noUiSlider.create(sliderRadius, {
+    start: [5],
+    connect: false,
+    step: 1,
+    range: {
+      'min': 0,
+      'max': 100
+    }
+  });
+
+  var sliderBlur = document.getElementById('blur');
+  noUiSlider.create(sliderBlur, {
+    start: [10],
+    connect: false,
+    step: 1,
+    range: {
+      'min': 0,
+      'max': 50
+    }
+  });
+
+
   // accordion
   $('.collapsible').collapsible({
     accordion: false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
@@ -56,7 +90,9 @@ function loadPage() {
   $('#btnReplay').click(toast);
 
   //Tooltip
-  $('.tooltipped').tooltip({delay: 50});
+  $('.tooltipped').tooltip({
+    delay: 50
+  });
 
 }
 

@@ -14,5 +14,46 @@ shinyServer(function(input, output) {
     
   })
   
+  output$divHtml <- renderUI({
+    
+   # radius <- input$radius
+#     colorGradient <- input$color
+#     opacity <- input$opacity
+#     blur <- input$blur
+    
+    radius <- 20
+    colorGradient <- ""
+    opacity <- 1
+    blur <- 50
+    
+    # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
+    
+    # substring()
+    
+    dfSubset <- subset(x = ais[1:10000,], select = c("LON", "LAT", "SPEED"))
+    
+    print(input$radius)
+    print(input$dateFrom)
+    print(nrow(dfSubset))
+    
+    j <- paste0("[", dfSubset[, "LAT"], ",", dfSubset[, "LON"], ",", dfSubset[, "SPEED"], "]", collapse = ",")
+    j <- paste0("[", j, "]")
+    
+    mapa <- HTML(
+      paste(
+        "<script>",
+        sprintf("var buildingsCoords = %s;", j),
+        "buildingsCoords = buildingsCoords.map(function(p) {
+          return [p[0], p[1]];});
+          if(map.hasLayer(heat)) {
+          map.removeLayer(heat);  
+                                };
+          var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radius, colorGradient, ", blur:", blur,"}).addTo(map);
+          </script>"
+      ), sep = "")
+    
+    return(mapa)
+    
+  })
   
 })
