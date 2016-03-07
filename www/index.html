@@ -36,15 +36,17 @@
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
   <!-- noUiSlider -->
-  <link type="text/css" rel="stylesheet" href="css/nouislider.min.css">
-  <script type="text/javascript" src="js/nouislider.min.js"></script>
+  <link type="text/css" rel="stylesheet" href="css/nouislider.css">
+  <script type="text/javascript" src="js/nouislider.js"></script>
 
   <!-- Personalized js -->
   <script type="text/javascript" src="js/personalized.js"></script>
 
 </head>
 
-<body>
+<header></header>
+
+<main>
 
   <!-- Navigation bar -->
   <div class="navbar-fixed">
@@ -64,190 +66,188 @@
 
     <!-- Page Layout here -->
     <div class="row">
-      <!-- Sidebar panel -->
-      <div class="col s12 m4 l3 z-depth-2">
-        <section>
-          <h5 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fuente de los datos a consultar: AIS, VMS o ambos">Datos</h5>
-          <br>
-          <div class="row">
-            <div class="col s12">
-              <div class="switch">
-                <label>
-                  <img src="img/ais.png" alt="ais logo" width="40px">
-                  <input id="aisData" type="checkbox" checked>
-                  <span class="lever"></span>
-                  <label for="aisData">AIS</label>
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <div class="switch">
-                <label>
-                  <img src="img/vms.png" alt="ais logo" width="40px">
-                  <input id="vmsData" type="checkbox" checked>
-                  <span class="lever"></span>
-                  <label for="vmsData">VMS</label>
-                </label>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div class="divider"></div>
-        <section>
-          <h5 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fechas entre las cuales quiere consultarse los datos">Tiempo</h5>
-          <div class="row">
-            <div class="col s6">
-              <input id="dateFrom" type="date" class="datepicker">
-              <label for="dateFrom">Desde</label>
-            </div>
-            <div class="col s6">
-              <input id="dateUntil" type="date" class="datepicker">
-              <label for="dateUntil">Hasta</label>
-            </div>
-          </div>
-        </section>
-        <div class="divider"></div>
-        <h5>Barcos</h5>
-        <br>
-        <section>
-          <div class="row">
-            <div class="col s12">
-              <div id="selectVesselType" class="input-field col s12">
-                <select multiple>
-                  <option value="" disabled>Tipo de barco</option>
-                  <option value="fishingVesselType" selected>Pesquero</option>
-                  <option value="cargoVesselType">Carga</option>
-                </select>
-                <label for="selectVesselType">Tipo</label>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s12">
-              <div id="selectVesselName" class="input-field col s12">
-                <select multiple>
-                  <option value="" disabled>Nombre del barco</option>
-                  <option value="VesselName1" selected>Nombre1</option>
-                  <option value="VesselName2">Nombre2</option>
-                </select>
-                <label for="selectVesselName">Nombre</label>
-              </div>
-            </div>
-          </div>
-        </section>
-        <div class="divider"></div>
-        <h5>Operativa</h5>
-        <br>
-        <section>
-          <div class="row">
-            <div class="col s12">
-              <form action="#">
-                <p class="range-field">
-                  <label for="vesselSpeed">Velocidad (kn)</label>
-                  <input type="range" id="vesselSpeed" min="0" max="100" />
-                </p>
-              </form>
-            </div>
-            <div class="col s12">
-            </div>
-          </div>
-        </section>
-        <div class="divider"></div>
-        <section>
-          <ul class="collapsible" data-collapsible="accordion">
-            <li>
-              <div class="collapsible-header"><i class="small material-icons">settings</i>Opciones</div>
-              <div class="collapsible-body">
-
-                <div class="row">
-                  <div class="col s12">
-                    <label for="color">Color</label>
-                    <div id="color" class="input-field">
-                      <select>
-                        <option value="" disabled selected>Elige paleta</option>
-                        <option value="" data-icon="img/ais.png" class="circle" selected>Espectral</option>
-                        <option value=", gradient: {0: &#39;#f7f7f7&#39;, 0.25: &#39;#ffb6b6&#39;, 0.5: &#39;#f98a8a&#39;, 0.75: &#39;#ff4a4a&#39;, 1: &#39;#FF0000&#39;}" data-icon="img/ais.png" class="circle">Cálida</option>
-                        <option value=", gradient: {0.25: &#39;#78C0E0&#39;, 0.4: &#39;#449DD1&#39;, 0.5: &#39;#192BC2&#39;, 0.75: &#39;#0E0E52&#39;}" data-icon="img/ais.png" class="circle">Fría</option>
-                      </select>
-                    </div>
-                  </div>
+      <!-- Input Sidebar panel -->
+      <div id="sidebarPanel" class="col s12 m4 l3 z-depth-2">
+        <div id="input">
+          <div class="right"><i class="material-icons">input</i></div>
+          <section>
+            <h5 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fuente de los datos a consultar: AIS, VMS o ambos">Datos</h5>
+            <br>
+            <div class="row">
+              <div class="col s12">
+                <div class="switch">
+                  <label>
+                    <img src="img/ais.png" alt="ais logo" width="40px">
+                    <input id="aisData" name="aisData" type="checkbox" checked>
+                    <span class="lever"></span>
+                    <label for="aisData">AIS</label>
+                  </label>
                 </div>
-
-                <div class="row">
-                  <div class="col s12">
-                    <form action="#">
-                      <p class="range-field">
-                        <label for="opacity">Opacidad</label>
-                        <input type="range" id="opacity" min="0" max="1" />
-                      </p>
-                    </form>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col s12">
-                    <form action="#">
-                      <p class="range-field">
-                        <label for="radius">Radio de punto</label>
-                        <input type="range" id="radius" min="0" max="100"  />
-                      </p>
-                    </form>
-                  </div>
-                </div>
-
-                <div class="row">
-                  <div class="col s12">
-                    <form action="#">
-                      <p class="range-field">
-                        <label for="blur">Esfumado</label>
-                        <input type="range" id="blur" min="0" max="50"  />
-                      </p>
-                    </form>
-                  </div>
-                </div>
-
               </div>
-            </li>
-          </ul>
-        </section>
-      </div>
-
-      <!-- Main Panel -->
-      <div class="col s12 m8 l9">
-        <section>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div class="switch">
+                  <label>
+                    <img src="img/vms.png" alt="ais logo" width="40px">
+                    <input id="vmsData" name="vmsData" type="checkbox" checked>
+                    <span class="lever"></span>
+                    <label for="vmsData">VMS</label>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div class="divider"></div>
+          <section>
+            <h5 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fechas entre las cuales quiere consultarse los datos">Tiempo</h5>
+            <div class="row">
+              <div class="col s6">
+                <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
+                <label for="dateFrom">Desde</label>
+              </div>
+              <div class="col s6">
+                <input id="dateUntil" type="date" class="datepicker">
+                <label for="dateUntil">Hasta</label>
+              </div>
+            </div>
+          </section>
+          <div class="divider"></div>
+          <h5>Barcos</h5>
           <br>
           <section>
             <div class="row">
-              <div class="cols 12">
-                <div id="map"></div>
+              <div class="col s12">
+                <div id="selectVesselType2" class="input-field col s12">
+                  <select multiple name="selectVesselType">
+                    <option value="" disabled>Tipo de barco</option>
+                    <option value="fishingVesselType" selected>Pesquero</option>
+                    <option value="cargoVesselType">Carga</option>
+                  </select>
+                  <label for="selectVesselType2">Tipo</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <div id="selectVesselName2" class="input-field col s12">
+                  <select multiple name="selectVesselName">
+                    <option value="" disabled>Nombre del barco</option>
+                    <option value="VesselName1" selected>Nombre1</option>
+                    <option value="VesselName2">Nombre2</option>
+                  </select>
+                  <label for="selectVesselName2">Nombre</label>
+                </div>
+              </div>
+            </div>
+          </section>
+          <div class="divider"></div>
+          <h5>Operativa</h5>
+          <br>
+          <section>
+            <div class="row">
+              <div class="col s12">
+                <form>
+                  <label for="vesselSpeed">Velocidad (kn)</label>
+                  <div id="vesselSpeed"></div>
+                </form>
+              </div>
+              <div class="col s12">
+              </div>
+            </div>
+          </section>
+          <div class="divider"></div>
+        </div>
+
+        <!-- Settings Sidebar panel -->
+        <div id="settings" hidden>
+          <div class="right"><i class="material-icons">settings</i></div>
+          <section>
+            <h5 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Opciones de visualización de mapa">Opciones</h5>
+            <br>
+            <div class="row">
+              <div class="col s12">
+                <label for="color">Color</label>
+                <div id="color" name="color" class="input-field">
+                  <select>
+                    <option value="" disabled selected>Elige paleta</option>
+                    <option value="" data-icon="img/ais.png" class="circle" selected>Espectral</option>
+                    <option value=", gradient: {0: &#39;#f7f7f7&#39;, 0.25: &#39;#ffb6b6&#39;, 0.5: &#39;#f98a8a&#39;, 0.75: &#39;#ff4a4a&#39;, 1: &#39;#FF0000&#39;}" data-icon="img/ais.png" class="circle">Cálida</option>
+                    <option value=", gradient: {0.25: &#39;#78C0E0&#39;, 0.4: &#39;#449DD1&#39;, 0.5: &#39;#192BC2&#39;, 0.75: &#39;#0E0E52&#39;}" data-icon="img/ais.png" class="circle">Fría</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <form>
+                  <label for="opacity">Opacidad</label>
+                  <div id="opacity"></div>
+                </form>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <form>
+                  <label for="radius">Tamaño de punto</label>
+                  <div id="radius"></div>
+                </form>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col s12">
+                <form>
+                  <label for="blur">Esfumado</label>
+                  <div id="blur"></div>
+                </form>
+              </div>
+            </div>
+          </section>
+          <div class="divider"></div>
+          <br>
+        </div>
+      </div>
+
+      <!-- Main Panel -->
+      <div id="mainPanel" class="col s12 m8 l9">
+        <section>
+          <br>
+          <div class="row">
+            <div class="cols 12">
+              <div class="">
+                <div class="" id="map"></div>
                 <script src="js/makeLeafletMap.js"></script>
                 <div id="divHtml" class="shiny-html-output"></div>
               </div>
             </div>
-          </section>
+          </div>
         </section>
       </div>
     </div>
   </div>
 
   <!-- noUiSlider -->
-  <script type="text/javascript" src="js/nouislider.min.js"></script>
+  <script type="text/javascript" src="js/nouislider.js"></script>
 
   <!-- button menu -->
-  <div class="fixed-action-btn vertical click-to-toggle" style="bottom: 45px; right: 24px;">
+  <div class="fixed-action-btn vertical click-to-toggle z-depth-10" style="bottom: 45px; right: 24px;">
     <a class="btn-floating btn-large blue">
       <i class="large mdi-navigation-menu"></i>
     </a>
     <ul>
-      <li><a class="btn-floating red"><i class="material-icons">insert_chart</i></a></li>
-      <li><a class="btn-floating yellow darken-1"><i class="material-icons">format_quote</i></a></li>
-      <li><a href="#color" class="btn-floating green"><i class="material-icons">settings</i></a></li>
-      <li id="btnReplay"><a class="btn-floating blue"><i class="material-icons">replay</i></a></li>
+      <li id="btnInput"><a class="btn-floating green"><i class="material-icons">input</i></a></li>
+      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons">settings</i></a></li>
+      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons">replay</i></a></li>
     </ul>
   </div>
-</body>
+
+  <!-- Values from sliders -->
+  <input id="input_Opacity" type="text" />
+
+</main>
 
 <footer class="page-footer blue darken-4">
   <div class="container">

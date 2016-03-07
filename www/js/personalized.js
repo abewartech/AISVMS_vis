@@ -36,50 +36,63 @@ function loadPage() {
   });
 
   // noUiSlider
-  var slider1 = document.getElementById('vesselSpeed');
-  noUiSlider.create(slider1, {
+
+  var sliderVesselSpeed = document.getElementById('vesselSpeed');
+  noUiSlider.create(sliderVesselSpeed, {
     start: [3, 10],
     connect: true,
-    step: 0.5,
+    step: 0.1,
     range: {
       'min': 0,
-      'max': 40
-    }
+      'max': 50
+    },
+    format: wNumb({
+      decimals: 0
+    })
+
   });
 
   var sliderOpacity = document.getElementById('opacity');
   noUiSlider.create(sliderOpacity, {
     start: [0.5],
     connect: false,
-    step: 0.1,
+    step: 0.01,
     range: {
       'min': 0,
       'max': 1
-    }
+    },
+    format: wNumb({
+      decimals: 0
+    })
   });
 
   var sliderRadius = document.getElementById('radius');
   noUiSlider.create(sliderRadius, {
-    start: [5],
+    start: [25],
     connect: false,
     step: 1,
     range: {
       'min': 0,
       'max': 100
-    }
+    },
+    format: wNumb({
+      decimals: 0
+    })
   });
 
   var sliderBlur = document.getElementById('blur');
   noUiSlider.create(sliderBlur, {
-    start: [10],
+    start: [25],
     connect: false,
     step: 1,
     range: {
       'min': 0,
-      'max': 50
-    }
+      'max': 100
+    },
+    format: wNumb({
+      decimals: 0
+    })
   });
-
 
   // accordion
   $('.collapsible').collapsible({
@@ -94,9 +107,97 @@ function loadPage() {
     delay: 50
   });
 
+  // Button menu events
+  $('#btnInput').click(showInput);
+  $('#btnSettings').click(showSettings);
+
+  // Probar sacar valor de span
+  $('#btnReplay').click(prueba);
+
+  //evento cuando cambia
+  $('#opacity span').html().change(prueba);
+
 }
+
+
+function prueba() {
+  var value = $('#opacity span').html();
+  alert(value);
+  $('#input_Opacity').val(value);
+}
+
+
+
 
 // Materialize.toast(message, displayLength, className, completeCallback);
 function toast() {
   return Materialize.toast('10.000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
+}
+
+// Button menu events
+
+function showMapAllWidth() {
+
+  $('#mainPanel').removeClass("");
+  $('#sidebarPanel').removeClass("");
+  $('#mainPanel').addClass("col s12 m12 l12");
+}
+
+function showMapOriginWidth() {
+
+  $('#mainPanel').removeClass("");
+  $('#sidebarPanel').removeClass("");
+  $('#sidebarPanel').addClass("col s12 m4 l3 z-depth-2");
+  $('#mainPanel').addClass("col s12 m8 l9");
+}
+
+function showInput() {
+
+  var inputVisible = $('#input').is(":visible");
+  var settingsVisible = $('#settings').is(":visible");
+
+  if (settingsVisible) {
+    $('#settings').hide();
+  }
+
+  // hide and show
+  if (inputVisible) {
+    $('#input').hide();
+  } else {
+    $('#input').show();
+  }
+
+  /*
+    if (!settingsVisible && !inputVisible) {
+      showMapAllWidth();
+    } else {
+      showMapOriginWidth();
+    }
+  */
+
+}
+
+function showSettings() {
+
+  var inputVisible = $('#input').is(":visible");
+  var settingsVisible = $('#settings').is(":visible");
+
+  if (inputVisible) {
+    $('#input').hide();
+  }
+
+  // hide and show
+  if (settingsVisible) {
+    $('#settings').hide();
+  } else {
+    $('#settings').show();
+  }
+  /*
+    if (!settingsVisible && !inputVisible) {
+      showMapAllWidth();
+    } else {
+      showMapOriginWidth();
+    }
+  */
+
 }
