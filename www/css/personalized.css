@@ -19,7 +19,7 @@ nav {
 
 #map {
   width: 100%;
-  height: 495px;
+  height:85vh;
   z-index: 2;
 }
 .ghbtns {
