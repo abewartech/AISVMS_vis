@@ -39,3 +39,17 @@ body {
 main {
   flex: 1 0 auto;
 }
+
+/*** select options ***/
+media="screen, projection"
+.dropdown-content li>a, .dropdown-content li>span {
+    font-size: 14px !important;
+    color: #26a69a;
+    display: block;
+    line-height: 22px;
+    padding: 14px 16px;
+    padding-top: 14px;
+    padding-right: 16px;
+    padding-bottom: 14px;
+    padding-left: 16px;
+}

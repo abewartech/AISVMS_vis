@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <!--Let browser know website is optimized for mobile-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta property="og:title" content="Visualizar AIS y VMS data">
+  <meta property="og:image" content="img/ais.png">
+  <meta property="og:site_name" content="DINARA - LTP">
+  <meta property="og:description" content="Aplicación web interactiva basada en R con Shiny y Material Design de Google.">
+  <link rel="shortcut icon" href="img/ais.png" type="image/x-icon">
+  <meta name="author" content="Guzmán López - Programmer - guzilop@gmail.com">
+
+  <title>AIS/VMS - Laboratorio de Tecnología Pesquera - DINARA | Tabla</title>
+
+  <!-- Shiny -->
+  <script src="shared/jquery.js" type="text/javascript"></script>
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="shared/shiny.css" />
+
+  <!-- Data Tables -->
+  <link href="shared/datatables/css/dataTables.bootstrap.css" rel="stylesheet" />
+  <link href="shared/datatables/css/dataTables.extra.css" rel="stylesheet" />
+  <script src="shared/datatables/js/jquery.dataTables.min.js"></script>
+  <script src="shared/datatables/js/dataTables.bootstrap.js"></script>
+
+  <!-- <link href="shared/bootstrap/css/bootstrap.min.css" rel="stylesheet" /> -->
+  <!-- <script src="shared/bootstrap/js/bootstrap.min.js"></script> -->
+
+  <!-- Leaflet and leaf heatmap -->
+  <script src="leaflet/leaflet.js" type=" text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css" />
+  <script src="leaflet/leaflet-heat.js" type="text/javascript"></script>
+
+  <!--Import Google Icon Font-->
+  <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
+  <!--Import materialize.css-->
+  <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
+  <!-- Personalized style -->
+  <link type="text/css" rel="stylesheet" href="css/personalized.css" media="screen,projection" />
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="js/jquery-2.2.1.min.js"></script>
+  <script type="text/javascript" src="js/materialize.min.js"></script>
+
+  <!-- noUiSlider -->
+  <!-- <link type="text/css" rel="stylesheet" href="css/nouislider.css"> -->
+  <!-- <script type="text/javascript" src="js/nouislider.js"></script> -->
+
+  <!-- Personalized js -->
+  <!-- <script type="text/javascript" src="js/personalized.js"></script> -->
+
+</head>
+
+<header></header>
+
+<main>
+
+  <!-- Navigation bar -->
+  <div class="navbar-fixed">
+    <nav class="blue darken-4">
+      <a href="http://www.dinara.gub.uy" class="brand-logo" target="_blank"> DINARA </a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="table.html">Tabla </a></li>
+        <li><a href="index.html">Plots </a></li>
+        <li><a href="index.html">AISVMS_vis </a></li>
+      </ul>
+      <ul class="side-nav" id="mobile">
+        <li><a href="table.html">Tabla</a></li>
+        <li><a href="index.html">Plots </a></li>
+        <li><a href="index.html">AISVMS_vis </a></li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="content-fluid" id="top">
+    <div class="container">
+      <!-- Page Layout here -->
+      <div class="row">
+        <div id="table" style="width:100%; height:auto" class="shiny-datatable-output"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- noUiSlider -->
+  <!-- <script type="text/javascript" src="js/nouislider.js"></script> -->
+
+  <!-- button menu -->
+  <div class="fixed-action-btn vertical click-to-toggle z-depth-10" style="bottom: 45px; right: 24px;">
+    <a class="btn-floating btn-large blue">
+      <i class="large mdi-navigation-menu"></i>
+    </a>
+    <ul>
+      <li id="btnInput"><a class="btn-floating green"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Entrada de datos">input</i></a></li>
+      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Opciones de mapa">settings</i></a></li>
+      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Actualizar">refresh</i></a></li>
+    </ul>
+  </div>
+</main>
+
+<footer class="page-footer blue darken-4">
+  <div class="container">
+    <div class="row">
+      <div class="col l6 s12">
+        <h6 class="white-text"></h6>
+        <p class="grey-text text-lighten-4">
+          <img src="img/LogoDinara.JPG" alt="Logo Dinara" width="35%" class="">
+        </p>
+      </div>
+      <div class="col l4 offset-l2 s12">
+        <h6 class="white-text">Enlaces</h6>
+        <ul>
+          <li><a class="grey-text text-lighten-3" href="#top"><i class="tiny material-icons">navigation</i> Ir hacia arriba </a></li>
+          <li><a class="grey-text text-lighten-3" href="http://www.dinara.gub.uy" target="_blank"><i class="tiny material-icons">info</i> Página web de DINARA </a></li>
+          <li><a class="grey-text text-lighten-3" href="https://github.com/guzmanlopez/AISVMS_vis" target="_blank"><i class="tiny material-icons">code</i> Ver código en GitHub </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-copyright">
+    <div class="container">
+      © 2016 Copyright - under GPLv3
+      <a class="grey-text text-lighten-4 right" href="https://github.com/guzmanlopez" target="_blank"><i class="tiny material-icons">perm_identity</i> Por Guzmán López - glopez@dinara.gub.uy</a>
+    </div>
+  </div>
+</footer>
+
+</html>

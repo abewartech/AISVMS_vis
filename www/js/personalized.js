@@ -54,9 +54,9 @@ function loadPage() {
 
   var sliderOpacity = document.getElementById('opacity');
   noUiSlider.create(sliderOpacity, {
-    start: [0.5],
+    start: [0.8],
     connect: false,
-    step: 0.05,
+    step: 0.1,
     range: {
       'min': 0,
       'max': 1
@@ -68,12 +68,12 @@ function loadPage() {
 
   var sliderRadius = document.getElementById('radius');
   noUiSlider.create(sliderRadius, {
-    start: [5],
+    start: [1],
     connect: false,
     step: 1,
     range: {
-      'min': 0,
-      'max': 50
+      'min': 1,
+      'max': 30
     },
     format: wNumb({
       decimals: 0
@@ -82,12 +82,12 @@ function loadPage() {
 
   var sliderBlur = document.getElementById('blur');
   noUiSlider.create(sliderBlur, {
-    start: [5],
+    start: [1],
     connect: false,
     step: 1,
     range: {
-      'min': 0,
-      'max': 50
+      'min': 1,
+      'max': 20
     },
     format: wNumb({
       decimals: 0
