@@ -14,20 +14,18 @@ shinyServer(function(input, output) {
     
   })
   
+  
+  
   output$divHtml <- renderUI({
     
-#    radius <- input$radius
-#    colorGradient <- input$color
-#    opacity <- input$opacity
-#    blur <- input$blur
+   radius <- input$radius
+   # colorGradient <- input$color
+   opacity <- input$opacity
+   blur <- input$blur
     
-    radius <- 20
-    colorGradient <- ""
-    opacity <- 1
-    blur <- 50
+   colorGradient <- ""
     
     # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
-    
     # substring()
     
     dfSubset <- subset(x = ais[1:10000,], select = c("LON", "LAT", "SPEED"))
@@ -35,7 +33,6 @@ shinyServer(function(input, output) {
 #     print(input$dateFrom)
 #     print(input$dateUntil)
 #     print(input$vesselSpeed)
-    print(input$input_Opacity)
     
     
     j <- paste0("[", dfSubset[, "LAT"], ",", dfSubset[, "LON"], ",", dfSubset[, "SPEED"], "]", collapse = ",")

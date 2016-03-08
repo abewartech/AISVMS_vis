@@ -56,7 +56,7 @@ function loadPage() {
   noUiSlider.create(sliderOpacity, {
     start: [0.5],
     connect: false,
-    step: 0.01,
+    step: 0.05,
     range: {
       'min': 0,
       'max': 1
@@ -68,12 +68,12 @@ function loadPage() {
 
   var sliderRadius = document.getElementById('radius');
   noUiSlider.create(sliderRadius, {
-    start: [25],
+    start: [5],
     connect: false,
     step: 1,
     range: {
       'min': 0,
-      'max': 100
+      'max': 50
     },
     format: wNumb({
       decimals: 0
@@ -82,12 +82,12 @@ function loadPage() {
 
   var sliderBlur = document.getElementById('blur');
   noUiSlider.create(sliderBlur, {
-    start: [25],
+    start: [5],
     connect: false,
     step: 1,
     range: {
       'min': 0,
-      'max': 100
+      'max': 50
     },
     format: wNumb({
       decimals: 0
@@ -115,15 +115,19 @@ function loadPage() {
   $('#btnReplay').click(prueba);
 
   //evento cuando cambia
-  $('#opacity span').html().change(prueba);
+  //$('#opacity span').html().change(prueba);
 
 }
 
 
 function prueba() {
-  var value = $('#opacity span').html();
-  alert(value);
-  $('#input_Opacity').val(value);
+  var opacity = $('#opacity span').html();
+  var radius = $('#radius span').html();
+  //var color = $('#color span').html();
+  var blur = $('#blur span').html();
+  Shiny.onInputChange("opacity", opacity);
+  Shiny.onInputChange("radius", radius);
+  Shiny.onInputChange("blur", blur);
 }
 
 
