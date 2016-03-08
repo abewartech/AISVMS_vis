@@ -15,7 +15,6 @@ shinyServer(function(input, output) {
   })
   
   
-  
   output$divHtml <- renderUI({
     
    radius <- input$radius
@@ -26,7 +25,7 @@ shinyServer(function(input, output) {
     # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
     # substring()
     
-    dfSubset <- subset(x = ais[1:10000,], select = c("LON", "LAT", "SPEED"))
+    dfSubset <- subset(x = ais[1:100000,], select = c("LON", "LAT", "SPEED"))
     
     nrow(dfSubset)
     

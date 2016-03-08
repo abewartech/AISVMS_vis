@@ -133,7 +133,7 @@ function settings() {
 
 // Materialize.toast(message, displayLength, className, completeCallback);
 function toast() {
-  return Materialize.toast('10.000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
+  return Materialize.toast('¡100,000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
 }
 
 // Button menu events
