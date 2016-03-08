@@ -112,21 +112,19 @@ function loadPage() {
   $('#btnSettings').click(showSettings);
 
   // Probar sacar valor de span
-  $('#btnReplay').click(prueba);
-
-  //evento cuando cambia
-  //$('#opacity span').html().change(prueba);
+  $('#btnReplay').click(settings);
 
 }
 
 
-function prueba() {
+function settings() {
   var opacity = $('#opacity span').html();
   var radius = $('#radius span').html();
-  //var color = $('#color span').html();
+  var color = $('#color select').val();
   var blur = $('#blur span').html();
   Shiny.onInputChange("opacity", opacity);
   Shiny.onInputChange("radius", radius);
+  Shiny.onInputChange("color", color);
   Shiny.onInputChange("blur", blur);
 }
 

@@ -19,12 +19,10 @@ shinyServer(function(input, output) {
   output$divHtml <- renderUI({
     
    radius <- input$radius
-   # colorGradient <- input$color
+   colorGradient <- input$color
    opacity <- input$opacity
    blur <- input$blur
-    
-   colorGradient <- ""
-    
+
     # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
     # substring()
     
