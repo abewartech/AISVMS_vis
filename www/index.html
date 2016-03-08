@@ -165,19 +165,6 @@
           <section>
             <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Opciones de visualización de mapa">Opciones</h6>
             <br>
-            <div class="row">
-              <div class="col s12">
-                <label for="color">Color</label>
-                <div id="color" name="color" class="input-field">
-                  <select>
-                    <option value="" disabled selected>Elige paleta</option>
-                    <option value="" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
-                    <option value=", gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
-                    <option value=", gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
-                  </select>
-                </div>
-              </div>
-            </div>
 
             <div class="row">
               <div class="col s12">
@@ -203,6 +190,19 @@
                   <label for="blur">Esfumado</label>
                   <div id="blur"></div>
                 </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s12">
+                <label for="color">Color</label>
+                <div id="color" name="color" class="input-field">
+                  <select>
+                    <option value="" disabled selected>Elige paleta</option>
+                    <option value="" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
+                    <option value=", gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
+                    <option value=", gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
+                  </select>
+                </div>
               </div>
             </div>
           </section>
@@ -238,9 +238,9 @@
       <i class="large mdi-navigation-menu"></i>
     </a>
     <ul>
-      <li id="btnInput"><a class="btn-floating green"><i class="material-icons">input</i></a></li>
-      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons">settings</i></a></li>
-      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons">replay</i></a></li>
+      <li id="btnInput"><a class="btn-floating green"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Entrada de datos">input</i></a></li>
+      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Opciones de mapa">settings</i></a></li>
+      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Actualizar">refresh</i></a></li>
     </ul>
   </div>
 </main>
