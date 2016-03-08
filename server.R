@@ -30,10 +30,7 @@ shinyServer(function(input, output) {
     
     dfSubset <- subset(x = ais[1:10000,], select = c("LON", "LAT", "SPEED"))
     
-#     print(input$dateFrom)
-#     print(input$dateUntil)
-#     print(input$vesselSpeed)
-    
+    nrow(dfSubset)
     
     j <- paste0("[", dfSubset[, "LAT"], ",", dfSubset[, "LON"], ",", dfSubset[, "SPEED"], "]", collapse = ",")
     j <- paste0("[", j, "]")
