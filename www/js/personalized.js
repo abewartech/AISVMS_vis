@@ -138,41 +138,32 @@ function settings() {
 }
 
 function input() {
+
   var aisCheck = $('#aisData').prop('checked');
   var vmsCheck = $('#vmsData').prop('checked');
   var dateFrom = $('input[name=dateFrom_submit]').closest('input').attr('value');
   var dateUntil = $('input[name=_submit]').closest('input').attr('value');
   var selectVesselType = $('select[name=selectVesselType]').val();
   var selectVesselName = $('select[name=selectVesselName]').val();
+  var vesselSpeedMin = $('#vesselSpeed span').html();
+  var vesselSpeedMax = $('#vesselSpeed').children('.noUi-handle noUi-handle-upper').closest('span').html();
 
-
-
-
-  alert(selectVesselName);
-
+  //alert(vesselSpeedMax);
 
   //Shiny.onInputChange("aisData", aisCheck);
   //Shiny.onInputChange("vmsData", vmsCheck);
   //Shiny.onInputChange("dateFrom", dateFrom);
   //Shiny.onInputChange("dateUntil", dateUntil);
+  //Shiny.onInputChange("selectVesselType", selectVesselType);
+  //Shiny.onInputChange("selectVesselName", selectVesselName);
+  //Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
+  //Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
 
-  /*
-
-    var vesselSpeed = $('#color select').val();
-    var vesselType = $('#blur span').html();
-    var vesselName = $('#blur span').html();
-    Shiny.onInputChange("opacity", opacity);
-    Shiny.onInputChange("radius", radius);
-    Shiny.onInputChange("color", color);
-    Shiny.onInputChange("blur", blur);
-    */
 }
-
-
 
 // Materialize.toast(message, displayLength, className, completeCallback);
 function toast() {
-  return Materialize.toast('¡100,000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
+  return Materialize.toast('¡500,000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
 }
 
 // Button menu events

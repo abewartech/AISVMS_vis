@@ -13,13 +13,12 @@ shinyServer(function(input, output) {
     # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
     # substring()
     
-    ais_df <- subset(x = ais[1:100000,], select = c("LON", "LAT", "SPEED"))
+    ais_df <- subset(x = ais[1:500000,], select = c("LON", "LAT", "SPEED"))
     
     return(ais_df)
     
   })
-  
-  
+
   # Plot de puntos
   output$plot <- renderPlot({
     
@@ -41,7 +40,7 @@ shinyServer(function(input, output) {
    
    ais_df <- ais_df()
    
-   j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], ",", ais_df[, "SPEED"], "]", collapse = ",")
+   j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")
    
    mapa <- HTML(
