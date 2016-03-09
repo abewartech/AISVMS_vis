@@ -3,7 +3,15 @@ library("shiny")
 library("fasttime")
 
 # Global data -------------------------------------------------------------
+
 ais <- readRDS("data/aisData.rds") # 1 million rows
+ais <- subset(x = ais[1:100000,], select = c("LON", "LAT", "TIMESTAMP"))
+ais$TIMESTAMP <- fastPOSIXct(x = ais$TIMESTAMP)
+
+# Initial values
+dateFrom <- min(ais$TIMESTAMP)
+dateUntil <- max(ais$TIMESTAMP)
+
 # vms <- readRDS("data/vms.rds")
 
 # Shiny Server ------------------------------------------------------------
@@ -14,24 +22,19 @@ shinyServer(function(input, output) {
   
   ais_df <- reactive({
     
-    # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
-    # substring()
-    
-    ais_df <- subset(x = ais[1:100000,], select = c("LON", "LAT", "TIMESTAMP"))
-    ais_df$TIMESTAMP <- fastPOSIXct(x = ais_df$TIMESTAMP)
-    
     # Query
-    if(input$dateFrom != ""){
-      
-      ais_df <- subset(x = ais_df, subset = TIMESTAMP , select = c("LON", "LAT", "TIMESTAMP"))
-      
+    if(input$dateFrom == ""){
+      dateFromQuery <- dateFrom
     } else {
+        dateFromQuery <- input$dateFrom
+        }
+    if(input$dateUntil == ""){
+      dateUntilQuery <- dateUntil
+    } else {
+        dateUntilQuery <- input$dateUntil
+        }
       
-      print(paste("Vacía.", input$dateFrom))
-      
-    }
-    
-    
+    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery && TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP"))
     
     return(ais_df)
     
@@ -59,6 +62,10 @@ shinyServer(function(input, output) {
    blur <- input$blur
    
    ais_df <- ais_df()
+   
+   print(nrow(ais_df))
+   print(input$dateFrom)
+   print(input$dateUntil)
    
    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")

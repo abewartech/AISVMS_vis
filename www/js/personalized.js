@@ -25,11 +25,9 @@ function loadPage() {
     close: 'Cerrar',
     format: 'dd mmmm, yyyy',
     firstDay: 'Lunes',
-    //min: '',
-    //max
+    //min: '2013-07-03',
+    //max: '2013-07-15',    
     formatSubmit: 'dd-mm-yyyy'
-
-
   });
 
   $('#dateFrom').click(function(event) {
