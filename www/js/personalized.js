@@ -111,8 +111,10 @@ function loadPage() {
   $('#btnInput').click(showInput);
   $('#btnSettings').click(showSettings);
 
-  // Probar sacar valor de span
+  // Eventos disparados por Actualizar
   $('#btnReplay').click(settings);
+  $('#btnReplay').click(input);
+
 
 }
 
@@ -128,6 +130,29 @@ function settings() {
   Shiny.onInputChange("blur", blur);
 }
 
+function input() {
+  var aisCheck = $('#aisData').prop('checked');
+  var vmsCheck = $('#vmsData').prop('checked');
+  var dateFrom = $('#dateFrom span').html();
+  alert(dateFrom);
+
+
+  //Shiny.onInputChange("aisData", aisCheck);
+  //Shiny.onInputChange("vmsData", vmsCheck);
+
+  /*
+
+    var dateFrom = $('#opacity span').html();
+    var dateUntil = $('#radius span').html();
+    var vesselSpeed = $('#color select').val();
+    var vesselType = $('#blur span').html();
+    var vesselName = $('#blur span').html();
+    Shiny.onInputChange("opacity", opacity);
+    Shiny.onInputChange("radius", radius);
+    Shiny.onInputChange("color", color);
+    Shiny.onInputChange("blur", blur);
+    */
+}
 
 
 
