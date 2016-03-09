@@ -142,7 +142,10 @@ function input() {
   var vmsCheck = $('#vmsData').prop('checked');
   var dateFrom = $('input[name=dateFrom_submit]').closest('input').attr('value');
   var dateUntil = $('input[name=_submit]').closest('input').attr('value');
-  alert(dateFrom + " " + dateUntil);
+  var selectVesselType = $('select[name=selectVesselType]').val();
+
+
+  alert(selectVesselType);
 
 
   //Shiny.onInputChange("aisData", aisCheck);
@@ -151,7 +154,7 @@ function input() {
   //Shiny.onInputChange("dateUntil", dateUntil);
 
   /*
-  
+
     var vesselSpeed = $('#color select').val();
     var vesselType = $('#blur span').html();
     var vesselName = $('#blur span').html();
