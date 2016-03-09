@@ -143,9 +143,12 @@ function input() {
   var dateFrom = $('input[name=dateFrom_submit]').closest('input').attr('value');
   var dateUntil = $('input[name=_submit]').closest('input').attr('value');
   var selectVesselType = $('select[name=selectVesselType]').val();
+  var selectVesselName = $('select[name=selectVesselName]').val();
 
 
-  alert(selectVesselType);
+
+
+  alert(selectVesselName);
 
 
   //Shiny.onInputChange("aisData", aisCheck);
