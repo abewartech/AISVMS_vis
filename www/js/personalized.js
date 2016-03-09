@@ -22,7 +22,14 @@ function loadPage() {
     weekdaysLetter: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
     today: 'Hoy',
     clear: 'Limpiar',
-    close: 'Cerrar'
+    close: 'Cerrar',
+    format: 'dd mmmm, yyyy',
+    firstDay: 'Lunes',
+    //min: '',
+    //max
+    formatSubmit: 'dd-mm-yyyy'
+
+
   });
 
   $('#dateFrom').click(function(event) {
@@ -133,17 +140,18 @@ function settings() {
 function input() {
   var aisCheck = $('#aisData').prop('checked');
   var vmsCheck = $('#vmsData').prop('checked');
-  var dateFrom = $('#dateFrom span').html();
-  alert(dateFrom);
+  var dateFrom = $('input[name=dateFrom_submit]').closest('input').attr('value');
+  var dateUntil = $('input[name=_submit]').closest('input').attr('value');
+  alert(dateFrom + " " + dateUntil);
 
 
   //Shiny.onInputChange("aisData", aisCheck);
   //Shiny.onInputChange("vmsData", vmsCheck);
+  //Shiny.onInputChange("dateFrom", dateFrom);
+  //Shiny.onInputChange("dateUntil", dateUntil);
 
   /*
-
-    var dateFrom = $('#opacity span').html();
-    var dateUntil = $('#radius span').html();
+  
     var vesselSpeed = $('#color select').val();
     var vesselType = $('#blur span').html();
     var vesselName = $('#blur span').html();
