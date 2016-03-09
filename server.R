@@ -1,25 +1,45 @@
+# Packages ----------------------------------------------------------------
 library("shiny")
+library("fasttime")
 
-# Load data
-# 1 million rows
-ais <- readRDS("data/aisData.rds")
+# Global data -------------------------------------------------------------
+ais <- readRDS("data/aisData.rds") # 1 million rows
 # vms <- readRDS("data/vms.rds")
+
+# Shiny Server ------------------------------------------------------------
 
 shinyServer(function(input, output) {
   
-  # Datos
+  # Data --------------------------------------------------------------------
+  
   ais_df <- reactive({
     
     # TIMESTAMP >= input$dateFrom & TIMESTAMP <= input$dateUntil
     # substring()
     
-    ais_df <- subset(x = ais[1:500000,], select = c("LON", "LAT", "SPEED"))
+    ais_df <- subset(x = ais[1:100000,], select = c("LON", "LAT", "TIMESTAMP"))
+    ais_df$TIMESTAMP <- fastPOSIXct(x = ais_df$TIMESTAMP)
+    
+    # Query
+    if(input$dateFrom != ""){
+      
+      ais_df <- subset(x = ais_df, subset = TIMESTAMP , select = c("LON", "LAT", "TIMESTAMP"))
+      
+    } else {
+      
+      print(paste("Vacía.", input$dateFrom))
+      
+    }
+    
+    
     
     return(ais_df)
     
   })
 
-  # Plot de puntos
+
+# Point cloud -------------------------------------------------------------
+
   output$plot <- renderPlot({
     
     ais_df <- ais_df()
@@ -55,10 +75,13 @@ var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radi
    return(mapa)
    })
   
-  # Tabla de datos consultados
+  # Table of data -----------------------------------------------------------  
   
   output$table <- renderDataTable({
     ais_df()
     })
     
 })
+
+
+

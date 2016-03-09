@@ -150,20 +150,20 @@ function input() {
 
   //alert(vesselSpeedMax);
 
-  //Shiny.onInputChange("aisData", aisCheck);
-  //Shiny.onInputChange("vmsData", vmsCheck);
-  //Shiny.onInputChange("dateFrom", dateFrom);
-  //Shiny.onInputChange("dateUntil", dateUntil);
-  //Shiny.onInputChange("selectVesselType", selectVesselType);
-  //Shiny.onInputChange("selectVesselName", selectVesselName);
-  //Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
+  Shiny.onInputChange("aisData", aisCheck);
+  Shiny.onInputChange("vmsData", vmsCheck);
+  Shiny.onInputChange("dateFrom", dateFrom);
+  Shiny.onInputChange("dateUntil", dateUntil);
+  Shiny.onInputChange("selectVesselType", selectVesselType);
+  Shiny.onInputChange("selectVesselName", selectVesselName);
+  Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
   //Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
 
 }
 
 // Materialize.toast(message, displayLength, className, completeCallback);
 function toast() {
-  return Materialize.toast('¡500,000 puntos ploteados!', 4000, 'rounded'); // 4000 is the duration of the toast
+  return Materialize.toast('¡100,000 puntos!', 4000, 'rounded'); // 4000 is the duration of the toast
 }
 
 // Button menu events
