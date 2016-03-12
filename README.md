@@ -26,6 +26,8 @@ install.packages('fasttime')
 
 ## Capturas de pantalla
 
+![image](https://github.com/guzmanlopez/AISVMS_vis/blob/master/screenshots/mainScreenshot.png)
+
 ## Futuros desarrollos
 
 *
