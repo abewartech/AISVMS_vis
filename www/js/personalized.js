@@ -107,7 +107,7 @@ function loadPage() {
   });
 
   // Toast event
-  $('#btnReplay').click(toast);
+  //$('#btnReplay').click(toast);
 
   //Tooltip
   $('.tooltipped').tooltip({
@@ -162,9 +162,9 @@ function input() {
 }
 
 // Materialize.toast(message, displayLength, className, completeCallback);
-function toast() {
-  return Materialize.toast('¡100,000 puntos!', 4000, 'rounded'); // 4000 is the duration of the toast
-}
+//function toast() {
+//  return Materialize.toast('¡100,000 puntos!', 4000, 'rounded'); // 4000 is the duration of the toast
+//}
 
 // Button menu events
 

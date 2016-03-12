@@ -5,7 +5,8 @@ library("fasttime")
 # Global data -------------------------------------------------------------
 
 ais <- readRDS("data/aisData.rds") # 1 million rows
-ais <- subset(x = ais[1:100000,], select = c("LON", "LAT", "TIMESTAMP"))
+colnames(ais)[1] <- c("MMSI")
+ais <- subset(x = ais[1:100000,], select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
 ais$TIMESTAMP <- fastPOSIXct(x = ais$TIMESTAMP)
 
 # Initial values
@@ -38,7 +39,7 @@ shinyServer(function(input, output) {
       dateUntilQuery <- input$dateUntil
     }
     
-    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery & TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP"))
+    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery & TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
     
     return(ais_df)
     
@@ -64,10 +65,17 @@ shinyServer(function(input, output) {
    blur <- input$blur
    
    ais_df <- ais_df()
+   
+   numberOfVessels <- length(unique(ais_df$MMSI))
 
-   print(nrow(ais_df))
-   print(dateFromQuery)
-   print(dateUntilQuery)
+   # number of rows to toast
+   # Materialize.toast(message, displayLength, className, completeCallback);
+   toast <- paste("Materialize.toast('", nrow(ais_df), " posiciones ', 8000, 'rounded');", sep = "")
+   toast2 <- paste("Materialize.toast('", numberOfVessels, " barcos ', 8000, 'rounded');", sep = "")
+   
+   print(numberOfVessels)
+   print(toast2)
+   
    
    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")
@@ -78,8 +86,10 @@ shinyServer(function(input, output) {
        sprintf("var buildingsCoords = %s;", j),
 "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
 if(map.hasLayer(heat)) {map.removeLayer(heat);};
-var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radius, colorGradient, ", blur:", blur,"}).addTo(map);
-</script>"), sep = "")
+var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radius, colorGradient, ", blur:", blur,"}).addTo(map);",
+toast,
+toast2,
+"</script>"), sep = "")
    
    return(mapa)
    })
