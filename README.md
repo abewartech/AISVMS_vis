@@ -14,12 +14,14 @@ shiny::runGitHub(repo = 'AISVMS_vis', username = 'guzmanlopez')
 
 ```R
 library('shiny')
+library('fasttime')
 ```
 
 #### Para instalar las dependencias requeridas
 
 ```R
 install.packages('shiny')
+install.packages('fasttime')
 ```
 
 ## Capturas de pantalla
