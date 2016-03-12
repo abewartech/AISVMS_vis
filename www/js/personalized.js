@@ -23,11 +23,14 @@ function loadPage() {
     today: 'Hoy',
     clear: 'Limpiar',
     close: 'Cerrar',
-    format: 'dd mmmm, yyyy',
+    // Dropdown selectors
+    selectYears: true,
+    selectMonths: true,
     firstDay: 'Lunes',
-    //min: '2013-07-03',
-    //max: '2013-07-15',    
-    formatSubmit: 'dd-mm-yyyy'
+    min: new Date(2013, 06, 3),
+    max: new Date(2013, 06, 15),
+    format: 'dd mmmm, yyyy',
+    formatSubmit: 'yyyy-mm-dd'
   });
 
   $('#dateFrom').click(function(event) {
@@ -41,7 +44,6 @@ function loadPage() {
   });
 
   // noUiSlider
-
   var sliderVesselSpeed = document.getElementById('vesselSpeed');
   noUiSlider.create(sliderVesselSpeed, {
     start: [3, 10],

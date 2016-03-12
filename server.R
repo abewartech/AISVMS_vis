@@ -11,41 +11,43 @@ ais$TIMESTAMP <- fastPOSIXct(x = ais$TIMESTAMP)
 # Initial values
 dateFrom <- min(ais$TIMESTAMP)
 dateUntil <- max(ais$TIMESTAMP)
+dateFromQuery <- dateFrom
+dateUntilQuery <- dateUntil
+
 
 # vms <- readRDS("data/vms.rds")
 
 # Shiny Server ------------------------------------------------------------
 
 shinyServer(function(input, output) {
-  
+   
+
   # Data --------------------------------------------------------------------
   
   ais_df <- reactive({
     
-    # Query
+    # Query time
     if(input$dateFrom == ""){
       dateFromQuery <- dateFrom
     } else {
-        dateFromQuery <- input$dateFrom
-        }
+      dateFromQuery <- input$dateFrom
+    }
     if(input$dateUntil == ""){
       dateUntilQuery <- dateUntil
     } else {
-        dateUntilQuery <- input$dateUntil
-        }
-      
-    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery && TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP"))
+      dateUntilQuery <- input$dateUntil
+    }
+    
+    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery & TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP"))
     
     return(ais_df)
     
   })
 
 
-# Point cloud -------------------------------------------------------------
+  # Point cloud -------------------------------------------------------------
 
   output$plot <- renderPlot({
-    
-    ais_df <- ais_df()
     
     plot <- plot(x = ais_df$LON[1:10000], y = ais_df$LAT[1:10000], xlab = "Longitud", ylab = "Latitud", pch = 19, col = "black")
     
@@ -62,10 +64,10 @@ shinyServer(function(input, output) {
    blur <- input$blur
    
    ais_df <- ais_df()
-   
+
    print(nrow(ais_df))
-   print(input$dateFrom)
-   print(input$dateUntil)
+   print(dateFromQuery)
+   print(dateUntilQuery)
    
    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")

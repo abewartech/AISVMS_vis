@@ -53,3 +53,7 @@ media="screen, projection"
     padding-bottom: 14px;
     padding-left: 16px;
 }
+
+.picker__day--disabled, .picker__day--disabled:hover, .picker--focused .picker__day--disabled{
+  background: #595959 !important;
+}
