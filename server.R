@@ -71,11 +71,7 @@ shinyServer(function(input, output) {
    # number of rows to toast
    # Materialize.toast(message, displayLength, className, completeCallback);
    toast <- paste("Materialize.toast('", nrow(ais_df), " posiciones ', 8000, 'rounded');", sep = "")
-   toast2 <- paste("Materialize.toast('", numberOfVessels, " barcos ', 8000, 'rounded');", sep = "")
-   
-   print(numberOfVessels)
-   print(toast2)
-   
+   toast2 <- paste("Materialize.toast('", numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
    
    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")
