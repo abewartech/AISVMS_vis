@@ -41,17 +41,16 @@ main {
 }
 
 /*** select options ***/
-media="screen, projection"
 .dropdown-content li>a, .dropdown-content li>span {
-    font-size: 14px !important;
+    font-size: 12px !important;
     color: #26a69a;
     display: block;
-    line-height: 22px;
-    padding: 14px 16px;
+    line-height: 12px !important;
+    padding: 12px 14px;
     padding-top: 14px;
-    padding-right: 16px;
-    padding-bottom: 14px;
-    padding-left: 16px;
+    padding-right: 14px;
+    padding-bottom: 12px;
+    padding-left: 14px;
 }
 
 .picker__day--disabled, .picker__day--disabled:hover, .picker--focused .picker__day--disabled{

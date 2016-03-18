@@ -44,18 +44,27 @@ shinyServer(function(input, output) {
     # Query vessel name
     if(input$searchVesselName == "") {
       
-      VesselNameQuery <- vesselNames
+      if(is.null(input$selectVesselName)) {
+        VesselNameQuery <- vesselNames
+      } else {
+        VesselNameQuery <- input$selectVesselName
+      }
       
     } else {
-      
       VesselNameQuery <- input$searchVesselName
-      
     }
     
     if(length(VesselNameQuery) == 1) {
-      
       ais_df <- subset(x = ais_df, subset = MMSI == VesselNameQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+    } else {
       
+      listQueriedVesselsNames <- list()
+      
+      for(i in 1:length(VesselNameQuery)) {
+        listQueriedVesselsNames[[i]] <- subset(x = ais_df, subset = MMSI == VesselNameQuery[i], select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+      }
+      
+      ais_df <- do.call("rbind", listQueriedVesselsNames)
     }
     
     return(ais_df)
@@ -120,7 +129,7 @@ toast2,
   output$selectVesselName <- renderUI({
 
     ais_df <- ais_df()
-    vesselNames <- unique(ais_df$MMSI)[1:10]
+    vesselNames <- unique(ais_df$MMSI)
     numberOfVessels <- length(vesselNames)
 
     options <- list()

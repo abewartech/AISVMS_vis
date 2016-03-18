@@ -144,7 +144,7 @@ function input() {
   var dateFrom = $('input[name=dateFrom_submit]').closest('input').attr('value');
   var dateUntil = $('input[name=_submit]').closest('input').attr('value');
   var selectVesselType = $('select[name=selectVesselType]').val();
-  var selectVesselName = $('select[name=selectVesselName]').val();
+  var selectVesselName = $('select[name=selectVesselName2]').val();
   var vesselSpeedMin = $('#vesselSpeed span').html();
   var vesselSpeedMax = $('#vesselSpeed').children('.noUi-handle noUi-handle-upper').closest('span').html();
 
