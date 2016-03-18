@@ -87,11 +87,8 @@ shinyServer(function(input, output) {
 
    # number of rows to toast
    # Materialize.toast(message, displayLength, className, completeCallback);
-   toast <- paste("Materialize.toast('<i class=material-icons>location_on</i> ", nrow(ais_df), " posiciones ', 8000, 'rounded');", sep = "")
-   toast2 <- paste("Materialize.toast('", numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
-   
-   
-     
+   toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", nrow(ais_df), " posiciones ', 8000, 'rounded');", sep = "")
+   toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
    
    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
    j <- paste0("[", j, "]")
@@ -119,32 +116,32 @@ toast2,
   
   # Select vessel name ------------------------------------------------------
   
-#   output$selectVesselName4 <- renderUI({
-# 
-#     ais_df <- ais_df()
-#     vesselNames <- unique(ais_df$MMSI)[1:10]
-#     numberOfVessels <- length(vesselNames)
-# 
-#     options <- list()
-# 
-#     for(i in 1:numberOfVessels){
-# 
-#       options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep = "")
-# 
-#     }
-# 
-#     options <- do.call("rbind", options)
-#     
-#     select <- HTML(c("<select multiple name='selectVesselName2'>",
-#                      "<option value='' disabled>Nombre del barco</option>",
-#                      options,
-#                      "</select>",
-#                      "<script>$('#selectVesselName2').material_select();</script>")
-#                    )
-#     
-#     return(select)
-# 
-#   })
+  output$selectVesselName <- renderUI({
+
+    ais_df <- ais_df()
+    vesselNames <- unique(ais_df$MMSI)[1:10]
+    numberOfVessels <- length(vesselNames)
+
+    options <- list()
+
+    for(i in 1:numberOfVessels){
+
+      options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep = "")
+
+    }
+
+    options <- do.call("rbind", options)
+    
+    select <- HTML(c("<select multiple name='selectVesselName2'>",
+                     "<option value='' disabled>Nombre del barco</option>",
+                     options,
+                     "</select>",
+                     "<script>$('#selectVesselName2').material_select();</script>")
+                   )
+    
+    return(select)
+
+  })
   
   
 })
