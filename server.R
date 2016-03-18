@@ -96,7 +96,44 @@ toast2,
     ais_df()
     })
     
+  
+  # Select vessel name ------------------------------------------------------
+  
+  output$selectVesselName <- renderUI({
+
+    ais_df <- ais_df()
+    vesselNames <- unique(ais_df$MMSI)[1:10]
+    numberOfVessels <- length(vesselNames)
+
+    options <- list()
+
+    for(i in 1:numberOfVessels){
+
+      options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep ="")
+
+    }
+
+    options <- do.call("rbind", options)
+
+    # select <- HTML(c("<select multiple name='selectVesselName2'>",
+    #                  "<option value='' disabled>Nombre del barco</option>",
+    #                  options,
+    #                  "</select>"))
+    #                
+    
+    # return <- HTML(c("<script>$('#selectVesselName').html('", c("<select multiple name='selectVesselName2'>",
+    #                                                             "<option value='' disabled>Nombre del barco</option>",
+    #                                                             options,
+    #                                                             "</select>"), "'); </script>"))
+
+    # return(return)
+
+  })
+  
+  
 })
+
+
 
 
 
