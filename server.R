@@ -105,6 +105,7 @@ toast2,
 "</script>"), sep = "")
    
    return(mapa)
+   
    })
   
   # Table of data -----------------------------------------------------------  
@@ -125,19 +126,21 @@ toast2,
     options <- list()
 
     for(i in 1:numberOfVessels){
-
       options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep = "")
-
     }
 
     options <- do.call("rbind", options)
     
-    select <- HTML(c("<select multiple name='selectVesselName2'>",
+    select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>",
+                     "<select multiple name='selectVesselName2'>",
                      "<option value='' disabled>Nombre del barco</option>",
                      options,
                      "</select>",
-                     "<script>$('#selectVesselName2').material_select();</script>")
-                   )
+                     "</div>",
+                     "<script>$('select').material_select();</script>"))
+    
+    #"<script>$('#selectVesselName2').material_select('destroy'); </script>"
+    #"<script>$('#selectVesselName2').material_select();</script>"
     
     return(select)
 
