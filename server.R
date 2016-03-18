@@ -128,17 +128,71 @@ toast2,
   
   output$selectVesselName <- renderUI({
 
+    # Subset
     ais_df <- ais_df()
-    vesselNames <- unique(ais_df$MMSI)
-    numberOfVessels <- length(vesselNames)
+    
+    # All vessels names and total number
+    vesselNames2 <- vesselNames
+    numberOfVessels <- length(vesselNames2)
+    
+    # Selected vessels names
+    vesselNamesSelected <- unique(ais_df$MMSI)
+    
+    # Mark as selected options the previously selected vessels
+    
+    if(numberOfVessels == length(vesselNamesSelected)) {
 
-    options <- list()
-
-    for(i in 1:numberOfVessels){
-      options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep = "")
+      options <- list()
+      
+      for(i in 1:numberOfVessels){
+        options[[i]] <- paste("<option value='", vesselNames2[i], "'>", vesselNames2[i], "</option>", sep = "")
+      }
+      
+      options <- do.call("rbind", options)
+      
+    } else {
+      
+      listSelectedVessels <- list()
+      
+      for(i in 1:numberOfVessels) {
+        
+        listSelectedVessels[[i]] <- which(vesselNames2[i] == vesselNamesSelected)
+        
+      }
+      
+      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 0)
+      lengthListSelectedVessels <- length(listSelectedVessels)
+      
+      options <- list()
+      
+      for(i in 1:numberOfVessels){
+        
+        encontrado <- FALSE
+        
+        j <- 1
+        
+        while(j <= lengthListSelectedVessels & !encontrado) {
+          
+          if(i == listSelectedVessels[j]) {
+            encontrado <- TRUE
+            #print("encontrado")
+          }
+          
+          j <- j + 1
+          
+        }
+        
+        if(encontrado){
+          options[[i]] <- paste("<option value='", vesselNames2[i], "' selected>", vesselNames2[i], "</option>", sep = "")
+        }
+        
+        if(!encontrado){
+          options[[i]] <- paste("<option value='", vesselNames2[i], "'>", vesselNames2[i], "</option>", sep = "")
+        }
+      }
+      
+      options <- do.call("rbind", options)
     }
-
-    options <- do.call("rbind", options)
     
     select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>",
                      "<select multiple name='selectVesselName2'>",
