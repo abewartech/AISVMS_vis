@@ -14,7 +14,7 @@ dateFrom <- min(ais$TIMESTAMP)
 dateUntil <- max(ais$TIMESTAMP)
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
-
+vesselNames <- unique(ais$MMSI)
 
 # vms <- readRDS("data/vms.rds")
 
@@ -40,6 +40,23 @@ shinyServer(function(input, output) {
     }
     
     ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery & TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+    
+    # Query vessel name
+    if(input$searchVesselName == "") {
+      
+      VesselNameQuery <- vesselNames
+      
+    } else {
+      
+      VesselNameQuery <- input$searchVesselName
+      
+    }
+    
+    if(length(VesselNameQuery) == 1) {
+      
+      ais_df <- subset(x = ais_df, subset = MMSI == VesselNameQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+      
+    }
     
     return(ais_df)
     
@@ -99,36 +116,32 @@ toast2,
   
   # Select vessel name ------------------------------------------------------
   
-  output$selectVesselName <- renderUI({
-
-    ais_df <- ais_df()
-    vesselNames <- unique(ais_df$MMSI)[1:10]
-    numberOfVessels <- length(vesselNames)
-
-    options <- list()
-
-    for(i in 1:numberOfVessels){
-
-      options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep ="")
-
-    }
-
-    options <- do.call("rbind", options)
-
-    # select <- HTML(c("<select multiple name='selectVesselName2'>",
-    #                  "<option value='' disabled>Nombre del barco</option>",
-    #                  options,
-    #                  "</select>"))
-    #                
-    
-    # return <- HTML(c("<script>$('#selectVesselName').html('", c("<select multiple name='selectVesselName2'>",
-    #                                                             "<option value='' disabled>Nombre del barco</option>",
-    #                                                             options,
-    #                                                             "</select>"), "'); </script>"))
-
-    # return(return)
-
-  })
+#   output$selectVesselName4 <- renderUI({
+# 
+#     ais_df <- ais_df()
+#     vesselNames <- unique(ais_df$MMSI)[1:10]
+#     numberOfVessels <- length(vesselNames)
+# 
+#     options <- list()
+# 
+#     for(i in 1:numberOfVessels){
+# 
+#       options[[i]] <- paste("<option value='", vesselNames[i], "'>", vesselNames[i], "</option>", sep = "")
+# 
+#     }
+# 
+#     options <- do.call("rbind", options)
+#     
+#     select <- HTML(c("<select multiple name='selectVesselName2'>",
+#                      "<option value='' disabled>Nombre del barco</option>",
+#                      options,
+#                      "</select>",
+#                      "<script>$('#selectVesselName2').material_select();</script>")
+#                    )
+#     
+#     return(select)
+# 
+#   })
   
   
 })
