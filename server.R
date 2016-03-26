@@ -175,8 +175,11 @@ toast2,
           
           if(i == listSelectedVessels[j]) {
             encontrado <- TRUE
+            #print("encontrado")
           }
+          
           j <- j + 1
+          
         }
         
         if(encontrado){
