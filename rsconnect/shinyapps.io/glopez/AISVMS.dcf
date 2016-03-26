@@ -1,0 +1,9 @@
+name: AISVMS
+account: glopez
+server: shinyapps.io
+appId: 90638
+bundleId: 403807
+url: https://glopez.shinyapps.io/AISVMS/
+when: 1459014140.10426
+asMultiple: FALSE
+asStatic: FALSE
