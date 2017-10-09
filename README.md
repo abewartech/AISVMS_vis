@@ -1,6 +1,6 @@
 # Visualización de datos de AIS y VMS
 
-Aplicación web interactiva de R con la librería Shiny, mapas de Leaflet y con estilo Material Design de Google.
+Aplicación web interactiva de R con la librería Shiny, mapas de Leaflet y con estilo Material Design de Google que lee datos de AIS desde una base de datos en PostgreSQL.
 
 #### **Resumen**
 
