@@ -1,94 +1,136 @@
-# Packages ----------------------------------------------------------------
+
+# Packages -----------------------------------------------------
+
 library("shiny")
 library("fasttime")
 library("lubridate")
+library("DBI")
+library("RPostgreSQL")
 
-# Global data -------------------------------------------------------------
+library("sf")
+library("wkb")
 
-ais <- readRDS("data/aisData.rds") # 1 million rows
-colnames(ais)[1] <- c("MMSI")
-ais <- subset(x = ais[1:500000, ], select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
-ais$TIMESTAMP <- fastPOSIXct(x = ais$TIMESTAMP)
+#library("dplyr")
+#library("dbplyr")
+#library("pool")
+
+# Global data -------------------------------------------------
+
+# Conectar con PostgreSQL
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
 
 # Initial values
-dateFrom <- min(ais$TIMESTAMP)
-dateUntil <- max(ais$TIMESTAMP)
+dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")  # dbGetQuery(conn, 'SELECT max(timestamp) FROM posiciones;')
+dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")  # dbGetQuery(conn, 'SELECT min(timestamp) FROM posiciones;')
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
 
-# Not all vessel names
-vesselNames <- unique(ais$MMSI)[1:100]
+# Define number of points shown threshold
+threshold <- 50000
 
-# vms <- readRDS("data/vms.rds")
+# All vessel mmsi ids
+vesselNames <- dbGetQuery(conn, "SELECT DISTINCT(mmsi) FROM barcos;")$mmsi
 
-# Shiny Server ------------------------------------------------------------
+# Shiny Server -----------------------------------------------
 
 shinyServer(function(input, output) {
   
+  # Data --------------------------------------------------------
   
-  # Data --------------------------------------------------------------------
-  
-  ais_df <- reactive({
+  positionsQry <- reactive({
     
     # Query time
-    if(input$dateFrom == "")
-    {
+    if (input$dateFrom == "") {
+      
       dateFromQuery <- dateFrom
-    } 
-    else
-    {
+      
+    } else {
+      
       dateFromQuery <- input$dateFrom
-    }
-    if(input$dateUntil == "")
-    {
-      dateUntilQuery <- dateUntil
-    }
-    else 
-    {
-      dateUntilQuery <- input$dateUntil
+      
     }
     
-    ais_df <- subset(x = ais, subset = TIMESTAMP >= dateFromQuery & TIMESTAMP <= dateUntilQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+    if (input$dateUntil == "") {
+      
+      
+      dateUntilQuery <- dateUntil
+      
+    } else {
+      
+      dateUntilQuery <- input$dateUntil
+      
+    }
+    
+    print("positionsQry.count...")
+    positionsQry.count <- dbGetQuery(conn, paste("SELECT COUNT(*) FROM posiciones 
+                                                  WHERE timestamp BETWEEN '", 
+                                                 dateFromQuery, "' AND '", 
+                                                 dateUntilQuery, "';", sep = ""))
+    
+    if(positionsQry.count$count > threshold) {
+      
+      print("positionsQry > threshold...")
+      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
+                                              WHERE timestamp BETWEEN '", 
+                                             dateFromQuery, "' AND '", 
+                                             dateUntilQuery, "' ORDER BY RANDOM()
+                                              LIMIT '", threshold, "' ;", sep = ""))
+    } else {
+      
+      print("positionsQry < threshold...")
+      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
+                                              WHERE timestamp BETWEEN '", 
+                                             dateFromQuery, "' AND '", 
+                                             dateUntilQuery, "';", sep = ""))
+    }
     
     # Query vessel name
-    if(input$searchVesselName == "") 
-    {
-      if(is.null(input$selectVesselName))
-      {
+    
+    if (input$searchVesselName == "") {
+      
+      if (is.null(input$selectVesselName)) {
+        
         VesselNameQuery <- vesselNames
-      } 
-      else
-      {
+        
+      } else {
+        
         VesselNameQuery <- input$selectVesselName
+        
       }
-    }
-    else 
-    {
+    } else {
+      
       VesselNameQuery <- input$searchVesselName
+      
     }
     
-    if(length(VesselNameQuery) == 1) 
-    {
-      ais_df <- subset(x = ais_df, subset = MMSI == VesselNameQuery, select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
+    if (length(VesselNameQuery) > 0) {
+      
+      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
+                                                WHERE timestamp BETWEEN '", 
+                                             dateFromQuery, "' AND '", 
+                                             dateUntilQuery, "' AND
+                                                mmsi = '", VesselNameQuery, "';", sep = ""))
     } 
-    else 
-    {
-      listQueriedVesselsNames <- list()
-      for(i in 1:length(VesselNameQuery)) 
-      {
-        listQueriedVesselsNames[[i]] <- subset(x = ais_df, subset = MMSI == VesselNameQuery[i], select = c("LON", "LAT", "TIMESTAMP", "MMSI"))
-      }
-      ais_df <- do.call("rbind", listQueriedVesselsNames)
-    }
-    return(ais_df)
+    
+    # Disconnect
+    print("Disconnecting...")
+    dbDisconnect(conn)
+    
+    points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
+    
+    return(points)
+    
   })
   
-  
-  # Point cloud -------------------------------------------------------------
+  # Point cloud -------------------------------------------------
   
   output$plot <- renderPlot({
     
-    plot <- plot(x = ais_df$LON[1:10000], y = ais_df$LAT[1:10000], xlab = "Longitud", ylab = "Latitud", pch = 19, col = "black")
+    points <- sf::st_as_sfc(wkb::hex2raw(positionsQry$wkb_geometry))
+    st_crs(points) <- st_crs(4326)
+    
+    plot <- plot(x = st_coordinates(points)[,1], y = st_coordinates(points)[,2], 
+                 xlab = "Longitud", ylab = "Latitud", pch = 19, col = "black")
     
     return(plot)
     
@@ -102,62 +144,63 @@ shinyServer(function(input, output) {
     opacity <- input$opacity
     blur <- input$blur
     
-    ais_df <- ais_df()
+    positionsQry <- positionsQry()
+        
+    numberOfVessels <- length(unique(positionsQry$mmsi))
     
-    numberOfVessels <- length(unique(ais_df$MMSI))
+    # number of rows to toast Materialize.toast(message, displayLength,
+    # className, completeCallback);
+    toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
+                   nrow(positionsQry), " posiciones ', 8000, 'rounded');", sep = "")
+    toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
+                    numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
     
-    # number of rows to toast
-    # Materialize.toast(message, displayLength, className, completeCallback);
-    toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", nrow(ais_df), " posiciones ', 8000, 'rounded');", sep = "")
-    toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
-    
-    j <- paste0("[", ais_df[, "LAT"], ",", ais_df[, "LON"], "]", collapse = ",")
+    j <- paste0("[", positionsQry[,"y"], ",", positionsQry[,"x"], "]", collapse = ",")
     j <- paste0("[", j, "]")
     
-    mapa <- HTML(
-      paste(
-        "<script>",
-        sprintf("var buildingsCoords = %s;", j),
-        "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
-if(map.hasLayer(heat)) {map.removeLayer(heat);};
-var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radius, colorGradient, ", blur:", blur,"}).addTo(map);",
-        toast,
-        toast2,
-        "</script>"), sep = "")
+    mapa <- HTML(paste("<script>", sprintf("var buildingsCoords = %s;", 
+                                           j), "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
+                       if(map.hasLayer(heat)) {map.removeLayer(heat);};
+                       var heat = L.heatLayer(buildingsCoords, {minOpacity:", 
+                       opacity, ", radius:", radius, colorGradient, ", blur:", blur, 
+                       "}).addTo(map);", toast, toast2, "</script>"), sep = "")
     
     return(mapa)
     
   })
   
-  # Table of data -----------------------------------------------------------  
+  # Table of data ---------------------------------------------
   
   output$table <- renderDataTable({
-    ais_df()
+    
+    positionsQry()
+    
   })
   
   
-  # Select vessel name ------------------------------------------------------
+  # Select vessel name -----------------------------------
   
   output$selectVesselName <- renderUI({
     
     # Subset
-    ais_df <- ais_df()
+    positionsQry <- positionsQry()
     
     # All vessels names and total number
     vesselNames2 <- vesselNames
     numberOfVessels <- length(vesselNames2)
     
     # Selected vessels names
-    vesselNamesSelected <- unique(ais_df$MMSI)
+    vesselNamesSelected <- unique(positionsQry$mmsi)
     
     # Mark as selected options the previously selected vessels
     
-    if(numberOfVessels == length(vesselNamesSelected)) {
+    if (numberOfVessels == length(vesselNamesSelected)) {
       
       options <- list()
       
-      for(i in 1:numberOfVessels){
-        options[[i]] <- paste("<option value='", vesselNames2[i], "'>", vesselNames2[i], "</option>", sep = "")
+      for (i in 1:numberOfVessels) {
+        options[[i]] <- paste("<option value='", vesselNames2[i], 
+                              "'>", vesselNames2[i], "</option>", sep = "")
       }
       
       options <- do.call("rbind", options)
@@ -166,56 +209,57 @@ var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radi
       
       listSelectedVessels <- list()
       
-      for(i in 1:numberOfVessels) {
+      for (i in 1:numberOfVessels) {
         
         listSelectedVessels[[i]] <- which(vesselNames2[i] == vesselNamesSelected)
         
       }
       
-      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 0)
+      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 
+                                     0)
       lengthListSelectedVessels <- length(listSelectedVessels)
       
       options <- list()
       
-      for(i in 1:numberOfVessels){
+      for (i in 1:numberOfVessels) {
         
         encontrado <- FALSE
         
         j <- 1
         
-        while(j <= lengthListSelectedVessels & !encontrado) {
+        while (j <= lengthListSelectedVessels & !encontrado) {
           
-          if(i == listSelectedVessels[j]) {
+          if (i == listSelectedVessels[j]) {
+            
             encontrado <- TRUE
-            #print("encontrado")
+            # print('encontrado')
+            
           }
           
           j <- j + 1
           
         }
         
-        if(encontrado){
-          options[[i]] <- paste("<option value='", vesselNames2[i], "' selected>", vesselNames2[i], "</option>", sep = "")
+        if (encontrado) {
+          options[[i]] <- paste("<option value='", vesselNames2[i], 
+                                "' selected>", vesselNames2[i], "</option>", sep = "")
         }
         
-        if(!encontrado){
-          options[[i]] <- paste("<option value='", vesselNames2[i], "'>", vesselNames2[i], "</option>", sep = "")
+        if (!encontrado) {
+          options[[i]] <- paste("<option value='", vesselNames2[i], 
+                                "'>", vesselNames2[i], "</option>", sep = "")
         }
       }
       
       options <- do.call("rbind", options)
     }
     
-    select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>",
-                     "<select multiple name='selectVesselName2'>",
-                     "<option value='' disabled>Nombre del barco</option>",
-                     options,
-                     "</select>",
-                     "</div>",
-                     "<script>$('select').material_select();</script>"))
+    select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>", 
+                     "<select multiple name='selectVesselName2'>", "<option value='' disabled>Nombre del barco</option>", 
+                     options, "</select>", "</div>", "<script>$('select').material_select();</script>"))
     
-    #"<script>$('#selectVesselName2').material_select('destroy'); </script>"
-    #"<script>$('#selectVesselName2').material_select();</script>"
+    #'<script>$('#selectVesselName2').material_select('destroy'); </script>'
+    #'<script>$('#selectVesselName2').material_select();</script>'
     
     return(select)
     
@@ -223,8 +267,4 @@ var heat = L.heatLayer(buildingsCoords, {minOpacity:", opacity,", radius:", radi
   
   
 })
-
-
-
-
 

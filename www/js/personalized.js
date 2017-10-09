@@ -27,8 +27,8 @@ function loadPage() {
     selectYears: true,
     selectMonths: true,
     firstDay: 'Lunes',
-    min: new Date(2013, 06, 3),
-    max: new Date(2013, 06, 15),
+    min: new Date(2012, 05, 8),
+    max: new Date(2014, 05, 17),
     format: 'dd mmmm, yyyy',
     formatSubmit: 'yyyy-mm-dd'
   });
