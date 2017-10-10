@@ -1,6 +1,5 @@
 $(document).ready(loadPage);
 
-
 function loadPage() {
 
   //****** Materialize Design ******//

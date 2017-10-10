@@ -9,30 +9,35 @@ library("RPostgreSQL")
 library("sf")
 library("wkb")
 
-#library("dplyr")
-#library("dbplyr")
-#library("pool")
-
 # Global data -------------------------------------------------
 
 # Initial date values
-dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03") 
+dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")
 dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
 
 # Define number of points shown threshold
-threshold <- 10000
+threshold <- 1000
 
 # First map data
 vista_inicial = TRUE
 
 # All vessel mmsi
-conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais") # Connect to PostgreSQL
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")  # Connect to PostgreSQL
 sql.vesselsNames <- "SELECT DISTINCT(mmsi) FROM barcos;"
 query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
 getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
-dbDisconnect(conn) # Disconnect 
+# dbDisconnect(conn)  # Disconnect 
+
+print("Vista inicial...")
+sql.positions <- "SELECT * FROM vista_inicial LIMIT ?threshold;"
+query.positions <- sqlInterpolate(conn, sql.positions, threshold = threshold)
+getquery.positions <- dbGetQuery(conn, query.positions)
+print("Disconnecting...")
+positionsQry <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
+                getquery.positions[-c(1, 2)])
+dbDisconnect(conn)  # Disconnect
 
 # Shiny Server -----------------------------------------------
 
@@ -45,16 +50,16 @@ shinyServer(function(input, output) {
     # Conectar con PostgreSQL
     conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
     
-    if(vista_inicial) {
+    if (vista_inicial) {
       
       print("Vista inicial...")
-      sql.positions <- "SELECT * FROM vista_inicial;"
-      query.positions <- sqlInterpolate(conn, sql.positions)
+      sql.positions <- "SELECT * FROM vista_inicial LIMIT ?threshold;"
+      query.positions <- sqlInterpolate(conn, sql.positions, threshold = threshold)
       getquery.positions <- dbGetQuery(conn, query.positions)
-      print("Disconnecting...") 
-      dbDisconnect(conn) # Disconnect
-      points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
-      print(head(points))
+      print("Disconnecting...")
+      dbDisconnect(conn)  # Disconnect
+      points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
+                      getquery.positions[-c(1, 2)])
       
       return(points)
       
@@ -82,32 +87,32 @@ shinyServer(function(input, output) {
         
       }
       
-      print("positionsQry.count...")
+      print("getquery.positions.count...")
       sql.positions.counts <- "SELECT COUNT(*) FROM posiciones 
-                               WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
-      query.positions.counts <- sqlInterpolate(conn, sql.positions.counts,
+      WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+      query.positions.counts <- sqlInterpolate(conn, sql.positions.counts, 
                                                dateFrom = as.character(dateFromQuery), 
                                                dateUntil = as.character(dateUntilQuery))
       getquery.positions.counts <- dbGetQuery(conn, query.positions.counts)
       
-      if(getquery.positions.counts$count > threshold) {
+      if (getquery.positions.counts$count > threshold) {
         
-        print("positionsQry > threshold...")
+        print("getquery.positions > threshold...")
         sql.positions <- "SELECT * FROM posiciones 
-                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
-                          ORDER BY RANDOM() LIMIT ?threshold;"
-        query.positions <- sqlInterpolate(conn, sql.positions,
+        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+        ORDER BY RANDOM() LIMIT ?threshold;"
+        query.positions <- sqlInterpolate(conn, sql.positions, 
                                           dateFrom = as.character(dateFromQuery), 
-                                          dateUntil = as.character(dateUntilQuery),
+                                          dateUntil = as.character(dateUntilQuery), 
                                           threshold = as.character(threshold))
         getquery.positions <- dbGetQuery(conn, query.positions)
         
       } else {
         
-        print("positionsQry < threshold...")
+        print("getquery.positions < threshold...")
         sql.positions <- "SELECT * FROM posiciones 
-                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
-        query.positions <- sqlInterpolate(conn, sql.positions,
+        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+        query.positions <- sqlInterpolate(conn, sql.positions, 
                                           dateFrom = as.character(dateFromQuery), 
                                           dateUntil = as.character(dateUntilQuery))
         getquery.positions <- dbGetQuery(conn, query.positions)
@@ -136,21 +141,22 @@ shinyServer(function(input, output) {
       if (length(VesselNameQuery) > 0) {
         
         sql.positions <- "SELECT * FROM posiciones 
-                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
-                          AND mmsi = ?mmsi;"
-        query.positions <- sqlInterpolate(conn, sql.positions,
+        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+        AND mmsi = ?mmsi;"
+        query.positions <- sqlInterpolate(conn, sql.positions, 
                                           dateFrom = as.character(dateFromQuery), 
-                                          dateUntil = as.character(dateUntilQuery),
+                                          dateUntil = as.character(dateUntilQuery), 
                                           mmsi = VesselNameQuery)
         getquery.positions <- dbGetQuery(conn, query.positions)
         
-      } 
+      }
       
       # Disconnect
       print("Disconnecting...")
       dbDisconnect(conn)
       
-      points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
+      points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
+                      getquery.positions[-c(1, 2)])
       
       return(points)
     }
@@ -161,17 +167,19 @@ shinyServer(function(input, output) {
   
   output$plot <- renderPlot({
     
-    points <- sf::st_as_sfc(wkb::hex2raw(positionsQry$wkb_geometry))
-    st_crs(points) <- st_crs(4326)
+    positionsQry <- positionsQry()
     
-    plot <- plot(x = st_coordinates(points)[,1], y = st_coordinates(points)[,2], 
-                 xlab = "Longitud", ylab = "Latitud", pch = 19, col = "black")
+    plot <- plot(x = positionsQry$x, 
+                 y = positionsQry$y, 
+                 xlab = "Longitud", 
+                 ylab = "Latitud", pch = 19, col = "black")
     
     return(plot)
     
   })
   
-  # Mapa
+  # Mapa -------------------------------------------------------- 
+  
   output$divHtml <- renderUI({
     
     radius <- input$radius
@@ -180,6 +188,8 @@ shinyServer(function(input, output) {
     blur <- input$blur
     
     positionsQry <- positionsQry()
+    
+    print("divHtml")
     
     numberOfVessels <- length(unique(positionsQry$mmsi))
     
@@ -190,11 +200,13 @@ shinyServer(function(input, output) {
     toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
                     numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
     
-    j <- paste0("[", positionsQry[,"y"], ",", positionsQry[,"x"], "]", collapse = ",")
+    j <- paste0("[", positionsQry[, "y"], ",", positionsQry[, "x"],"]", 
+                collapse = ",")
     j <- paste0("[", j, "]")
     
-    mapa <- HTML(paste("<script>", sprintf("var buildingsCoords = %s;", 
-                                           j), "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
+    mapa <- HTML(paste("<script>", 
+                       sprintf("var buildingsCoords = %s;", j), 
+                       "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
                        if(map.hasLayer(heat)) {map.removeLayer(heat);};
                        var heat = L.heatLayer(buildingsCoords, {minOpacity:", 
                        opacity, ", radius:", radius, colorGradient, ", blur:", blur, 
@@ -221,7 +233,7 @@ shinyServer(function(input, output) {
     positionsQry <- positionsQry()
     
     # All vessels names and total number
-    vesselNames2 <- getquery.vesselNames$mmsi
+    vesselNames2 <- positionsQry$mmsi
     numberOfVessels <- length(vesselNames2)
     
     # Selected vessels names
@@ -234,8 +246,8 @@ shinyServer(function(input, output) {
       options <- list()
       
       for (i in 1:numberOfVessels) {
-        options[[i]] <- paste("<option value='", vesselNames2[i], 
-                              "'>", vesselNames2[i], "</option>", sep = "")
+        options[[i]] <- paste("<option value='", vesselNames2[i], "'>", 
+                              vesselNames2[i], "</option>", sep = "")
       }
       
       options <- do.call("rbind", options)
@@ -250,8 +262,7 @@ shinyServer(function(input, output) {
         
       }
       
-      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 
-                                     0)
+      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 0)
       lengthListSelectedVessels <- length(listSelectedVessels)
       
       options <- list()
@@ -299,7 +310,5 @@ shinyServer(function(input, output) {
     return(select)
     
   })
-  
-  
 })
 
