@@ -6,7 +6,6 @@ library("fasttime")
 library("lubridate")
 library("DBI")
 library("RPostgreSQL")
-
 library("sf")
 library("wkb")
 
@@ -16,20 +15,24 @@ library("wkb")
 
 # Global data -------------------------------------------------
 
-# Conectar con PostgreSQL
-conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
-
-# Initial values
-dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")  # dbGetQuery(conn, 'SELECT max(timestamp) FROM posiciones;')
-dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")  # dbGetQuery(conn, 'SELECT min(timestamp) FROM posiciones;')
+# Initial date values
+dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03") 
+dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
 
 # Define number of points shown threshold
-threshold <- 50000
+threshold <- 10000
 
-# All vessel mmsi ids
-vesselNames <- dbGetQuery(conn, "SELECT DISTINCT(mmsi) FROM barcos;")$mmsi
+# First map data
+vista_inicial = TRUE
+
+# All vessel mmsi
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais") # Connect to PostgreSQL
+sql.vesselsNames <- "SELECT DISTINCT(mmsi) FROM barcos;"
+query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
+getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
+dbDisconnect(conn) # Disconnect 
 
 # Shiny Server -----------------------------------------------
 
@@ -39,86 +42,118 @@ shinyServer(function(input, output) {
   
   positionsQry <- reactive({
     
-    # Query time
-    if (input$dateFrom == "") {
+    # Conectar con PostgreSQL
+    conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+    
+    if(vista_inicial) {
       
-      dateFromQuery <- dateFrom
+      print("Vista inicial...")
+      sql.positions <- "SELECT * FROM vista_inicial;"
+      query.positions <- sqlInterpolate(conn, sql.positions)
+      getquery.positions <- dbGetQuery(conn, query.positions)
+      print("Disconnecting...") 
+      dbDisconnect(conn) # Disconnect
+      points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
+      print(head(points))
+      
+      return(points)
       
     } else {
       
-      dateFromQuery <- input$dateFrom
-      
-    }
-    
-    if (input$dateUntil == "") {
-      
-      
-      dateUntilQuery <- dateUntil
-      
-    } else {
-      
-      dateUntilQuery <- input$dateUntil
-      
-    }
-    
-    print("positionsQry.count...")
-    positionsQry.count <- dbGetQuery(conn, paste("SELECT COUNT(*) FROM posiciones 
-                                                  WHERE timestamp BETWEEN '", 
-                                                 dateFromQuery, "' AND '", 
-                                                 dateUntilQuery, "';", sep = ""))
-    
-    if(positionsQry.count$count > threshold) {
-      
-      print("positionsQry > threshold...")
-      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
-                                              WHERE timestamp BETWEEN '", 
-                                             dateFromQuery, "' AND '", 
-                                             dateUntilQuery, "' ORDER BY RANDOM()
-                                              LIMIT '", threshold, "' ;", sep = ""))
-    } else {
-      
-      print("positionsQry < threshold...")
-      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
-                                              WHERE timestamp BETWEEN '", 
-                                             dateFromQuery, "' AND '", 
-                                             dateUntilQuery, "';", sep = ""))
-    }
-    
-    # Query vessel name
-    
-    if (input$searchVesselName == "") {
-      
-      if (is.null(input$selectVesselName)) {
+      # Query time
+      if (input$dateFrom == "") {
         
-        VesselNameQuery <- vesselNames
+        dateFromQuery <- dateFrom
         
       } else {
         
-        VesselNameQuery <- input$selectVesselName
+        dateFromQuery <- input$dateFrom
         
       }
-    } else {
       
-      VesselNameQuery <- input$searchVesselName
+      if (input$dateUntil == "") {
+        
+        
+        dateUntilQuery <- dateUntil
+        
+      } else {
+        
+        dateUntilQuery <- input$dateUntil
+        
+      }
       
+      print("positionsQry.count...")
+      sql.positions.counts <- "SELECT COUNT(*) FROM posiciones 
+                               WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+      query.positions.counts <- sqlInterpolate(conn, sql.positions.counts,
+                                               dateFrom = as.character(dateFromQuery), 
+                                               dateUntil = as.character(dateUntilQuery))
+      getquery.positions.counts <- dbGetQuery(conn, query.positions.counts)
+      
+      if(getquery.positions.counts$count > threshold) {
+        
+        print("positionsQry > threshold...")
+        sql.positions <- "SELECT * FROM posiciones 
+                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+                          ORDER BY RANDOM() LIMIT ?threshold;"
+        query.positions <- sqlInterpolate(conn, sql.positions,
+                                          dateFrom = as.character(dateFromQuery), 
+                                          dateUntil = as.character(dateUntilQuery),
+                                          threshold = as.character(threshold))
+        getquery.positions <- dbGetQuery(conn, query.positions)
+        
+      } else {
+        
+        print("positionsQry < threshold...")
+        sql.positions <- "SELECT * FROM posiciones 
+                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+        query.positions <- sqlInterpolate(conn, sql.positions,
+                                          dateFrom = as.character(dateFromQuery), 
+                                          dateUntil = as.character(dateUntilQuery))
+        getquery.positions <- dbGetQuery(conn, query.positions)
+        
+      }
+      
+      # Query vessel name
+      
+      if (input$searchVesselName == "") {
+        
+        if (is.null(input$selectVesselName)) {
+          
+          VesselNameQuery <- getquery.vesselNames$mmsi
+          
+        } else {
+          
+          VesselNameQuery <- input$selectVesselName
+          
+        }
+      } else {
+        
+        VesselNameQuery <- input$searchVesselName
+        
+      }
+      
+      if (length(VesselNameQuery) > 0) {
+        
+        sql.positions <- "SELECT * FROM posiciones 
+                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+                          AND mmsi = ?mmsi;"
+        query.positions <- sqlInterpolate(conn, sql.positions,
+                                          dateFrom = as.character(dateFromQuery), 
+                                          dateUntil = as.character(dateUntilQuery),
+                                          mmsi = VesselNameQuery)
+        getquery.positions <- dbGetQuery(conn, query.positions)
+        
+      } 
+      
+      # Disconnect
+      print("Disconnecting...")
+      dbDisconnect(conn)
+      
+      points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
+      
+      return(points)
     }
-    
-    if (length(VesselNameQuery) > 0) {
-      
-      positionsQry <- dbGetQuery(conn, paste("SELECT * FROM posiciones 
-                                                WHERE timestamp BETWEEN '", 
-                                             dateFromQuery, "' AND '", 
-                                             dateUntilQuery, "' AND
-                                                mmsi = '", VesselNameQuery, "';", sep = ""))
-    } 
-    
-    # Disconnect
-    print("Disconnecting...")
-    dbDisconnect(conn)
-    
-    points <- cbind(readWKB(hex2raw(positionsQry$wkb_geometry))@coords, positionsQry[-c(1,2)])
-    
-    return(points)
     
   })
   
@@ -145,7 +180,7 @@ shinyServer(function(input, output) {
     blur <- input$blur
     
     positionsQry <- positionsQry()
-        
+    
     numberOfVessels <- length(unique(positionsQry$mmsi))
     
     # number of rows to toast Materialize.toast(message, displayLength,
@@ -186,7 +221,7 @@ shinyServer(function(input, output) {
     positionsQry <- positionsQry()
     
     # All vessels names and total number
-    vesselNames2 <- vesselNames
+    vesselNames2 <- getquery.vesselNames$mmsi
     numberOfVessels <- length(vesselNames2)
     
     # Selected vessels names
