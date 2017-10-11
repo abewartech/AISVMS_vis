@@ -57,6 +57,23 @@ function loadPage() {
     })
 
   });
+  
+  var sliderThresholdPoints = document.getElementById('thresholdPoints');
+  noUiSlider.create(sliderThresholdPoints, {
+    start: [1000],
+    padding: 1,
+    connect: false,
+    step: 1000,
+    range: {
+      'min': 0,
+      'max': 100000
+    },
+    format: wNumb({
+      decimals: 0,
+      //thousand: ',', 
+      suffix: ' '
+    })
+  });
 
   var sliderOpacity = document.getElementById('opacity');
   noUiSlider.create(sliderOpacity, {
@@ -126,10 +143,12 @@ function loadPage() {
 
 
 function settings() {
+  var thresholdPoints = $('#thresholdPoints span').html();
   var opacity = $('#opacity span').html();
   var radius = $('#radius span').html();
   var color = $('#color select').val();
   var blur = $('#blur span').html();
+  Shiny.onInputChange("thresholdPoints", thresholdPoints);
   Shiny.onInputChange("opacity", opacity);
   Shiny.onInputChange("radius", radius);
   Shiny.onInputChange("color", color);

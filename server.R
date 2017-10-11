@@ -1,5 +1,5 @@
 
-# Packages -----------------------------------------------------
+# Packages -----------------------------------------------
 
 library("shiny")
 library("fasttime")
@@ -9,16 +9,16 @@ library("RPostgreSQL")
 library("sf")
 library("wkb")
 
-# Global data -------------------------------------------------
+# Disable scientific notation 
+options(scipen = 999)
+
+# Global data --------------------------------------------
 
 # Initial date values
 dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")
 dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
-
-# Define number of points shown threshold
-threshold <- 1000
 
 # First map data
 vista_inicial = TRUE
@@ -28,66 +28,62 @@ conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")  # Connect to PostgreS
 sql.vesselsNames <- "SELECT DISTINCT(mmsi) FROM barcos;"
 query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
 getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
-# dbDisconnect(conn)  # Disconnect 
 
-print("Vista inicial...")
-sql.positions <- "SELECT * FROM vista_inicial LIMIT ?threshold;"
-query.positions <- sqlInterpolate(conn, sql.positions, threshold = threshold)
-getquery.positions <- dbGetQuery(conn, query.positions)
-print("Disconnecting...")
-positionsQry <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
-                getquery.positions[-c(1, 2)])
-dbDisconnect(conn)  # Disconnect
-
-# Shiny Server -----------------------------------------------
+# Shiny Server -------------------------------------------
 
 shinyServer(function(input, output) {
   
-  # Data --------------------------------------------------------
+  # Data -------------------------------------------------
   
   positionsQry <- reactive({
     
-    # Conectar con PostgreSQL
-    conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+    # Manage threshold number of points
+    if (is.null(input$thresholdPoints) || input$thresholdPoints == "") {
+      threshold <- 10000
+    } 
+    else {
+      threshold <- as.numeric(input$thresholdPoints)
+    }
     
+    # First view
     if (vista_inicial) {
       
-      print("Vista inicial...")
+      # Conectar con PostgreSQL
+      message("*** Vista inicial ***")
+      message("Connect to PostgreSQL")
+      conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
       sql.positions <- "SELECT * FROM vista_inicial LIMIT ?threshold;"
       query.positions <- sqlInterpolate(conn, sql.positions, threshold = threshold)
       getquery.positions <- dbGetQuery(conn, query.positions)
-      print("Disconnecting...")
+      message("Disconnect from PostgreSQL")
       dbDisconnect(conn)  # Disconnect
-      points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
-                      getquery.positions[-c(1, 2)])
       
-      return(points)
+      # Set flag to FALSE
+      vista_inicial <<- FALSE
       
-    } else {
+    } 
+    else {
       
       # Query time
       if (input$dateFrom == "") {
-        
         dateFromQuery <- dateFrom
-        
-      } else {
-        
-        dateFromQuery <- input$dateFrom
-        
       }
-      
+      else {
+        dateFromQuery <- input$dateFrom
+      }
       if (input$dateUntil == "") {
         
         
         dateUntilQuery <- dateUntil
         
-      } else {
-        
+      }
+      else {
         dateUntilQuery <- input$dateUntil
-        
       }
       
-      print("getquery.positions.count...")
+      message("*** Get positions count from query ***")
+      message("Connect to PostgreSQL")
+      conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
       sql.positions.counts <- "SELECT COUNT(*) FROM posiciones 
       WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
       query.positions.counts <- sqlInterpolate(conn, sql.positions.counts, 
@@ -97,73 +93,84 @@ shinyServer(function(input, output) {
       
       if (getquery.positions.counts$count > threshold) {
         
-        print("getquery.positions > threshold...")
+        message("    *** Positions > Threshold: Get positions ***")
         sql.positions <- "SELECT * FROM posiciones 
-        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
-        ORDER BY RANDOM() LIMIT ?threshold;"
+                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+                          ORDER BY RANDOM() LIMIT ?threshold;"
         query.positions <- sqlInterpolate(conn, sql.positions, 
                                           dateFrom = as.character(dateFromQuery), 
                                           dateUntil = as.character(dateUntilQuery), 
                                           threshold = as.character(threshold))
         getquery.positions <- dbGetQuery(conn, query.positions)
         
-      } else {
+      }
+      else {
         
-        print("getquery.positions < threshold...")
+        message("   *** Positions < Threshold: Get positions ***")
         sql.positions <- "SELECT * FROM posiciones 
-        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+                          WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil;"
         query.positions <- sqlInterpolate(conn, sql.positions, 
                                           dateFrom = as.character(dateFromQuery), 
                                           dateUntil = as.character(dateUntilQuery))
         getquery.positions <- dbGetQuery(conn, query.positions)
+        print(query.positions)
         
       }
       
       # Query vessel name
       
-      if (input$searchVesselName == "") {
-        
-        if (is.null(input$selectVesselName)) {
-          
-          VesselNameQuery <- getquery.vesselNames$mmsi
-          
-        } else {
-          
-          VesselNameQuery <- input$selectVesselName
-          
-        }
-      } else {
-        
-        VesselNameQuery <- input$searchVesselName
-        
-      }
+      # if (input$searchVesselName == "") {
+      #   
+      #   if (is.null(input$selectVesselName)) {
+      #     
+      #     VesselNameQuery <- getquery.vesselNames$mmsi
+      #     
+      #   } else {
+      #     
+      #     VesselNameQuery <- input$selectVesselName
+      #     
+      #   }
+      # } else {
+      #   
+      #   VesselNameQuery <- input$searchVesselName
+      #   
+      # }
       
-      if (length(VesselNameQuery) > 0) {
-        
-        sql.positions <- "SELECT * FROM posiciones 
-        WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
-        AND mmsi = ?mmsi;"
-        query.positions <- sqlInterpolate(conn, sql.positions, 
-                                          dateFrom = as.character(dateFromQuery), 
-                                          dateUntil = as.character(dateUntilQuery), 
-                                          mmsi = VesselNameQuery)
-        getquery.positions <- dbGetQuery(conn, query.positions)
-        
-      }
+      # if (length(VesselNameQuery) > 0) {
+      #   
+      #   sql.positions <- "SELECT * FROM posiciones 
+      #   WHERE timestamp BETWEEN ?dateFrom AND ?dateUntil
+      #   AND mmsi = ?mmsi;"
+      #   query.positions <- sqlInterpolate(conn, sql.positions, 
+      #                                     dateFrom = as.character(dateFromQuery), 
+      #                                     dateUntil = as.character(dateUntilQuery), 
+      #                                     mmsi = VesselNameQuery)
+      #   getquery.positions <- dbGetQuery(conn, query.positions)
+      #   
+      # }
       
-      # Disconnect
-      print("Disconnecting...")
-      dbDisconnect(conn)
+      message("Disconnect from PostgreSQL")
+      dbDisconnect(conn)  # Disconnect
+    }
+    
+    # Make points df
+    if (nrow(getquery.positions) > 0) {
       
       points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
                       getquery.positions[-c(1, 2)])
+    } 
+    else {
       
-      return(points)
+      points <- NULL
+      
     }
+    
+    # Return
+    return(points)
     
   })
   
-  # Point cloud -------------------------------------------------
+  # Point cloud ------------------------------------------
   
   output$plot <- renderPlot({
     
@@ -178,52 +185,69 @@ shinyServer(function(input, output) {
     
   })
   
-  # Mapa -------------------------------------------------------- 
+  # Mapa ------------------------------------------------- 
   
   output$divHtml <- renderUI({
     
+    # Plot options
     radius <- input$radius
     colorGradient <- input$color
     opacity <- input$opacity
     blur <- input$blur
     
+    # Get data
     positionsQry <- positionsQry()
     
-    print("divHtml")
+    if (is.null(positionsQry)) {
+      
+      numberOfVessels <- 0
+      positions <- 0
+      
+      toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
+                     positions, " posiciones ', 8000, 'rounded');", sep = "")
+      toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
+                      numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
+      
+      mapa <- HTML(paste("<script>", toast, toast2, "</script>"), sep = "")
+      
+    } 
     
-    numberOfVessels <- length(unique(positionsQry$mmsi))
-    
-    # number of rows to toast Materialize.toast(message, displayLength,
-    # className, completeCallback);
-    toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
-                   nrow(positionsQry), " posiciones ', 8000, 'rounded');", sep = "")
-    toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
-                    numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
-    
-    j <- paste0("[", positionsQry[, "y"], ",", positionsQry[, "x"],"]", 
-                collapse = ",")
-    j <- paste0("[", j, "]")
-    
-    mapa <- HTML(paste("<script>", 
-                       sprintf("var buildingsCoords = %s;", j), 
-                       "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
+    else {
+      
+      positions <- nrow(positionsQry)
+      numberOfVessels <- length(unique(positionsQry$mmsi))
+      
+      # number of rows to toast Materialize.toast(message, displayLength,
+      # className, completeCallback);
+      toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
+                     positions, " posiciones ', 8000, 'rounded');", sep = "")
+      toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
+                      numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
+      
+      j <- paste0("[", positionsQry[, "y"], ",", positionsQry[, "x"],"]", 
+                  collapse = ",")
+      j <- paste0("[", j, "]")
+      
+      mapa <- HTML(paste("<script>", 
+                         sprintf("var buildingsCoords = %s;", j), 
+                         "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
                        if(map.hasLayer(heat)) {map.removeLayer(heat);};
                        var heat = L.heatLayer(buildingsCoords, {minOpacity:", 
-                       opacity, ", radius:", radius, colorGradient, ", blur:", blur, 
-                       "}).addTo(map);", toast, toast2, "</script>"), sep = "")
+                         opacity, ", radius:", radius, colorGradient, ", blur:", blur, 
+                         "}).addTo(map);", toast, toast2, "</script>"), sep = "")
+    }
     
     return(mapa)
     
   })
   
-  # Table of data ---------------------------------------------
+  # Table of data ----------------------------------------
   
   output$table <- renderDataTable({
     
     positionsQry()
     
   })
-  
   
   # Select vessel name -----------------------------------
   
@@ -237,7 +261,7 @@ shinyServer(function(input, output) {
     numberOfVessels <- length(vesselNames2)
     
     # Selected vessels names
-    vesselNamesSelected <- unique(positionsQry$mmsi)
+    vesselNamesSelected <- unique(positionsQry$mmsi)[1:10]
     
     # Mark as selected options the previously selected vessels
     
@@ -310,5 +334,6 @@ shinyServer(function(input, output) {
     return(select)
     
   })
+  
 })
 
