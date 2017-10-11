@@ -65,17 +65,14 @@ shinyServer(function(input, output) {
     else {
       
       # Query time
-      if (input$dateFrom == "") {
+      if (input$dateFrom == "" || is.null(input$dateFrom)) {
         dateFromQuery <- dateFrom
       }
       else {
         dateFromQuery <- input$dateFrom
       }
-      if (input$dateUntil == "") {
-        
-        
+      if (input$dateUntil == "" || is.null(input$dateUntil)) {
         dateUntilQuery <- dateUntil
-        
       }
       else {
         dateUntilQuery <- input$dateUntil
@@ -113,7 +110,6 @@ shinyServer(function(input, output) {
                                           dateFrom = as.character(dateFromQuery), 
                                           dateUntil = as.character(dateUntilQuery))
         getquery.positions <- dbGetQuery(conn, query.positions)
-        print(query.positions)
         
       }
       
@@ -245,95 +241,100 @@ shinyServer(function(input, output) {
   
   output$table <- renderDataTable({
     
-    positionsQry()
+    if (is.null(positionsQry)) {
+      return(NULL)
+    } 
+    else {
+      return(positionsQry())
+    }
     
   })
   
   # Select vessel name -----------------------------------
   
-  output$selectVesselName <- renderUI({
-    
-    # Subset
-    positionsQry <- positionsQry()
-    
-    # All vessels names and total number
-    vesselNames2 <- positionsQry$mmsi
-    numberOfVessels <- length(vesselNames2)
-    
-    # Selected vessels names
-    vesselNamesSelected <- unique(positionsQry$mmsi)[1:10]
-    
-    # Mark as selected options the previously selected vessels
-    
-    if (numberOfVessels == length(vesselNamesSelected)) {
-      
-      options <- list()
-      
-      for (i in 1:numberOfVessels) {
-        options[[i]] <- paste("<option value='", vesselNames2[i], "'>", 
-                              vesselNames2[i], "</option>", sep = "")
-      }
-      
-      options <- do.call("rbind", options)
-      
-    } else {
-      
-      listSelectedVessels <- list()
-      
-      for (i in 1:numberOfVessels) {
-        
-        listSelectedVessels[[i]] <- which(vesselNames2[i] == vesselNamesSelected)
-        
-      }
-      
-      listSelectedVessels <- which(sapply(listSelectedVessels, length) > 0)
-      lengthListSelectedVessels <- length(listSelectedVessels)
-      
-      options <- list()
-      
-      for (i in 1:numberOfVessels) {
-        
-        encontrado <- FALSE
-        
-        j <- 1
-        
-        while (j <= lengthListSelectedVessels & !encontrado) {
-          
-          if (i == listSelectedVessels[j]) {
-            
-            encontrado <- TRUE
-            # print('encontrado')
-            
-          }
-          
-          j <- j + 1
-          
-        }
-        
-        if (encontrado) {
-          options[[i]] <- paste("<option value='", vesselNames2[i], 
-                                "' selected>", vesselNames2[i], "</option>", sep = "")
-        }
-        
-        if (!encontrado) {
-          options[[i]] <- paste("<option value='", vesselNames2[i], 
-                                "'>", vesselNames2[i], "</option>", sep = "")
-        }
-      }
-      
-      options <- do.call("rbind", options)
-    }
-    
-    select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>", 
-                     "<select multiple name='selectVesselName2'>", "<option value='' disabled>Nombre del barco</option>", 
-                     options, "</select>", "</div>", "<script>$('select').material_select();</script>"))
-    
-    #'<script>$('#selectVesselName2').material_select('destroy'); </script>'
-    #'<script>$('#selectVesselName2').material_select();</script>'
-    
-    return(select)
-    
-  })
+  #' output$selectVesselName <- renderUI({
+  #'   
+  #'   # Subset
+  #'   positionsQry <- positionsQry()
+  #'   
+  #'   # All vessels names and total number
+  #'   vesselNames2 <- positionsQry$mmsi
+  #'   numberOfVessels <- length(vesselNames2)
+  #'   
+  #'   # Selected vessels names
+  #'   vesselNamesSelected <- unique(positionsQry$mmsi)[1:10]
+  #'   
+  #'   # Mark as selected options the previously selected vessels
+  #'   
+  #'   if (numberOfVessels == length(vesselNamesSelected)) {
+  #'     
+  #'     options <- list()
+  #'     
+  #'     for (i in 1:numberOfVessels) {
+  #'       options[[i]] <- paste("<option value='", vesselNames2[i], "'>", 
+  #'                             vesselNames2[i], "</option>", sep = "")
+  #'     }
+  #'     
+  #'     options <- do.call("rbind", options)
+  #'     
+  #'   } else {
+  #'     
+  #'     listSelectedVessels <- list()
+  #'     
+  #'     for (i in 1:numberOfVessels) {
+  #'       
+  #'       listSelectedVessels[[i]] <- which(vesselNames2[i] == vesselNamesSelected)
+  #'       
+  #'     }
+  #'     
+  #'     listSelectedVessels <- which(sapply(listSelectedVessels, length) > 0)
+  #'     lengthListSelectedVessels <- length(listSelectedVessels)
+  #'     
+  #'     options <- list()
+  #'     
+  #'     for (i in 1:numberOfVessels) {
+  #'       
+  #'       encontrado <- FALSE
+  #'       
+  #'       j <- 1
+  #'       
+  #'       while (j <= lengthListSelectedVessels & !encontrado) {
+  #'         
+  #'         if (i == listSelectedVessels[j]) {
+  #'           
+  #'           encontrado <- TRUE
+  #'           # print('encontrado')
+  #'           
+  #'         }
+  #'         
+  #'         j <- j + 1
+  #'         
+  #'       }
+  #'       
+  #'       if (encontrado) {
+  #'         options[[i]] <- paste("<option value='", vesselNames2[i], 
+  #'                               "' selected>", vesselNames2[i], "</option>", sep = "")
+  #'       }
+  #'       
+  #'       if (!encontrado) {
+  #'         options[[i]] <- paste("<option value='", vesselNames2[i], 
+  #'                               "'>", vesselNames2[i], "</option>", sep = "")
+  #'       }
+  #'     }
+  #'     
+  #'     options <- do.call("rbind", options)
+  #'   }
+  #'   
+  #'   select <- HTML(c("<div id='selectVesselName2' class='input-field col s12'>", 
+  #'                    "<select multiple name='selectVesselName2'>", "<option value='' disabled>Nombre del barco</option>", 
+  #'                    options, "</select>", "</div>", "<script>$('select').material_select();</script>"))
+  #'   
+  #'   #'<script>$('#selectVesselName2').material_select('destroy'); </script>'
+  #'   #'<script>$('#selectVesselName2').material_select();</script>'
+  #'   
+  #'   return(select)
+  #'   
+  #' })
   
 })
 
