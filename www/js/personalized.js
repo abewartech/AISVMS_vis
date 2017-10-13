@@ -21,7 +21,7 @@ function loadPage() {
     weekdaysLetter: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
     today: 'Hoy',
     clear: 'Limpiar',
-    close: 'Cerrar',
+    close: 'OK',
     // Dropdown selectors
     selectYears: true,
     selectMonths: true,
@@ -47,10 +47,10 @@ function loadPage() {
   noUiSlider.create(sliderVesselSpeed, {
     start: [3, 10],
     connect: true,
-    step: 0.1,
+    step: 0.5,
     range: {
       'min': 0,
-      'max': 50
+      'max': 20
     },
     format: wNumb({
       decimals: 0
@@ -60,18 +60,18 @@ function loadPage() {
   
   var sliderThresholdPoints = document.getElementById('thresholdPoints');
   noUiSlider.create(sliderThresholdPoints, {
-    start: [1000],
-    padding: 1,
+    start: [0.1],
+    padding: 0.1,
     connect: false,
-    step: 1000,
+    step: 1,
     range: {
-      'min': 0,
-      'max': 100000
+      'min': 0.1,
+      'max': 20
     },
     format: wNumb({
       decimals: 0,
       //thousand: ',', 
-      suffix: ' '
+      suffix: 'M'
     })
   });
 
@@ -116,7 +116,31 @@ function loadPage() {
       decimals: 0
     })
   });
+  
+  // Load vessels data
+  var vesselsData = "";
+  
+  function loadJSON() {
+    vesselsData = JSON.parse(vessels);
+    console.log("Vessels data loaded.");
+  }
 
+  loadJSON();
+  
+  //console.log(vesselsData);
+  //console.log({"Apple": null, "Microsoft": null, "Google": 'https://placehold.it/250x250'});
+  
+  $('#searchVesselName').autocomplete({
+    data: vesselsData,
+    limit: 10, // The max amount of results that can be shown at once. Default: Infinity.
+    onAutocomplete: function(val) {
+      // Callback function when value is autcompleted.
+      var searchVesselName = $("#searchVesselName").val();
+      Shiny.onInputChange("searchVesselName", searchVesselName);
+    },
+    minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
+  });
+        
   // accordion
   $('.collapsible').collapsible({
     accordion: false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
@@ -138,11 +162,10 @@ function loadPage() {
   $('#btnReplay').click(settings);
   $('#btnReplay').click(input);
 
-
 }
 
-
 function settings() {
+  
   var thresholdPoints = $('#thresholdPoints span').html();
   var opacity = $('#opacity span').html();
   var radius = $('#radius span').html();
@@ -163,11 +186,9 @@ function input() {
   var dateUntil = $('input[name=_submit]').closest('input').attr('value');
   var selectVesselType = $('select[name=selectVesselType]').val();
   var selectVesselName = $('select[name=selectVesselName2]').val();
-  var vesselSpeedMin = $('#vesselSpeed span').html();
-  var vesselSpeedMax = $('#vesselSpeed').children('.noUi-handle noUi-handle-upper').closest('span').html();
-
-  //alert(vesselSpeedMax);
-
+  var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
+  var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
+  
   Shiny.onInputChange("aisData", aisCheck);
   Shiny.onInputChange("vmsData", vmsCheck);
   Shiny.onInputChange("dateFrom", dateFrom);
@@ -175,8 +196,7 @@ function input() {
   Shiny.onInputChange("selectVesselType", selectVesselType);
   Shiny.onInputChange("selectVesselName", selectVesselName);
   Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
-  //Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
-
+  Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
 }
 
 // Materialize.toast(message, displayLength, className, completeCallback);
@@ -185,7 +205,6 @@ function input() {
 //}
 
 // Button menu events
-
 function showMapAllWidth() {
 
   $('#mainPanel').removeClass("");

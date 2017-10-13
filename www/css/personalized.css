@@ -1,5 +1,6 @@
 /*** MI ESTILO ***/
 
+/* Replace colors #26a69a, #84c7c1 from materialize.css
 
 /*** nav ***/
 
@@ -43,7 +44,7 @@ main {
 /*** select options ***/
 .dropdown-content li>a, .dropdown-content li>span {
     font-size: 12px !important;
-    color: #26a69a;
+    color: #37474f;
     display: block;
     line-height: 12px !important;
     padding: 12px 14px;
@@ -70,4 +71,17 @@ main {
 .noUi-target .range-label {
   
   background-color: #37474f !important;
+  box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4) !important;
+}
+
+.picker__weekday-display {
+  
+  background-color: #37474f !important;
+  
+}
+
+.circle {
+  height: 30px !important;;
+  width: 40px !important;
+  border-radius: 0% !important;
 }

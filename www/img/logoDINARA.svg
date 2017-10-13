@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   viewBox="0 0 371.63974 40.694663"
+   height="40.694664"
+   width="371.63974"
+   xml:space="preserve"
+   id="svg2"
+   version="1.1"><metadata
+     id="metadata8"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+     id="defs6"><clipPath
+       id="clipPath26"
+       clipPathUnits="userSpaceOnUse"><path
+         id="path24"
+         d="M 0,228.281 H 332.231 V 0 H 0 Z" /></clipPath></defs><g
+     transform="matrix(1.3333333,0,0,-1.3333333,-42.376582,198.35181)"
+     id="g10"><g
+       transform="translate(31.782437,148.76386)"
+       id="g12"><path
+         id="path14"
+         style="fill:#fab20b;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="M 0,0 H 146.173 L 134.86,-30.521 H 0 Z" /></g><g
+       transform="translate(163.68524,148.76386)"
+       id="g16"><path
+         id="path18"
+         style="fill:#64696e;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="M 0,0 H 0.301 146.827 V -30.521 H -12.46 -12.533 Z" /></g><text
+       y="-125.77266"
+       x="55.983536"
+       id="text66"
+       style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20.15950012px;font-family:'Times New Roman';-inkscape-font-specification:TimesNewRomanPS-BoldMT;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="scale(1,-1)"><tspan
+         id="tspan64"
+         y="-125.77266"
+         x="55.983536 70.538696 78.380745 92.935898 107.49106 122.04622">DINARA</tspan></text>
+<text
+       y="-134.74146"
+       x="196.05824"
+       id="text72"
+       style="font-variant:normal;font-weight:bold;font-stretch:normal;font-size:9px;font-family:'Times New Roman';-inkscape-font-specification:TimesNewRomanPS-BoldMT;writing-mode:lr-tb;fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       transform="scale(1,-1)"><tspan
+         id="tspan68"
+         y="-134.74146"
+         x="196.05824 202.55624 205.05824 208.89224 212.88823 216.88423 220.88023 223.38223 227.88223 232.88623 235.13623 241.63423 246.13423 250.13023 252.63223 257.13223 262.13623 266.63623 269.13824 271.38824 276.39224">Dirección Nacional de</tspan><tspan
+         id="tspan70"
+         y="-123.94146"
+         x="185.83424 192.33223 198.33524 204.83324 211.33124 217.82924 222.83324 229.83524 234.83923 236.59424 243.09224 249.59024 256.08823 262.58624 268.58923 272.09024 278.58823 285.59024">RECURSOS ACUÁTICOS</tspan></text>
+</g></svg>

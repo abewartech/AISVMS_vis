@@ -36,10 +36,11 @@
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
   <!-- noUiSlider -->
-  <link type="text/css" rel="stylesheet" href="css/nouislider.css">
-  <script type="text/javascript" src="js/nouislider.js"></script>
+   <link type="text/css" rel="stylesheet" href="css/nouislider.css"> 
+   <script type="text/javascript" src="js/nouislider.js"></script> 
 
   <!-- Personalized js -->
+  <script type="text/javascript" src="js/vessels.json"></script>
   <script type="text/javascript" src="js/personalized.js"></script>
 
 </head>
@@ -51,7 +52,9 @@
   <!-- Navigation bar -->
   <div class="navbar-fixed">
     <nav class="blue-grey darken-3">
-      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="brand-logo" target="_blank"> DINARA </a>
+      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="brand-logo" target="_blank">
+        <img src="img/logoDINARA.png" alt="Logo Dinara" width="100%" class="">
+      </a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
         <li><a href="table.html">Tabla </a></li>
@@ -105,25 +108,27 @@
           <div class="divider"></div>
           <section>
             <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fechas entre las cuales quiere consultarse los datos">Tiempo</h6>
+            <br />
             <div class="row">
               <div class="col s6">
-                <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
                 <label for="dateFrom">Desde</label>
+                <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
               </div>
               <div class="col s6">
-                <input id="dateUntil" type="date" class="datepicker">
                 <label for="dateUntil">Hasta</label>
+                <input id="dateUntil" type="date" class="datepicker">
               </div>
             </div>
           </section>
           <div class="divider"></div>
           <section>
           <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Buscar barcos">Barcos</h6>
+          <br />
             <div class="row">
               <div class="col s12">
                 <div id="" class="input-field col s12">
                   <i class="material-icons prefix">search</i>
-                  <input id="searchVesselName" type="text">
+                  <input id="searchVesselName" type="text" class="autocomplete">
                   <label for="searchVesselName">Nombre del barco</label>
                 </div>
               </div>
@@ -150,6 +155,7 @@
           <div class="divider"></div>
           <section>
           <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Filtrar por comportamiento del barco">Operativa</h6>
+          <br />
             <div class="row">
               <div class="col s12">
                 <form>
@@ -162,6 +168,19 @@
             </div>
           </section>
           <div class="divider"></div>
+          <section>
+          <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip=""></h6>
+            <div class="row">
+              <div class="col s12">
+                <form>
+                  <label for=""></label>
+                  <div id=""></div>
+                </form>
+              </div>
+              <div class="col s12">
+              </div>
+            </div>
+          </section>
         </div>
 
         <!-- Settings Sidebar panel -->
@@ -174,7 +193,7 @@
             <div class="row">
               <div class="col s12">
                 <form>
-                  <label for="thresholdPoints">Umbral de puntos</label>
+                  <label for="thresholdPoints">Umbral de puntos (millones)</label>
                   <div id="thresholdPoints"></div>
                 </form>
               </div>
@@ -206,9 +225,10 @@
                 </form>
               </div>
             </div>
+            <br />
             <div class="row">
               <div class="col s12">
-                <label for="color">Color</label>
+                <label for="color">Paleta de colores</label>
                 <div id="color" name="color" class="input-field">
                   <select>
                     <option value="" disabled selected>Elige paleta</option>
@@ -280,7 +300,7 @@
   </div>
   <div class="footer-copyright">
     <div class="container">
-      © 2016 Copyright - GPLv3
+      © 2017 Copyright - GPLv3
       <a class="grey-text text-lighten-3 right" href="https://github.com/guzmanlopez" target="_blank"><i class="tiny material-icons">perm_identity</i> Por Guzmán López - glopez@dinara.gub.uy</a>
     </div>
   </div>
