@@ -85,3 +85,8 @@ main {
   width: 40px !important;
   border-radius: 0% !important;
 }
+
+label {
+    font-size: .9rem;
+    color: #212121;
+}

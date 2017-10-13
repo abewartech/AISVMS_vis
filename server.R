@@ -12,7 +12,7 @@ library("wkb")
 # Disable scientific notation 
 options(scipen = 999)
 
-# Global data --------------------------------------------
+# Global variables ---------------------------------------
 
 # Initial data values
 dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")
@@ -22,7 +22,7 @@ vesselsNames <- " "
 vesselSpeedMin <- 3
 vesselSpeedMax <- 9
 
-# Queried values
+# Query values
 dateFromQuery <- dateFrom
 dateUntilQuery <- dateUntil
 thresholdQuery <- threshold
@@ -126,6 +126,7 @@ shinyServer(function(input, output) {
       
       message("    *** Positions > thresholdQuery: Get positions ***")
       sql.positions <- "SELECT posiciones.wkb_geometry,
+                               barcos.name,
                                posiciones.mmsi,
                                posiciones.status,
                                posiciones.speed,
@@ -152,6 +153,7 @@ shinyServer(function(input, output) {
       
       message("   *** Positions < thresholdQuery: Get positions ***")
       sql.positions <- "SELECT posiciones.wkb_geometry,
+                               barcos.name,
                                posiciones.mmsi,
                                posiciones.status,
                                posiciones.speed,
@@ -256,10 +258,18 @@ shinyServer(function(input, output) {
   output$table <- renderDataTable({
     
     if (is.null(positionsQry.df)) {
-      return(NULL)
+      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
+                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
+                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
+      return(table)
     } 
     else {
-      return(positionsQry.df)
+      table <- positionsQry.df
+      table$speed <- table$speed / 10
+      table$course <- table$course / 10
+      table$heading <- table$heading / 10
+      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
+      return(table)
     }
     
   })
