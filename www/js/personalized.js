@@ -60,12 +60,12 @@ function loadPage() {
   
   var sliderThresholdPoints = document.getElementById('thresholdPoints');
   noUiSlider.create(sliderThresholdPoints, {
-    start: [0.1],
+    start: 1,
     padding: 0.1,
     connect: false,
-    step: 1,
+    step: 0.5,
     range: {
-      'min': 0.1,
+      'min': 0,
       'max': 20
     },
     format: wNumb({
@@ -132,7 +132,7 @@ function loadPage() {
   
   $('#searchVesselName').autocomplete({
     data: vesselsData,
-    limit: 10, // The max amount of results that can be shown at once. Default: Infinity.
+    limit: 15, // The max amount of results that can be shown at once. Default: Infinity.
     onAutocomplete: function(val) {
       // Callback function when value is autcompleted.
       var searchVesselName = $("#searchVesselName").val();
@@ -140,11 +140,8 @@ function loadPage() {
     },
     minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
   });
-        
-  // accordion
-  $('.collapsible').collapsible({
-    accordion: false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
-  });
+  
+  $('.collapsible').collapsible();
 
   // Toast event
   //$('#btnReplay').click(toast);

@@ -35,6 +35,8 @@
 
   <!--Import Google Icon Font-->
   <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
+  <!--Import FontAwesome-->
+  <link rel="stylesheet" href="font/font-awesome-4.7.0/css/font-awesome.min.css">
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
   <!-- Personalized style -->
@@ -60,14 +62,15 @@
   <!-- Navigation bar -->
   <div class="navbar-fixed">
     <nav class="blue-grey darken-3">
-     <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="brand-logo" target="_blank">
+      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="tooltipped brand-logo" data-position="top" data-delay="1000" data-tooltip="Ir a página web de DINARA" target="_blank">
         <img src="img/logoDINARA.png" alt="Logo Dinara" width="100%" class="">
       </a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="table.html">Tabla </a></li>
-        <li><a href="index.html">Plots </a></li>
-        <li><a href="index.html">AISVMS_vis </a></li>
+        <li><a href="index.html"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
+        <li><a href="table.html"><i class="fa fa-table fa-fw" aria-hidden="true"></i>&nbsp; Tabla</a></li>
+        <li><a href="index.html"><i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>&nbsp; Plots</a></li>
+        <li><a href="index.html"><i class="fa fa-question fa-fw" aria-hidden="true"></i>&nbsp; Ayuda</a></li>
       </ul>
       <ul class="side-nav" id="mobile">
         <li><a href="table.html">Tabla</a></li>
@@ -88,20 +91,21 @@
 
   <!-- noUiSlider -->
   <!-- <script type="text/javascript" src="js/nouislider.js"></script> -->
-
+  
   <!-- button menu -->
   <div class="fixed-action-btn vertical click-to-toggle z-depth-10" style="bottom: 45px; right: 24px;">
     <a class="btn-floating btn-large blue-grey darken-3">
       <i class="material-icons">menu</i>
     </a>
     <ul>
-      <li id="btnInput"><a class="btn-floating green"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Entrada de datos">input</i></a></li>
-      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Opciones de mapa">settings</i></a></li>
-      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Actualizar">refresh</i></a></li>
+      <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Entrada de datos">input</i></a></li>
+      <li id="btnSettings"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Opciones de mapa">settings</i></a></li>
+      <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Actualizar">refresh</i></a></li>
     </ul>
   </div>
 </main>
 
+<!--
 <footer class="page-footer blue-grey darken-3">
   <div class="container">
     <div class="row">
@@ -128,5 +132,6 @@
     </div>
   </div>
 </footer>
+-->
 
 </html>

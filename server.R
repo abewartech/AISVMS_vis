@@ -2,7 +2,7 @@
 # Packages -----------------------------------------------
 
 library("shiny")
-library("fasttime")
+#library("fasttime")
 library("lubridate")
 library("DBI")
 library("RPostgreSQL")
@@ -15,9 +15,9 @@ options(scipen = 999)
 # Global variables ---------------------------------------
 
 # Initial data values
-dateFrom <- fastPOSIXct("2012-05-08 19:47:00 -03")
-dateUntil <- fastPOSIXct("2014-05-17 11:15:00 -03")
-threshold <- 100000
+dateFrom <- "2012-05-08"
+dateUntil <- "2014-05-17"
+threshold <- 1000000
 vesselsNames <- " "
 vesselSpeedMin <- 3
 vesselSpeedMax <- 9
@@ -40,7 +40,14 @@ shinyServer(function(input, output) {
   
   positionsQry <- reactive({
     
+    # Create a Progress object
+    progress <- shiny::Progress$new(min=0, max=4)
+    
+    # Close it on exit
+    on.exit(progress$close())
+    
     # Get values from client
+    progress$set(message = "Tomando datos del cliente...", value = 0)
     thresholdPointsCli <- input$thresholdPoints
     dateFromCli <- input$dateFrom
     dateUntilCli <- input$dateUntil
@@ -53,7 +60,7 @@ shinyServer(function(input, output) {
       thresholdQuery <- threshold
     } 
     else {
-      thresholdQuery <- as.numeric(thresholdPointsCli) * 1000000
+      thresholdQuery <<- as.numeric(thresholdPointsCli) * 1000000
     }
     
     # Query datetime From / Until
@@ -61,14 +68,14 @@ shinyServer(function(input, output) {
       dateFromQuery <- dateFrom
     }
     else {
-      dateFromQuery <- dateFromCli
+      dateFromQuery <<- dateFromCli
     }
     
     if (dateUntilCli == "" || is.null(dateUntilCli)) {
       dateUntilQuery <- dateUntil
     }
     else {
-      dateUntilQuery <- dateUntilCli
+      dateUntilQuery <<- dateUntilCli
     }
     
     # Query vessel name
@@ -76,7 +83,7 @@ shinyServer(function(input, output) {
       vesselNameQuery <- vesselsNames
     }
     else {
-      vesselNameQuery <- searchVesselNameCli
+      vesselNameQuery <<- searchVesselNameCli
     }
     
     # Query vessel speed Min / Max
@@ -84,16 +91,14 @@ shinyServer(function(input, output) {
       vesselSpeedMinQuery <- vesselSpeedMin * 10
     }
     else {
-      vesselSpeedMinQuery <- as.numeric(vesselSpeedMinCli) * 10
+      vesselSpeedMinQuery <<- as.numeric(vesselSpeedMinCli) * 10
     }
     if (vesselSpeedMaxCli == "" || is.null(vesselSpeedMaxCli)) {
       vesselSpeedMaxQuery <- vesselSpeedMax * 10
     }
     else {
-      vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli) * 10
+      vesselSpeedMaxQuery <<- as.numeric(vesselSpeedMaxCli) * 10
     }
-    
-    print(vesselSpeedMaxCli)
     
     message("*** Query parameters from client ***")
     message(paste0("thresholdPointsCli: ", thresholdQuery))
@@ -107,6 +112,7 @@ shinyServer(function(input, output) {
     # Count returned points in query
     message("*** Get positions count from query ***")
     message("Connect to PostgreSQL")
+    progress$set(message = "Contando elementos...", value = 1)
     conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
     sql.positions.counts <- "SELECT COUNT(*) 
                              FROM posiciones, barcos 
@@ -125,6 +131,7 @@ shinyServer(function(input, output) {
     if (getquery.positions.counts$count > thresholdQuery) {
       
       message("    *** Positions > thresholdQuery: Get positions ***")
+      progress$set(message = "Obteniendo datos...", value = 2)
       sql.positions <- "SELECT posiciones.wkb_geometry,
                                barcos.name,
                                posiciones.mmsi,
@@ -152,6 +159,7 @@ shinyServer(function(input, output) {
     else {
       
       message("   *** Positions < thresholdQuery: Get positions ***")
+      progress$set(message = "Obteniendo datos...", value = 2)
       sql.positions <- "SELECT posiciones.wkb_geometry,
                                barcos.name,
                                posiciones.mmsi,
@@ -175,6 +183,7 @@ shinyServer(function(input, output) {
       
     }
     
+    progress$set(message = "Desconectando de la base de datos...", value = 3)
     message("Disconnect from PostgreSQL")
     dbDisconnect(conn)  # Disconnect
     
@@ -189,7 +198,8 @@ shinyServer(function(input, output) {
       points <- NULL
     }
     
-    positionsQry.df <<- points 
+    positionsQry.df <<- points
+    progress$set(message = "Terminado!", value = 4)
     message("Finished")
     
     # Return
@@ -207,10 +217,23 @@ shinyServer(function(input, output) {
     opacity <- input$opacity
     blur <- input$blur
     
-    # Get data
-    positionsQry <- positionsQry()
+    if (dateFromQuery != as.character(input$dateFrom) || 
+        dateUntilQuery != as.character(input$dateUntil) ||
+        thresholdQuery !=  input$thresholdPoints ||
+        vesselNameQuery != input$searchVesselName ||
+        vesselSpeedMinQuery != input$vesselSpeedMin ||
+        vesselSpeedMaxQuery != input$vesselSpeedMax) {
+      
+      # Call query
+      positionsQry <- positionsQry()
+      
+    } 
     
-    if (is.null(positionsQry)) {
+    else  {
+      positionsQry <- positionsQry.df
+    }
+    
+    if (nrow(positionsQry) <= 0 || is.null(positionsQry)) {
       
       numberOfVessels <- 0
       positions <- 0
@@ -220,8 +243,11 @@ shinyServer(function(input, output) {
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
                       numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
       
-      mapa <- HTML(paste("<script>", toast, toast2, "</script>"), sep = "")
-      
+      # Remove latest heat layer and show toasts
+      mapa <- HTML(paste0("<script>",
+                         "if(map.hasLayer(heat)) {map.removeLayer(heat);};",
+                          toast, toast2,
+                         "</script>"))
     } 
     
     else {

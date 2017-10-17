@@ -26,6 +26,8 @@
 
   <!--Import Google Icon Font-->
   <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
+  <!--Import FontAwesome-->
+  <link rel="stylesheet" href="font/font-awesome-4.7.0/css/font-awesome.min.css">
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
   <!-- Personalized style -->
@@ -36,8 +38,8 @@
   <script type="text/javascript" src="js/materialize.min.js"></script>
 
   <!-- noUiSlider -->
-   <link type="text/css" rel="stylesheet" href="css/nouislider.css"> 
-   <script type="text/javascript" src="js/nouislider.js"></script> 
+  <link type="text/css" rel="stylesheet" href="css/nouislider.css">
+  <script type="text/javascript" src="js/nouislider.js"></script>
 
   <!-- Personalized js -->
   <script type="text/javascript" src="js/vessels.json"></script>
@@ -52,14 +54,15 @@
   <!-- Navigation bar -->
   <div class="navbar-fixed">
     <nav class="blue-grey darken-3">
-      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="brand-logo" target="_blank">
+      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="tooltipped brand-logo" data-position="top" data-delay="1000" data-tooltip="Ir a página web de DINARA" target="_blank">
         <img src="img/logoDINARA.png" alt="Logo Dinara" width="100%" class="">
       </a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="table.html">Tabla </a></li>
-        <li><a href="index.html">Plots </a></li>
-        <li><a href="index.html">AISVMS_vis </a></li>
+        <li><a href="index.html"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
+        <li><a href="table.html"><i class="fa fa-table fa-fw" aria-hidden="true"></i>&nbsp; Tabla</a></li>
+        <li><a href="index.html"><i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>&nbsp; Plots</a></li>
+        <li><a href="index.html"><i class="fa fa-question fa-fw" aria-hidden="true"></i>&nbsp; Ayuda</a></li>
       </ul>
       <ul class="side-nav" id="mobile">
         <li><a href="table.html">Tabla</a></li>
@@ -74,126 +77,177 @@
     <!-- Page Layout here -->
     <div class="row">
       <!-- Input Sidebar panel -->
-      <div id="sidebarPanel" class="col s12 m4 l3 z-depth-2">
+      <div id="sidebarPanel" class="col s12 m4 l3 z-depth-0">
         <div id="input">
-          <div class="right"><i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Fuente de los datos a consultar: AIS, VMS o ambos">input</i></div>
-          <section>
-            <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fuente de los datos a consultar: AIS, VMS o ambos">Datos</h6>
-            <br>
-            <div class="row">
-              <div class="col s12">
-                <div class="switch">
-                  <label>
-                    <img src="img/ais.png" alt="ais logo" width="34px">
-                    <input id="aisData" name="aisData" type="checkbox" checked>
-                    <span class="lever"></span>
-                    <label for="aisData">AIS</label>
-                  </label>
+          <ul class="collapsible z-depth-0" data-collapsible="expandable">
+            <li>
+              <div class="tooltipped collapsible-header active" data-position="top" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
+              <div class="collapsible-body" style="display: block;"><span>
+                <div class="row">
+                  <div class="col s12">
+                    <div class="switch">
+                      <label>
+                        <img src="img/ais.png" alt="ais logo" width="34px">
+                        <input id="aisData" name="aisData" type="checkbox" checked>
+                        <span class="lever">
+                        </span>
+                        <label for="aisData">AIS</label>
+                      </label>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s12">
-                <div class="switch">
-                  <label>
-                    <img src="img/vms.png" alt="vms logo" width="36px">
-                    <input id="vmsData" name="vmsData" type="checkbox">
-                    <span class="lever"></span>
-                    <label for="vmsData">VMS</label>
-                  </label>
+                <div class="row">
+                  <div class="col s12">
+                    <div class="switch">
+                      <label>
+                        <img src="img/vms.png" alt="vms logo" width="36px">
+                        <input id="vmsData" name="vmsData" type="checkbox">
+                        <span class="lever"></span>
+                        <label for="vmsData">VMS</label>
+                      </label>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </span>
             </div>
-          </section>
-          <div class="divider"></div>
-          <section>
-            <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Fechas entre las cuales quiere consultarse los datos">Tiempo</h6>
-            <br />
-            <div class="row">
-              <div class="col s6">
-                <label for="dateFrom">Desde</label>
-                <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
-              </div>
-              <div class="col s6">
-                <label for="dateUntil">Hasta</label>
-                <input id="dateUntil" type="date" class="datepicker">
-              </div>
+          </li>
+          <li>
+                <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por fechas"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; Fechas</div>
+                <div class="collapsible-body">
+                  <span>
+                  <div class="row">
+                    <div class="col s6">
+                      <label for="dateFrom">Desde</label>
+                      <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
+                    </div>
+                    <div class="col s6">
+                      <label for="dateUntil">Hasta</label>
+                      <input id="dateUntil" type="date" class="datepicker">
+                    </div>
+                  </div>
+                </span>
+                </div>
+              </li>
+              <li>
+                <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Buscar barco"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
+                <div class="collapsible-body"><span>
+                  <div class="row">
+                    <div class="col s12">
+                      <div id="" class="input-field col s12">
+                        <i class="material-icons prefix">search</i>
+                        <input id="searchVesselName" type="text" class="autocomplete">
+                        <label for="searchVesselName">Nombre del barco</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="input-field col s12">
+                      <div id="selectVesselName" class="shiny-html-output">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col s12">
+                      <div id="selectVesselType2" class="input-field col s12">
+                        <select multiple name="selectVesselType">
+                          <option value="" disabled>Tipo de barco</option>
+                          <option value="fishingVesselType" selected>Pesquero</option>
+                          <option value="cargoVesselType">Carga</option>
+                        </select>
+                        <label for="selectVesselType2">Tipo</label>
+                      </div>
+                    </div>
+                  </div>
+                </span>
+                </div>
+              </li>
+              <li>
+                <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por actividad del barco"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
+                <div class="collapsible-body"><span>
+                  <div class="row">
+                    <div class="col s12">
+                      <form>
+                        <label for="vesselSpeed">Velocidad (kn)</label>
+                        <div id="vesselSpeed"></div>
+                      </form>
+                    </div>
+                    <div class="col s12">
+                    </div>
+                  </div>
+                </span>
+                </div>
+              </li>
+              <li>
+                <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Opciones</div>
+                <div class="collapsible-body">
+                  <span>
+          <div class="row">
+            <div class="col s12">
+              <form>
+                <label for="thresholdPoints">Umbral (millones)</label>
+                <div id="thresholdPoints"></div>
+              </form>
             </div>
-          </section>
-          <div class="divider"></div>
-          <section>
-          <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Buscar barcos">Barcos</h6>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <form>
+                <label for="opacity">Opacidad</label>
+                <div id="opacity"></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <form>
+                <label for="radius">Tamaño</label>
+                <div id="radius"></div>
+              </form>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <form>
+                <label for="blur">Esfumado</label>
+                <div id="blur"></div>
+              </form>
+            </div>
+          </div>
           <br />
-            <div class="row">
-              <div class="col s12">
-                <div id="" class="input-field col s12">
-                  <i class="material-icons prefix">search</i>
-                  <input id="searchVesselName" type="text" class="autocomplete">
-                  <label for="searchVesselName">Nombre del barco</label>
+          <div class="row">
+            <div class="col s12">
+              <label for="color">Paleta de colores</label>
+              <div id="color" name="color" class="input-field">
+                <select>
+                        <option value="" disabled selected>Elige paleta</option>
+                        <option value="" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
+                        <option value=", gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
+                        <option value=", gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
+                      </select>
+              </div>
+            </div>
+          </div>
+
+        </span>
                 </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="input-field col s12">
-                <div id="selectVesselName" class="shiny-html-output">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s12">
-                <div id="selectVesselType2" class="input-field col s12">
-                  <select multiple name="selectVesselType">
-                    <option value="" disabled>Tipo de barco</option>
-                    <option value="fishingVesselType" selected>Pesquero</option>
-                    <option value="cargoVesselType">Carga</option>
-                  </select>
-                  <label for="selectVesselType2">Tipo</label>
-                </div>
-              </div>
-            </div>
-          </section>
-          <div class="divider"></div>
-          <section>
-          <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Filtrar por comportamiento del barco">Operativa</h6>
-          <br />
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for="vesselSpeed">Velocidad (kn)</label>
-                  <div id="vesselSpeed"></div>
-                </form>
-              </div>
-              <div class="col s12">
-              </div>
-            </div>
-          </section>
-          <div class="divider"></div>
-          <section>
-          <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip=""></h6>
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for=""></label>
-                  <div id=""></div>
-                </form>
-              </div>
-              <div class="col s12">
-              </div>
-            </div>
-          </section>
+              </li>
+          </ul>
         </div>
 
         <!-- Settings Sidebar panel -->
         <div id="settings" hidden>
-          <div class="right"><i class="material-icons tooltipped" data-position="top" data-delay="50" data-tooltip="Opciones de visualización de mapa">settings</i></div>
+          <div class="right"><i class="material-icons tooltipped" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización de mapa">settings</i></div>
           <section>
-            <h6 class="tooltipped" data-position="top" data-delay="50" data-tooltip="Opciones de visualización de mapa">Opciones</h6>
+            <h6 class="tooltipped" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización de mapa">Opciones</h6>
             <br>
-            
+
             <div class="row">
               <div class="col s12">
                 <form>
-                  <label for="thresholdPoints">Umbral de puntos (millones)</label>
+                  <label for="thresholdPoints">Umbral (millones)</label>
                   <div id="thresholdPoints"></div>
                 </form>
               </div>
@@ -211,12 +265,12 @@
             <div class="row">
               <div class="col s12">
                 <form>
-                  <label for="radius">Tamaño de punto</label>
+                  <label for="radius">Tamaño</label>
                   <div id="radius"></div>
                 </form>
               </div>
             </div>
-            
+
             <div class="row">
               <div class="col s12">
                 <form>
@@ -248,7 +302,6 @@
       <!-- Main Panel -->
       <div id="mainPanel" class="col s12 m8 l9">
         <section>
-          <br>
           <div class="row">
             <div class="cols 12">
               <div class="">
@@ -272,13 +325,14 @@
       <i class="material-icons">menu</i>
     </a>
     <ul>
-      <li id="btnInput"><a class="btn-floating green"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Entrada de datos">input</i></a></li>
-      <li id="btnSettings"><a class="btn-floating orange darken-1"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Opciones de mapa">settings</i></a></li>
-      <li id="btnReplay"><a class="btn-floating red"><i class="material-icons tooltipped" data-position="left" data-delay="100" data-tooltip="Actualizar">refresh</i></a></li>
+      <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Entrada de datos">input</i></a></li>
+      <li id="btnSettings"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Opciones de mapa">settings</i></a></li>
+      <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Actualizar">refresh</i></a></li>
     </ul>
   </div>
 </main>
 
+<!--
 <footer class="page-footer blue-grey darken-3">
   <div class="container">
     <div class="row">
@@ -305,5 +359,6 @@
     </div>
   </div>
 </footer>
+-->
 
 </html>

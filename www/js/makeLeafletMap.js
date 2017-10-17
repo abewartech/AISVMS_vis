@@ -53,6 +53,20 @@ var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/mapti
 	size: '256'
 });
 
+var HERE_hybridDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/hybrid.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
+	attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
+	subdomains: '1234',
+	mapID: 'newest',
+	app_id: '<your app_id>',
+	app_code: '<your app_code>',
+	base: 'aerial',
+	maxZoom: 20,
+	type: 'maptile',
+	language: 'eng',
+	format: 'png8',
+	size: '256'
+});
+
 var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
 	maxZoom: 13
@@ -62,7 +76,7 @@ var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 var map = L.map('map', {
   center: [-35.259, -53.844],
   zoom: 7,
-  layers: [Esri_OceanBasemap, HERE_normalDay]
+  layers: [Esri_OceanBasemap, HERE_hybridDay, HERE_normalDay]
 });
 
 // Basemaps
@@ -72,7 +86,8 @@ var baseMaps = {
   //"CartoDB Dark Matter": CartoDB_DarkMatter,
   //"ESRI World Imagery": Esri_WorldImagery, 
   "ESRI Ocean Basemap": Esri_OceanBasemap,
-  "HERE normal Day": HERE_normalDay
+  "HERE Hybrid": HERE_hybridDay, 
+  "HERE Normal": HERE_normalDay
 };
 
 /// Add a layer control element to the map
