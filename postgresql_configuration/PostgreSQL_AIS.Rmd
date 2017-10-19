@@ -1,0 +1,177 @@
+---
+title: "Cargar datos de AIS en PostgreSQL"
+output:
+  pdf_document:
+    fig_caption: yes
+    highlight: zenburn
+    keep_tex: yes
+    number_sections: yes
+    toc: yes
+---
+
+# Cargar datos de AIS en PostgreSQL
+
+## Configurar y crear base de datos en PostgreSQL
+
+Desde la terminal de Linux `bash`:
+
+```{bash bd_ingresar_postgres, eval=FALSE, engine.path="/bin/bash", include=TRUE}
+
+# El usuario y la base de datos por defecto se llaman postgres 
+# Acceder con el usuario postgres:
+sudo -u postgres bash
+
+# Crear nuevo usuario para postgres
+createuser guzman
+
+# Crear base de datos para el usuario
+createdb -O guzman ais
+
+# Ingresar a PostgreSQL como usuario postgres
+psql 
+
+```
+
+En PostgtreSQL:
+
+```{sql bd_superusuario, eval=FALSE, connection=conn, engine.opts="psql -d batiValizas", engine.path="/bin/postgres", include=TRUE}
+
+-- Crear rol de superusuario para el usuario
+ALTER USER guzman WITH SUPERUSER;
+
+-- Salir de PostgreSQL (Ctrl+d)
+
+```
+
+Desde la terminal de Linux `bash`:
+
+```{bash bd_ingresar_usuario, eval=FALSE, engine.path="/bin/bash", include=TRUE}
+
+# Volver al usuario 
+su - guzman
+
+# Conectar a base de datos
+psql -d ais -U guzman
+
+```
+
+En PostgtreSQL:
+
+```{sql bd_postgis, eval=FALSE, connection=conn, engine.opts="psql -d batiValizas", engine.path="/bin/postgres", include=TRUE}
+
+-- Habilitar extensión postgis
+CREATE EXTENSION postgis;
+
+-- Habilitar extensión de topología
+CREATE EXTENSION postgis_topology;
+
+-- Salir de PostgreSQL (Ctrl+d)
+
+```
+
+
+## Establecer conexión a la base de datos PostgreSQL desde R:
+
+Cargar librerías en R
+
+```{r cargar_librerias, echo=TRUE, message=FALSE, warning=FALSE}
+
+# Manipulación de datos
+library("data.table")
+
+# Conexión a Bases de Datos
+library("RPostgreSQL")
+library("postGIStools")
+
+# Manipulación de objetos espaciales
+library("sf")
+library("sp")
+
+```
+
+
+```{r bd_conexión, eval=TRUE, include=TRUE}
+
+# Conectar con PostgreSQL
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+
+(conn)
+
+# Desconectar
+dbDisconnect(conn)
+
+
+```
+
+## Cargar datos de AIS
+
+```{r cargar_datos_bati, eval=TRUE, include=TRUE}
+
+  ais <- data.table::fread(input = "/home/guzman/Documents/AIS/ais_2012-13.csv", 
+    sep = ",", header = TRUE, showProgress = TRUE, data.table = FALSE, 
+    stringsAsFactors = FALSE)
+
+```
+
+```{r tabla_datos_bati, eval=TRUE, include=TRUE, echo=FALSE, results = 'asis'}
+
+knitr::kable(riverBati[1:5, 1:7], caption = "Datos de batimetría - parte 1")
+knitr::kable(riverBati[1:5, 8:11], caption = "Datos de batimetría - parte 2")
+
+```
+
+## Convertir datos a objeto 'sf' (simple features)
+
+```{r escribir_capas_bd, eval=FALSE, include=TRUE}
+
+# Crear objeto sf
+ais.sf <- st_as_sf(ais, coords = c("Longitude", "Latitude"))
+st_crs(riverBatiF) <- "+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"  # assign CRS to points
+
+```
+
+## Escribir objetos espaciales a PostgreSQL
+
+```{r escribir_capas_bd, eval=FALSE, include=TRUE}
+
+# Establecer conexión a PostgreSQL a través de una cadena de texto
+dbString <- "PG:dbname='ais'"
+
+st_write(obj = riverBatiF3, layer = "riverdepthb", driver = "PostgreSQL", 
+    dsn = dbString, layer_options = c("geometry_name=geom, OVERWRITE=YES"))
+
+```
+
+
+```{r =ver_bd, eval=FALSE, include=TRUE}
+
+# Conectar con PostgreSQL
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+
+# Ver tablas en la base de datos
+dbListTables(conn)
+
+# Desconectar
+dbDisconnect(conn)
+
+
+```
+
+## Hacer consulta a la base de datos PostgreSQL
+
+```{r =ver_bd, eval=FALSE, include=TRUE}
+
+# Conectar con PostgreSQL
+conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+
+# Ver tablas en la base de datos
+dbListTables(conn)
+
+# Generar consulta sobre tabla
+dbGetQuery(conn, "SELECT * FROM ais LIMIT 10;")
+
+# Desconectar
+dbDisconnect(conn)
+
+
+```
