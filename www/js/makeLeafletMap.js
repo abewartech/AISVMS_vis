@@ -25,20 +25,19 @@ var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{
 });
 */
 
-/*
+
 var CartoDB_DarkMatter = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
 	maxZoom: 19
 });
-*/
 
-/*
+
 var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
   attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
 });
-*/
 
+/*
 var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/normal.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
 	attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
 	subdomains: '1234',
@@ -52,7 +51,9 @@ var HERE_normalDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/mapti
 	format: 'png8',
 	size: '256'
 });
+*/
 
+/*
 var HERE_hybridDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/maptile/2.1/{type}/{mapID}/hybrid.day/{z}/{x}/{y}/{size}/{format}?app_id={app_id}&app_code={app_code}&lg={language}', {
 	attribution: 'Map &copy; 1987-2014 <a href="http://developer.here.com">HERE</a>',
 	subdomains: '1234',
@@ -66,6 +67,7 @@ var HERE_hybridDay = L.tileLayer('https://{s}.{base}.maps.cit.api.here.com/mapti
 	format: 'png8',
 	size: '256'
 });
+*/
 
 var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}', {
 	attribution: 'Tiles &copy; Esri &mdash; Sources: GEBCO, NOAA, CHS, OSU, UNH, CSUMB, National Geographic, DeLorme, NAVTEQ, and Esri',
@@ -76,18 +78,18 @@ var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 var map = L.map('map', {
   center: [-35.259, -53.844],
   zoom: 7,
-  layers: [Esri_OceanBasemap, HERE_hybridDay, HERE_normalDay]
+  layers: [CartoDB_DarkMatter,Esri_WorldImagery,Esri_OceanBasemap,]
 });
 
 // Basemaps
 var baseMaps = {
   //"OpenStreetMaps": OpenStreetMap_Mapnik,
   //"MapQuestOpen - OSM": MapQuestOpen_OSM,
-  //"CartoDB Dark Matter": CartoDB_DarkMatter,
-  //"ESRI World Imagery": Esri_WorldImagery, 
-  "ESRI Ocean Basemap": Esri_OceanBasemap,
-  "HERE Hybrid": HERE_hybridDay, 
-  "HERE Normal": HERE_normalDay
+  //"HERE Hybrid": HERE_hybridDay, 
+  //"HERE Normal": HERE_normalDay,
+  "ESRI World Imagery": Esri_WorldImagery, 
+  "CartoDB DarkMatter": CartoDB_DarkMatter,
+  "ESRI Ocean Basemap": Esri_OceanBasemap
 };
 
 /// Add a layer control element to the map

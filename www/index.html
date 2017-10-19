@@ -59,7 +59,7 @@
       </a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="index.html"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
+        <li><a href="index.html"><i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
         <li><a href="table.html"><i class="fa fa-table fa-fw" aria-hidden="true"></i>&nbsp; Tabla</a></li>
         <li><a href="index.html"><i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>&nbsp; Plots</a></li>
         <li><a href="index.html"><i class="fa fa-question fa-fw" aria-hidden="true"></i>&nbsp; Ayuda</a></li>
@@ -79,7 +79,7 @@
       <!-- Input Sidebar panel -->
       <div id="sidebarPanel" class="col s12 m4 l3 z-depth-0">
         <div id="input">
-          <ul class="collapsible z-depth-0" data-collapsible="expandable">
+          <ul class="collapsible z-depth-0" data-collapsible="accordion">
             <li>
               <div class="tooltipped collapsible-header active" data-position="top" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
               <div class="collapsible-body" style="display: block;"><span>
@@ -118,11 +118,11 @@
                   <div class="row">
                     <div class="col s6">
                       <label for="dateFrom">Desde</label>
-                      <input id="dateFrom" name="dateFrom" type="date" class="datepicker">
+                      <input id="dateFrom" name="dateFrom" type="date" data-value="2012-05-8"  class="datepicker">
                     </div>
                     <div class="col s6">
                       <label for="dateUntil">Hasta</label>
-                      <input id="dateUntil" type="date" class="datepicker">
+                      <input id="dateUntil" type="date" data-value="2014-05-17" class="datepicker">
                     </div>
                   </div>
                 </span>
@@ -134,15 +134,8 @@
                   <div class="row">
                     <div class="col s12">
                       <div id="" class="input-field col s12">
-                        <i class="material-icons prefix">search</i>
                         <input id="searchVesselName" type="text" class="autocomplete">
                         <label for="searchVesselName">Nombre del barco</label>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="input-field col s12">
-                      <div id="selectVesselName" class="shiny-html-output">
                       </div>
                     </div>
                   </div>
@@ -150,11 +143,10 @@
                     <div class="col s12">
                       <div id="selectVesselType2" class="input-field col s12">
                         <select multiple name="selectVesselType">
-                          <option value="" disabled>Tipo de barco</option>
                           <option value="fishingVesselType" selected>Pesquero</option>
                           <option value="cargoVesselType">Carga</option>
                         </select>
-                        <label for="selectVesselType2">Tipo</label>
+                        <label for="selectVesselType2">Tipo de barco</label>
                       </div>
                     </div>
                   </div>
@@ -170,6 +162,32 @@
                         <label for="vesselSpeed">Velocidad (kn)</label>
                         <div id="vesselSpeed"></div>
                       </form>
+                    </div>
+                    <div class="col s12">
+                    </div>
+                  </div>
+                </span>
+                </div>
+              </li>
+              <li>
+                <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por posición en zonas predeterminadas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
+                <div class="collapsible-body"><span>
+                  <div class="row">
+                    <div class="col s12">
+                      <form>
+                        <p>
+                          <input type="checkbox" id="enPuerto" checked="checked"/>
+                          <label for="enPuerto">Puerto</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" id="en7mn" checked="checked" />
+                          <label for="en7mn">Área de 7 mn desde la costa</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" id="enZcpau" checked="checked"/>
+                          <label for="enZcpau">Zona Común de Pesca Argentina Uruguaya</label>
+                        </p>
+                        </form>
                     </div>
                     <div class="col s12">
                     </div>
@@ -235,67 +253,6 @@
                 </div>
               </li>
           </ul>
-        </div>
-
-        <!-- Settings Sidebar panel -->
-        <div id="settings" hidden>
-          <div class="right"><i class="material-icons tooltipped" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización de mapa">settings</i></div>
-          <section>
-            <h6 class="tooltipped" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización de mapa">Opciones</h6>
-            <br>
-
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for="thresholdPoints">Umbral (millones)</label>
-                  <div id="thresholdPoints"></div>
-                </form>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for="opacity">Opacidad</label>
-                  <div id="opacity"></div>
-                </form>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for="radius">Tamaño</label>
-                  <div id="radius"></div>
-                </form>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col s12">
-                <form>
-                  <label for="blur">Esfumado</label>
-                  <div id="blur"></div>
-                </form>
-              </div>
-            </div>
-            <br />
-            <div class="row">
-              <div class="col s12">
-                <label for="color">Paleta de colores</label>
-                <div id="color" name="color" class="input-field">
-                  <select>
-                    <option value="" disabled selected>Elige paleta</option>
-                    <option value="" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
-                    <option value=", gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
-                    <option value=", gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-          </section>
-          <div class="divider"></div>
-          <br>
         </div>
       </div>
 

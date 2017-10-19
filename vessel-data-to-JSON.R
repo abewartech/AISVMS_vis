@@ -8,7 +8,7 @@ library("jsonlite")
 # Get vessel data ---------------------------------------------------------
 
 conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")  # Connect to PostgreSQL
-sql.vesselsNames <- "SELECT name, mmsi, flagcode FROM barcos;"
+sql.vesselsNames <- "SELECT name, mmsi, flag, flagcode FROM barcos;"
 query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
 getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
 

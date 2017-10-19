@@ -3,7 +3,7 @@
 
 library("shiny")
 #library("fasttime")
-library("lubridate")
+#library("lubridate")
 library("DBI")
 library("RPostgreSQL")
 library("sf")
@@ -14,40 +14,40 @@ options(scipen = 999)
 
 # Global variables ---------------------------------------
 
-# Initial data values
-dateFrom <- "2012-05-08"
-dateUntil <- "2014-05-17"
-threshold <- 1000000
-vesselsNames <- " "
-vesselSpeedMin <- 3
-vesselSpeedMax <- 9
+# Initial query values - default
+qryVal.df <- data.frame('thresholdPoints' = 1000000,
+                        'dateFrom' = "2012-05-08",
+                        'dateUntil' = "2014-05-17",
+                        'searchVesselName' = "ALDEBARAN I",
+                        'vesselSpeedMin' = 0,
+                        'vesselSpeedMax' = 20)
 
-# Query values
-dateFromQuery <- dateFrom
-dateUntilQuery <- dateUntil
-thresholdQuery <- threshold
-vesselNameQuery <- vesselsNames
-vesselSpeedMinQuery <- vesselSpeedMin
-vesselSpeedMaxQuery <- vesselSpeedMax
+# Initial config values for heatmap - default
+config.df <- data.frame('opacity' = 0.8,
+                        'radius' = 1,
+                        'colorGradient' = "''",
+                        'blur' = 1)
 
+# Query values -  customization
+qryValCustom.df <- qryVal.df
+
+# Config values -  customization 
+configCustom.df <- config.df
+
+# Empty df to push data from DB
 positionsQry.df <- data.frame()
 
 # Shiny Server -------------------------------------------
 
 shinyServer(function(input, output) {
   
-  # Data -------------------------------------------------
+  # Get client inputs ------------------------------------ 
   
-  positionsQry <- reactive({
+  getClientQry <- reactive({
     
-    # Create a Progress object
-    progress <- shiny::Progress$new(min=0, max=4)
-    
-    # Close it on exit
-    on.exit(progress$close())
+    message("*** Getting Client Query Parameters ***")
     
     # Get values from client
-    progress$set(message = "Tomando datos del cliente...", value = 0)
     thresholdPointsCli <- input$thresholdPoints
     dateFromCli <- input$dateFrom
     dateUntilCli <- input$dateUntil
@@ -57,56 +57,104 @@ shinyServer(function(input, output) {
     
     # Query threshold number of points
     if (is.null(thresholdPointsCli) || thresholdPointsCli == "") {
-      thresholdQuery <- threshold
+      thresholdQuery <- qryVal.df$thresholdPoints
     } 
     else {
-      thresholdQuery <<- as.numeric(thresholdPointsCli) * 1000000
+      thresholdQuery <- as.numeric(thresholdPointsCli) * 1000000
     }
     
     # Query datetime From / Until
-    if (dateFromCli == "" || is.null(dateFromCli)) {
-      dateFromQuery <- dateFrom
+    if (dateFromCli == "" || is.null(dateFromCli) || dateFromCli == "08 Junio, 2012") {
+      dateFromQuery <- qryVal.df$dateFrom
     }
     else {
-      dateFromQuery <<- dateFromCli
+      dateFromQuery <- dateFromCli
     }
     
-    if (dateUntilCli == "" || is.null(dateUntilCli)) {
-      dateUntilQuery <- dateUntil
+    if (dateUntilCli == "" || is.null(dateUntilCli) || dateUntilCli == "17 Mayo, 2014") {
+      dateUntilQuery <- qryVal.df$dateUntil
     }
     else {
-      dateUntilQuery <<- dateUntilCli
+      dateUntilQuery <- dateUntilCli
     }
     
     # Query vessel name
     if (searchVesselNameCli == "" || is.null(searchVesselNameCli)) {
-      vesselNameQuery <- vesselsNames
+      vesselNameQuery <- qryVal.df$searchVesselName
     }
     else {
-      vesselNameQuery <<- searchVesselNameCli
+      vesselNameQuery <- searchVesselNameCli
     }
     
     # Query vessel speed Min / Max
     if (vesselSpeedMinCli == "" || is.null(vesselSpeedMinCli)) {
-      vesselSpeedMinQuery <- vesselSpeedMin * 10
+      vesselSpeedMinQuery <- qryVal.df$vesselSpeedMin * 10
     }
     else {
-      vesselSpeedMinQuery <<- as.numeric(vesselSpeedMinCli) * 10
+      vesselSpeedMinQuery <- as.numeric(vesselSpeedMinCli) * 10
     }
     if (vesselSpeedMaxCli == "" || is.null(vesselSpeedMaxCli)) {
-      vesselSpeedMaxQuery <- vesselSpeedMax * 10
+      vesselSpeedMaxQuery <- qryVal.df$vesselSpeedMax * 10
     }
     else {
-      vesselSpeedMaxQuery <<- as.numeric(vesselSpeedMaxCli) * 10
+      vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli) * 10
     }
     
-    message("*** Query parameters from client ***")
+    
+    df <- data.frame('thresholdPoints' = thresholdQuery,
+                     'dateFrom' = dateFromQuery,
+                     'dateUntil' = dateUntilQuery,
+                     'searchVesselName' = vesselNameQuery,
+                     'vesselSpeedMin' = vesselSpeedMinQuery,
+                     'vesselSpeedMax' = vesselSpeedMaxQuery)
+    
+    return(df)
+    
+  })
+  
+  getClientConf <- reactive({
+    
+    message("*** Getting Client Config Parameters ***")
+    
+    # Map config options
+    opacityConf <- input$opacity
+    radiusConf <- input$radius
+    colorGradientConf <- input$color
+    blurConf <- input$blur
+    
+    df <- data.frame('opacity' = opacityConf,
+                     'radius' = radiusConf,
+                     'colorGradient' = colorGradientConf,
+                     'blur' = blurConf)
+    
+    return(df)
+    
+  })
+  
+  # Data -------------------------------------------------
+  
+  positionsQry <- function(thresholdQuery, dateFromQuery, dateUntilQuery, vesselNameQuery, vesselSpeedMinQuery, vesselSpeedMaxQuery) {
+    
+    message("**** Building Client Query ****")
+    
+    # Create a Progress object
+    progress <- shiny::Progress$new(min=0, max=4)
+    
+    # Close it on exit
+    on.exit(progress$close())
+    
+    progress$set(message = "Tomando datos del cliente...", value = 0)
+    
+    message("")
+    message("************************************")
+    message("    Query parameters from client    ")
     message(paste0("thresholdPointsCli: ", thresholdQuery))
     message(paste0("dateFromCli: ", dateFromQuery))
     message(paste0("dateUntilCli: ", dateUntilQuery))
     message(paste0("searchVesselNameCli: ", vesselNameQuery))
     message(paste0("vesselSpeedMinCli: ", vesselSpeedMinQuery))
     message(paste0("vesselSpeedMaxCli: ", vesselSpeedMaxQuery))
+    message("************************************")
     message("")
     
     # Count returned points in query
@@ -183,7 +231,7 @@ shinyServer(function(input, output) {
       
     }
     
-    progress$set(message = "Desconectando de la base de datos...", value = 3)
+    progress$set(message = "Desconectando de la BD...", value = 3)
     message("Disconnect from PostgreSQL")
     dbDisconnect(conn)  # Disconnect
     
@@ -198,80 +246,99 @@ shinyServer(function(input, output) {
       points <- NULL
     }
     
-    positionsQry.df <<- points
+    #positionsQry.df <<- points
     progress$set(message = "Terminado!", value = 4)
     message("Finished")
     
     # Return
     return(points)
     
-  })
+  }
   
   # Mapa ------------------------------------------------- 
   
   output$divHtml <- renderUI({
     
-    # Plot options
-    radius <- input$radius
-    colorGradient <- input$color
-    opacity <- input$opacity
-    blur <- input$blur
+    input$btnReplay
     
-    if (dateFromQuery != as.character(input$dateFrom) || 
-        dateUntilQuery != as.character(input$dateUntil) ||
-        thresholdQuery !=  input$thresholdPoints ||
-        vesselNameQuery != input$searchVesselName ||
-        vesselSpeedMinQuery != input$vesselSpeedMin ||
-        vesselSpeedMaxQuery != input$vesselSpeedMax) {
+    # Default df
+    render.df <- positionsQry.df
+    renderConfig.df <- configCustom.df
+    
+    # Check if same query and config values
+    sameQuery <- identical(getClientQry(), qryValCustom.df) 
+    sameConfig <- identical(getClientConf(), configCustom.df)
+    
+    if (sameQuery) {message("*** Same query ***")}
+    if (!sameQuery) {message("*** New query ***")}
+    if (sameConfig) {message("*** Same config ***")}
+    if (!sameConfig) {message("*** New config ***")}
+    
+    if (!sameQuery) {
+      
+      qryValCustom.df <<- getClientQry()
       
       # Call query
-      positionsQry <- positionsQry()
+      render.df <- positionsQry(qryValCustom.df$thresholdPoints, 
+                                qryValCustom.df$dateFrom, 
+                                qryValCustom.df$dateUntil, 
+                                qryValCustom.df$searchVesselName, 
+                                qryValCustom.df$vesselSpeedMin, 
+                                qryValCustom.df$vesselSpeedMax)
       
-    } 
+      positionsQry.df <<- render.df
+      
+      }
+    if (!sameConfig) {
+      
+      configCustom.df <<- getClientConf()
+      
+      # Call query
+      renderConfig.df <- configCustom.df
+    }  
     
-    else  {
-      positionsQry <- positionsQry.df
-    }
-    
-    if (nrow(positionsQry) <= 0 || is.null(positionsQry)) {
+    if (nrow(render.df) <= 0 || is.null(render.df)) {
       
       numberOfVessels <- 0
       positions <- 0
       
+      if (numberOfVessels > 1) {stringBarco <- " barcos "}
+      if (numberOfVessels <= 1) {stringBarco <- " barco "}
+      
       toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
                      positions, " posiciones ', 8000, 'rounded');", sep = "")
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
-                      numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
+                      numberOfVessels, stringBarco, "', 9500, 'rounded');", sep = "")
       
       # Remove latest heat layer and show toasts
       mapa <- HTML(paste0("<script>",
-                         "if(map.hasLayer(heat)) {map.removeLayer(heat);};",
+                          "if (map.hasLayer(heat)) {map.removeLayer(heat);} 
+                           else {var heat = L.heatLayer([[50.5, 30.5, 1000], [50.6, 30.4, 1000]], {radius: 30}).addTo(map);}",
                           toast, toast2,
-                         "</script>"))
+                          "</script>"))
     } 
-    
     else {
       
-      positions <- nrow(positionsQry)
-      numberOfVessels <- length(unique(positionsQry$mmsi))
+      positions <- nrow(render.df)
+      numberOfVessels <- length(unique(render.df$mmsi))
       
-      # number of rows to toast Materialize.toast(message, displayLength,
-      # className, completeCallback);
+      if (numberOfVessels > 1) {stringBarco <- " barcos "}
+      if (numberOfVessels <= 1) {stringBarco <- " barco "}
+      
       toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
                      positions, " posiciones ', 8000, 'rounded');", sep = "")
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
-                      numberOfVessels, " barcos ', 9500, 'rounded');", sep = "")
+                      numberOfVessels, stringBarco, "', 9500, 'rounded');", sep = "")
       
-      j <- paste0("[", positionsQry[, "y"], ",", positionsQry[, "x"],"]", 
-                  collapse = ",")
+      j <- paste0("[", render.df$y, ",", render.df$x,"]", collapse = ",")
       j <- paste0("[", j, "]")
       
       mapa <- HTML(paste("<script>", 
                          sprintf("var buildingsCoords = %s;", j), 
                          "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
-                       if(map.hasLayer(heat)) {map.removeLayer(heat);};
-                       var heat = L.heatLayer(buildingsCoords, {minOpacity:", 
-                         opacity, ", radius:", radius, colorGradient, ", blur:", blur, 
+                         if(map.hasLayer(heat)) {map.removeLayer(heat);};
+                         var heat = L.heatLayer(buildingsCoords, {minOpacity:", renderConfig.df$opacity, 
+                         ", radius:", renderConfig.df$radius, renderConfig.df$colorGradient, ", blur:", renderConfig.df$blur, 
                          "}).addTo(map);", toast, toast2, "</script>"), sep = "")
     }
     
