@@ -7,21 +7,23 @@ Aplicación web interactiva de R con la librería Shiny, mapas de Leaflet y con 
 ## Ejecutar aplicación
 
 ```R
-shiny::runGitHub(repo = 'AISVMS_vis', username = 'guzmanlopez')
+
 ```
 
 ### Dependencias
 
 ```R
-library('shiny')
-library('fasttime')
+library("shiny")
+library("DBI")
+library("RPostgreSQL")
+library("sf")
+library("wkb")
 ```
 
 #### Para instalar las dependencias requeridas
 
 ```R
 install.packages('shiny')
-install.packages('fasttime')
 ```
 
 ## Capturas de pantalla
@@ -30,7 +32,9 @@ install.packages('fasttime')
 
 ## Futuros desarrollos
 
-*
+- 
+-
+-
 
 ## Referencias
 
