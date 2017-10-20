@@ -36,3 +36,7 @@ configCustom.df <- config.df
 
 # Empty df to push data from DB
 positionsQry.df <- data.frame()
+
+# nvd3 charts ---------------------------------------
+
+source("linechart.R")
