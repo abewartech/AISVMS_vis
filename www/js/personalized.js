@@ -45,6 +45,9 @@ function loadPage() {
   });
 
   // noUiSlider
+  
+  // index.html
+  
   var sliderVesselSpeed = document.getElementById('vesselSpeed');
   noUiSlider.create(sliderVesselSpeed, {
     start: [0, 20],
@@ -119,6 +122,36 @@ function loadPage() {
     })
   });
   
+  // plot.html
+  
+  var sliderSinePhase = document.getElementById('sinePhase');
+  noUiSlider.create(sliderSinePhase, {
+    start: [0],
+    connect: false,
+    step: 10,
+    range: {
+      'min': -180,
+      'max': 180
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
+  
+  var sliderSineAmplitude = document.getElementById('sineAmplitude');
+  noUiSlider.create(sliderSineAmplitude, {
+    start: [1],
+    connect: false,
+    step: 0.1,
+    range: {
+      'min': -2,
+      'max': 2
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
+  
   // Load vessels data
   var vesselsData = "";
   
@@ -175,12 +208,16 @@ function settings() {
   var radius = $('#radius span').html();
   var color = $('#color select').val();
   var blur = $('#blur span').html();
+  var sinePhase = $('#sinePhase span').html();
+  var sineAmplitude = $('#sineAmplitude span').html();
   
   Shiny.onInputChange("thresholdPoints", thresholdPoints);
   Shiny.onInputChange("opacity", opacity);
   Shiny.onInputChange("radius", radius);
   Shiny.onInputChange("color", color);
   Shiny.onInputChange("blur", blur);
+  Shiny.onInputChange("sinePhase", sinePhase);
+  Shiny.onInputChange("sineAmplitude", sineAmplitude);
 }
 
 function input() {
