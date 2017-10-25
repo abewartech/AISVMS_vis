@@ -16,15 +16,16 @@ getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
 flags <- getquery.vesselNames$flagcode
 flags[which(stringr::str_length(flags) != 4)] <- NA
 flags <- stringr::str_extract(flags, "[A-Z]+")
+flags <- stringr::str_trim(flags)
 
 links <- vector()
 
-for(i in 1:length(flags)) {
+for (i in 1:length(flags)) {
   
-  if(is.na(flags[i])) links[[i]] <- paste0("../img/ais.png")
-  if(!is.na(flags[i])) links[[i]] <- paste0("https://www.marinetraffic.com/img/flags/png40/", flags[i], ".png")
+  if (is.na(flags[i]) | stringr::str_length(flags[i]) != 2) {links[[i]] <- paste0("../img/ais.png")}
+  if (!is.na(flags[i]) & stringr::str_length(flags[i]) == 2) {links[[i]] <- paste0("../img/flags-svg/", stringr::str_to_lower(flags[i]), ".svg")}
 }
-  
+
 # Convert to JSON ---------------------------------------------------------
 
 getquery.vesselNames.t <- as.data.frame(rbind(getquery.vesselNames$name, links))
