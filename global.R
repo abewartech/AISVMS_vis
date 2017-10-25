@@ -1,12 +1,13 @@
 # Packages -----------------------------------------------
 
 library("shiny")
-#library("fasttime")
-#library("lubridate")
 library("DBI")
 library("RPostgreSQL")
 library("sf")
 library("wkb")
+library("plotly")
+#library("fasttime")
+#library("lubridate")
 
 # Disable scientific notation 
 options(scipen = 999)
@@ -36,7 +37,3 @@ configCustom.df <- config.df
 
 # Empty df to push data from DB
 positionsQry.df <- data.frame()
-
-# nvd3 charts ---------------------------------------
-
-source("linechart.R")
