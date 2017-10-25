@@ -133,13 +133,45 @@ function loadPage() {
   //console.log(vesselsData);
   //console.log({"Apple": null, "Microsoft": null, "Google": 'https://placehold.it/250x250'});
   
+  /*
   $('#searchVesselName').autocomplete({
     data: vesselsData,
     limit: 15, // The max amount of results that can be shown at once. Default: Infinity.
     onAutocomplete: function(val) {},
     minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
   });
+  */
   
+
+  $('#searchVesselName').material_chip({
+    autocompleteOptions: {
+      data: vesselsData,
+      limit: 20,
+      minLength: 1
+    }
+  });
+  
+  
+  $('.chips').on('chip.add', function(e, chip){
+    // you have the added chip here
+    
+  var data = $('#searchVesselName').material_chip('data');
+  //alert(data[0].tag);
+  //alert(data[1].tag);     
+  
+  // recorrer data para cada var
+  
+  });
+
+  $('.chips').on('chip.delete', function(e, chip){
+    // you have the deleted chip here
+  });
+
+  $('.chips').on('chip.select', function(e, chip){
+    // you have the selected chip here
+  });
+        
+
   $('.collapsible').collapsible();
 
   // Toast event
