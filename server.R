@@ -249,7 +249,7 @@ shinyServer(function(input, output) {
       
       positionsQry.df <<- render.df
       
-      }
+    }
     if (!sameConfig) {
       
       configCustom.df <<- getClientConf()
@@ -315,7 +315,6 @@ shinyServer(function(input, output) {
       table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
                           "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
                           "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
-      return(table)
     } 
     else {
       table <- positionsQry.df
@@ -323,34 +322,35 @@ shinyServer(function(input, output) {
       table$course <- table$course / 10
       table$heading <- table$heading / 10
       colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
-      return(table)
     }
     
-  })
-  
-  # Point cloud ------------------------------------------
-  
-  output$plot <- renderPlot({
-    
-    plot <- plot(x = positionsQry.df$x, 
-                 y = positionsQry.df$y, 
-                 xlab = "Longitud", 
-                 ylab = "Latitud", pch = 19, 
-                 col = "black", cex = 0.5)
-    
-    return(plot)
+    return(table)
     
   })
   
   # Line Chart -------------------------------------------
   
-  output$mychart <- renderLineChart({
-    # Return a data frame. Each column will be a series in the line chart.
-    data.frame(
-      Sine = sin(1:100/10 + input$sinePhase * pi/180) * input$sineAmplitude,
-      Cosine = 0.5 * cos(1:100/10),
-      "Sine 2" = sin(1:100/10) * 0.25 + 0.5
-    )
+  output$plot <- renderPlotly({
+    
+    if (is.null(positionsQry.df)) {
+      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
+                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
+                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
+      plotly <- plot_ly(table, x = ~Tiempo, y = ~Velocidad)
+    } 
+    else {
+      table <- positionsQry.df
+      table$speed <- table$speed / 10
+      table$course <- table$course / 10
+      table$heading <- table$heading / 10
+      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
+      plotly <- plot_ly(table, x = ~Tiempo, y = ~Velocidad)
+    }
+    
+    return(plotly)
+    
+   
+
   })
   
 })
