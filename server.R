@@ -330,13 +330,14 @@ shinyServer(function(input, output) {
   
   # Line Chart -------------------------------------------
   
-  output$plot <- renderPlotly({
+  output$plotSpeed <- renderPlotly({
+    
+    message("*** Rendering speed plot ***")
     
     if (is.null(positionsQry.df)) {
       table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
                           "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
                           "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
-      plotly <- plot_ly(table, x = ~Tiempo, y = ~Velocidad)
     } 
     else {
       table <- positionsQry.df
@@ -344,13 +345,16 @@ shinyServer(function(input, output) {
       table$course <- table$course / 10
       table$heading <- table$heading / 10
       colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
-      plotly <- plot_ly(table, x = ~Tiempo, y = ~Velocidad)
     }
     
-    return(plotly)
+    p <- plot_ly(table, x = ~Tiempo, y = ~Velocidad, 
+                 name = 'Puntos de velocidad', type = 'scatter', mode = 'markers', 
+                 marker = list(size = 5, opacity = 0.8, color = "#0277bd"), symbols = 'circle', text = paste("Velocidad:", table$Velocidad, "kn", '<br>Fecha:', table$Tiempo))
     
-   
-
+    p %>%
+      layout(title = "Perfil de Velocidad",
+             xaxis = list(title = "Tiempo"),
+             yaxis = list (title = "Velocidad (kn)"))
   })
   
 })
