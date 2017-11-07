@@ -152,19 +152,13 @@ function loadPage() {
   });
   
   
-  $('.chips').on('chip.add', function(e, chip){
-    // you have the added chip here
-    
-  var data = $('#searchVesselName').material_chip('data');
-  //alert(data[0].tag);
-  //alert(data[1].tag);     
   
-  // recorrer data para cada var
+  $('.chips').on('chip.add', function(e, chip){
   
   });
 
   $('.chips').on('chip.delete', function(e, chip){
-    // you have the deleted chip here
+  
   });
 
   $('.chips').on('chip.select', function(e, chip){
@@ -220,7 +214,16 @@ function input() {
   var dateUntil = $('input[name=_submit]').attr('value');
   var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
   var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
-  var searchVesselName = $("#searchVesselName").val();
+  
+  // recorrer data para cada vessel
+  var data = $('#searchVesselName').material_chip('data');
+  var searchVesselName = "";
+  var len = data.length;
+  
+  for (var i = 0; i < len; i = i + 1) {
+    searchVesselName +=  data[i].tag + "\n";
+  }
+  
   //var selectVesselType = $('select[name=selectVesselType]').val();
   //var selectVesselName = $('select[name=selectVesselName2]').val();
   

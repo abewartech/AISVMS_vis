@@ -12,7 +12,8 @@ shinyServer(function(input, output) {
     thresholdPointsCli <- input$thresholdPoints
     dateFromCli <- input$dateFrom
     dateUntilCli <- input$dateUntil
-    searchVesselNameCli <- input$searchVesselName
+    searchVesselNameCli <- unlist(stringr::str_split(input$searchVesselName, "\n"))
+    searchVesselNameCli <- searchVesselNameCli[-length(searchVesselNameCli)]
     vesselSpeedMinCli <- input$vesselSpeedMin
     vesselSpeedMaxCli <- input$vesselSpeedMax
     
@@ -99,7 +100,7 @@ shinyServer(function(input, output) {
     message("**** Building Client Query ****")
     
     # Create a Progress object
-    progress <- shiny::Progress$new(min=0, max=4)
+    progress <- shiny::Progress$new(min = 0, max = 4)
     
     # Close it on exit
     on.exit(progress$close())
@@ -112,29 +113,59 @@ shinyServer(function(input, output) {
     message(paste0("thresholdPointsCli: ", thresholdQuery))
     message(paste0("dateFromCli: ", dateFromQuery))
     message(paste0("dateUntilCli: ", dateUntilQuery))
-    message(paste0("searchVesselNameCli: ", vesselNameQuery))
+    
+    for (v in vesselNameQuery) {
+      message(paste0("searchVesselNameCli: ", v)) 
+    }
+    
     message(paste0("vesselSpeedMinCli: ", vesselSpeedMinQuery))
     message(paste0("vesselSpeedMaxCli: ", vesselSpeedMaxQuery))
     message("************************************")
     message("")
+    
+    # Vessel name query
+    vesselNameQuery <- as.character(vesselNameQuery)
+    
+    for (i in 1:10) {
+      if (is.na(vesselNameQuery[i])) {
+        vesselNameQuery[i] <- as.character(" ")
+      } 
+      else {
+        vesselNameQuery[i] <- as.character(vesselNameQuery[i])
+      }
+    }
     
     # Count returned points in query
     message("*** Get positions count from query ***")
     message("Connect to PostgreSQL")
     progress$set(message = "Contando elementos...", value = 1)
     conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+    
+    #vesselsNameIN <- stringr::str_c(paste0("?vesselName", 1:10), collapse = ", ")
+    
     sql.positions.counts <- "SELECT COUNT(*) 
                              FROM posiciones, barcos 
-                             WHERE barcos.name = ?vesselName
-                             AND posiciones.mmsi = barcos.mmsi
+                             WHERE posiciones.mmsi = barcos.mmsi
+                             AND barcos.name IN (?vesselName1, ?vesselName2, ?vesselName3, ?vesselName4, ?vesselName5, ?vesselName6, ?vesselName7, ?vesselName8, ?vesselName9, ?vesselName10) 
                              AND posiciones.speed BETWEEN ?vesselSpeedMin AND ?vesselSpeedMax
                              AND posiciones.timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+    
     query.positions.counts <- sqlInterpolate(conn, sql.positions.counts, 
-                                             dateFrom = as.character(dateFromQuery), 
-                                             dateUntil = as.character(dateUntilQuery),
-                                             vesselName = as.character(vesselNameQuery),
+                                             vesselName1 = vesselNameQuery[1],
+                                             vesselName2 = vesselNameQuery[2],
+                                             vesselName3 = vesselNameQuery[3],
+                                             vesselName4 = vesselNameQuery[4],
+                                             vesselName5 = vesselNameQuery[5],
+                                             vesselName6 = vesselNameQuery[6],
+                                             vesselName7 = vesselNameQuery[7],
+                                             vesselName8 = vesselNameQuery[8],
+                                             vesselName9 = vesselNameQuery[9],
+                                             vesselName10 = vesselNameQuery[10],
                                              vesselSpeedMin = as.character(vesselSpeedMinQuery), 
-                                             vesselSpeedMax = as.character(vesselSpeedMaxQuery))
+                                             vesselSpeedMax = as.character(vesselSpeedMaxQuery),
+                                             dateFrom = as.character(dateFromQuery), 
+                                             dateUntil = as.character(dateUntilQuery))
+    
     getquery.positions.counts <- dbGetQuery(conn, query.positions.counts)
     
     if (getquery.positions.counts$count > thresholdQuery) {
@@ -150,18 +181,29 @@ shinyServer(function(input, output) {
                                posiciones.heading,
                                posiciones.timestamp
                         FROM posiciones, barcos 
-                        WHERE barcos.name = ?vesselName
-                        AND posiciones.mmsi = barcos.mmsi
+                        WHERE posiciones.mmsi = barcos.mmsi
+                        AND barcos.name IN (?vesselName1, ?vesselName2, ?vesselName3, ?vesselName4, ?vesselName5, ?vesselName6, ?vesselName7, ?vesselName8, ?vesselName9, ?vesselName10)
                         AND posiciones.speed BETWEEN ?vesselSpeedMin AND ?vesselSpeedMax
                         AND posiciones.timestamp BETWEEN ?dateFrom AND ?dateUntil
                         ORDER BY RANDOM() LIMIT ?thresholdQuery;"
+      
       query.positions <- sqlInterpolate(conn, sql.positions, 
+                                        vesselName1 = vesselNameQuery[1],
+                                        vesselName2 = vesselNameQuery[2],
+                                        vesselName3 = vesselNameQuery[3],
+                                        vesselName4 = vesselNameQuery[4],
+                                        vesselName5 = vesselNameQuery[5],
+                                        vesselName6 = vesselNameQuery[6],
+                                        vesselName7 = vesselNameQuery[7],
+                                        vesselName8 = vesselNameQuery[8],
+                                        vesselName9 = vesselNameQuery[9],
+                                        vesselName10 = vesselNameQuery[10],
+                                        vesselSpeedMin = as.character(vesselSpeedMinQuery), 
+                                        vesselSpeedMax = as.character(vesselSpeedMaxQuery),
                                         dateFrom = as.character(dateFromQuery), 
                                         dateUntil = as.character(dateUntilQuery),
-                                        vesselName = as.character(vesselNameQuery),
-                                        threshold = as.character(thresholdQuery),
-                                        vesselSpeedMin = as.character(vesselSpeedMinQuery), 
-                                        vesselSpeedMax = as.character(vesselSpeedMaxQuery))
+                                        threshold = as.character(thresholdQuery))
+      
       getquery.positions <- dbGetQuery(conn, query.positions)
       
     }
@@ -178,16 +220,27 @@ shinyServer(function(input, output) {
                                posiciones.heading,
                                posiciones.timestamp
                         FROM posiciones, barcos 
-                        WHERE barcos.name = ?vesselName
-                        AND posiciones.mmsi = barcos.mmsi
+                        WHERE posiciones.mmsi = barcos.mmsi
+                        AND barcos.name IN (?vesselName1, ?vesselName2, ?vesselName3, ?vesselName4, ?vesselName5, ?vesselName6, ?vesselName7, ?vesselName8, ?vesselName9, ?vesselName10)
                         AND posiciones.speed BETWEEN ?vesselSpeedMin AND ?vesselSpeedMax
                         AND posiciones.timestamp BETWEEN ?dateFrom AND ?dateUntil;"
+      
       query.positions <- sqlInterpolate(conn, sql.positions, 
-                                        dateFrom = as.character(dateFromQuery), 
-                                        dateUntil = as.character(dateUntilQuery), 
-                                        vesselName = as.character(vesselNameQuery), 
+                                        vesselName1 = vesselNameQuery[1],
+                                        vesselName2 = vesselNameQuery[2],
+                                        vesselName3 = vesselNameQuery[3],
+                                        vesselName4 = vesselNameQuery[4],
+                                        vesselName5 = vesselNameQuery[5],
+                                        vesselName6 = vesselNameQuery[6],
+                                        vesselName7 = vesselNameQuery[7],
+                                        vesselName8 = vesselNameQuery[8],
+                                        vesselName9 = vesselNameQuery[9],
+                                        vesselName10 = vesselNameQuery[10], 
                                         vesselSpeedMin = as.character(vesselSpeedMinQuery), 
-                                        vesselSpeedMax = as.character(vesselSpeedMaxQuery))
+                                        vesselSpeedMax = as.character(vesselSpeedMaxQuery),
+                                        dateFrom = as.character(dateFromQuery), 
+                                        dateUntil = as.character(dateUntilQuery))
+      
       getquery.positions <- dbGetQuery(conn, query.positions)
       
     }
@@ -240,12 +293,12 @@ shinyServer(function(input, output) {
       qryValCustom.df <<- getClientQry()
       
       # Call query
-      render.df <- positionsQry(qryValCustom.df$thresholdPoints, 
-                                qryValCustom.df$dateFrom, 
-                                qryValCustom.df$dateUntil, 
+      render.df <- positionsQry(qryValCustom.df$thresholdPoints[1], 
+                                qryValCustom.df$dateFrom[1], 
+                                qryValCustom.df$dateUntil[1], 
                                 qryValCustom.df$searchVesselName, 
-                                qryValCustom.df$vesselSpeedMin, 
-                                qryValCustom.df$vesselSpeedMax)
+                                qryValCustom.df$vesselSpeedMin[1], 
+                                qryValCustom.df$vesselSpeedMax[1])
       
       positionsQry.df <<- render.df
       
@@ -346,10 +399,16 @@ shinyServer(function(input, output) {
       table$heading <- table$heading / 10
       colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
     }
+
+    # Random sampling if nrows exceeds 10.000 
+    if (nrow(table >= 10000)) {
+      table <- table[sample(x = 1:nrow(table), size = 10000),]
+    }
     
-    p <- plot_ly(table, x = ~Tiempo, y = ~Velocidad, 
-                 name = 'Puntos de velocidad', type = 'scatter', mode = 'markers', 
-                 marker = list(size = 5, opacity = 0.8, color = "#0277bd"), symbols = 'circle', text = paste("Velocidad:", table$Velocidad, "kn", '<br>Fecha:', table$Tiempo))
+    p <- plot_ly(table, x = ~Tiempo, y = ~Velocidad, color = ~Nombre,
+                 type = 'scatter', mode = 'markers', 
+                 marker = list(size = 5, opacity = 0.8),
+                 symbols = 'circle', text = paste(" Barco:", table$Nombre, "<br> Velocidad:", table$Velocidad, "kn", '<br> Fecha:', table$Tiempo))
     
     p %>%
       layout(title = "Perfil de Velocidad",
