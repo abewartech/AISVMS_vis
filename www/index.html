@@ -5,14 +5,14 @@
   <!--Let browser know website is optimized for mobile-->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <meta property="og:title" content="Visualizar AIS y VMS data">
+  <meta property="og:title" content="Visualizar AIS data">
   <meta property="og:image" content="img/ais.png">
-  <meta property="og:site_name" content="DINARA - LTP">
+  <meta property="og:site_name" content="DINARA">
   <meta property="og:description" content="Aplicación web interactiva basada en R con Shiny, Material Design de Google y consultas a Base de Datos PostgreSQL">
   <link rel="shortcut icon" href="img/ais.png" type="image/x-icon">
   <meta name="author" content="Guzmán López - Data Scientist / Marine Biologist - guzilop@gmail.com">
 
-  <title>AIS/VMS - Laboratorio de Tecnología Pesquera - DINARA | Mapas</title>
+  <title>AIS - DINARA | Mapas</title>
 
   <!-- Shiny -->
   <script src="shared/jquery.js" type="text/javascript"></script>
@@ -97,6 +97,7 @@
               </div>
         </div>
       </div>
+      <!--
       <div class="row">
         <div class="col s12">
           <div class="switch">
@@ -109,6 +110,7 @@
           </div>
         </div>
       </div>
+      -->
       </span>
     </div>
     </li>
@@ -133,17 +135,6 @@
       <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Buscar barco"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
       <div class="collapsible-body"><span>
                   
-                  <!--
-                  <div class="row">
-                    <div class="col s12">
-                      <div id="" class="input-field col s12">
-                        <input id="searchVesselName" type="text" class="autocomplete">
-                        <label for="searchVesselName">Nombre del barco</label>
-                      </div>
-                    </div>
-                  </div>
-                  -->
-                  
                    <div class="row">
                     <div class="col s12">
                       <div id="" class="input-field col s12">
@@ -157,7 +148,7 @@
                     <div class="col s12">
                       <div id="selectVesselType2" class="input-field col s12">
                         <select multiple name="selectVesselType">
-                          <option value="fishingVesselType" selected>Pesquero</option>
+                          <option value="fishingVesselType" selected>Pesca</option>
                           <option value="cargoVesselType">Carga</option>
                         </select>
                         <label for="selectVesselType2">Tipo de barco</label>
@@ -168,14 +159,71 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por actividad del barco"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
+      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar flota de pesca por país o categoría"><i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; Flota de Pesca</div>
+      <div class="collapsible-body">
+                <span>
+                  <div class="row">
+                    <div class="col s12">
+                      <form>
+                        <div id="selectVesselCountry2" class="input-field col s12">
+                          <select class="icons" name="selectVesselCountry">
+                            <option value="" disabled selected></option>
+                            <option value="arg" data-icon="img/flags-svg/ar.svg" class="left circle">Argentina</option>
+                            <option value="ury" data-icon="img/flags-svg/uy.svg" class="left circle">Uruguay</option>
+                            <option value="argury" data-icon="img/flags-svg/aruy.svg" class="left circle">Argentina y Uruguay</option>
+                            </select>
+                            <label for="selectVesselCountry2">País</label>
+                            </div>
+                      </form>
+                    </div>
+                  </div>
+                </span>
+                <span>
+                  <div class="row">
+                    <div class="col s12">
+                      <form>
+                        <label for="">Categoría</label>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="catA" checked="checked"/>
+                          <label for="catA">Cat A</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="catB" checked="checked"/>
+                          <label for="catB">Cat B</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="catC" checked="checked"/>
+                          <label for="catC">Cat C</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="catD" checked="checked"/>
+                          <label for="catD">Cat D</label>
+                        </p>
+                        </form>
+                    </div>
+                    </div>
+                </span>
+                </li>
+    <li>
+      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por posición en zonas predeterminadas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
       <div class="collapsible-body"><span>
                   <div class="row">
                     <div class="col s12">
                       <form>
-                        <label for="vesselSpeed">Velocidad (kn)</label>
-                        <div id="vesselSpeed"></div>
-                      </form>
+                        <label for="">Espacio marítimo</label>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="enPuerto" checked="checked"/>
+                          <label for="enPuerto">Puerto</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="en7mn" checked="checked" />
+                          <label for="en7mn">Área de 7 mn desde la costa</label>
+                        </p>
+                        <p>
+                          <input type="checkbox" class="filled-in" id="enZcpau" checked="checked"/>
+                          <label for="enZcpau">Zona Común de Pesca Argentina Uruguaya</label>
+                        </p>
+                        </form>
                     </div>
                     <div class="col s12">
                     </div>
@@ -184,24 +232,15 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por posición en zonas predeterminadas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
-      <div class="collapsible-body"><span>
+      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por actividad del barco"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
+      <div class="collapsible-body">
+        <span>
                   <div class="row">
                     <div class="col s12">
                       <form>
-                        <p>
-                          <input type="checkbox" id="enPuerto" checked="checked"/>
-                          <label for="enPuerto">Puerto</label>
-                        </p>
-                        <p>
-                          <input type="checkbox" id="en7mn" checked="checked" />
-                          <label for="en7mn">Área de 7 mn desde la costa</label>
-                        </p>
-                        <p>
-                          <input type="checkbox" id="enZcpau" checked="checked"/>
-                          <label for="enZcpau">Zona Común de Pesca Argentina Uruguaya</label>
-                        </p>
-                        </form>
+                        <label for="vesselSpeed">Velocidad (kn)</label>
+                        <div id="vesselSpeed"></div>
+                      </form>
                     </div>
                     <div class="col s12">
                     </div>
