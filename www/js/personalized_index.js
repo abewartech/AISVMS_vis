@@ -130,20 +130,9 @@ function loadPage() {
 
   loadJSON();
   
-  //console.log(vesselsData);
-  //console.log({"Apple": null, "Microsoft": null, "Google": 'https://placehold.it/250x250'});
-  
-  /*
-  $('#searchVesselName').autocomplete({
-    data: vesselsData,
-    limit: 15, // The max amount of results that can be shown at once. Default: Infinity.
-    onAutocomplete: function(val) {},
-    minLength: 1, // The minimum length of the input for the autocomplete to start. Default: 1.
-  });
-  */
-  
-
+  // Search vessel by name
   $('#searchVesselName').material_chip({
+    placeholder: '',
     autocompleteOptions: {
       data: vesselsData,
       limit: 20,
@@ -151,25 +140,17 @@ function loadPage() {
     }
   });
   
+  $('.chips').on('chip.add', function(e, chip){});
+  $('.chips').on('chip.delete', function(e, chip){});
+  $('.chips').on('chip.select', function(e, chip){});
   
-  
-  $('.chips').on('chip.add', function(e, chip){
-  
-  });
-
-  $('.chips').on('chip.delete', function(e, chip){
-  
-  });
-
-  $('.chips').on('chip.select', function(e, chip){
-    // you have the selected chip here
-  });
+  // Categories
+  $('#catA').click(changeSearchVesselsNames);
+  $('#catB').click(changeSearchVesselsNames);
+  $('#catC').click(changeSearchVesselsNames);
         
-
+  // Collapsible sections in sidebar
   $('.collapsible').collapsible();
-
-  // Toast event
-  //$('#btnReplay').click(toast);
 
   //Tooltip
   $('.tooltipped').tooltip({
@@ -178,7 +159,6 @@ function loadPage() {
 
   // Button menu events
   $('#btnInput').click(showInput);
-  //$('#btnSettings').click(showSettings);
 
   // Eventos disparados por Actualizar
   $('#btnReplay').click(settings);
@@ -209,12 +189,11 @@ function settings() {
 function input() {
 
   var aisCheck = $('#aisData').prop('checked');
-  var vmsCheck = $('#vmsData').prop('checked');
   var dateFrom = $('input[name=dateFrom_submit]').attr('value');
   var dateUntil = $('input[name=_submit]').attr('value');
   var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
   var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
-  
+ 
   // recorrer data para cada vessel
   var data = $('#searchVesselName').material_chip('data');
   var searchVesselName = "";
@@ -224,25 +203,19 @@ function input() {
     searchVesselName +=  data[i].tag + "\n";
   }
   
-  //var selectVesselType = $('select[name=selectVesselType]').val();
-  //var selectVesselName = $('select[name=selectVesselName2]').val();
-  
   Shiny.onInputChange("aisData", aisCheck);
-  Shiny.onInputChange("vmsData", vmsCheck);
   Shiny.onInputChange("dateFrom", dateFrom);
   Shiny.onInputChange("dateUntil", dateUntil);
   Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
   Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
   Shiny.onInputChange("searchVesselName", searchVesselName);
+  
+  //var selectVesselType = $('select[name=selectVesselType]').val();
+  //var selectVesselName = $('select[name=selectVesselName2]').val();
   //Shiny.onInputChange("selectVesselType", selectVesselType);
   //Shiny.onInputChange("selectVesselName", selectVesselName);
   
 }
-
-// Materialize.toast(message, displayLength, className, completeCallback);
-//function toast() {
-//  return Materialize.toast('¡100,000 puntos!', 4000, 'rounded'); // 4000 is the duration of the toast
-//}
 
 // Button menu events
 function showMapAllWidth() {
@@ -256,7 +229,7 @@ function showMapOriginWidth() {
 
   $('#mainPanel').removeClass("");
   $('#sidebarPanel').removeClass("");
-  $('#sidebarPanel').addClass("col s12 m4 l3 z-depth-2");
+  $('#sidebarPanel').addClass("col s12 m4 l3");
   $('#mainPanel').addClass("col s12 m8 l9");
 }
 
@@ -286,30 +259,92 @@ function showInput() {
 
 }
 
-/*
-function showSettings() {
+function changeSearchVesselsNames() {
 
-  var inputVisible = $('#input').is(":visible");
-  var settingsVisible = $('#settings').is(":visible");
+// Fishing vessels categories
+var checkCatA = $('#catA').prop('checked');
+var checkCatB = $('#catB').prop('checked');
+var checkCatC = $('#catC').prop('checked');
+var checkCatD = $('#catD').prop('checked');
 
-  if (inputVisible) {
-    $('#input').hide();
-  }
+var vesselsCat = "{";
+var arrayOfCat = [];
 
-  // hide and show
-  if (settingsVisible) {
-    $('#settings').hide();
-  } else {
-    $('#settings').show();
-  }
-  
-    //if (!settingsVisible && !inputVisible) {
-    //  showMapAllWidth();
-    //} else {
-    //  showMapOriginWidth();
-    //}
-  
+if(checkCatA) {
+
+// Load catA vessels data
+var vesselsCatA = JSON.parse(catA);
+
+for (var keyA in vesselsCatA) {
+  var valA = vesselsCatA[keyA];
+  var objA = {};
+  objA.tag = keyA;
+  arrayOfCat.push(objA);
+  vesselsCat = vesselsCat +  '\"' + keyA + '\":\"' + valA + '\",';   
+}
+
+} 
+if(checkCatB) {
+
+// Load catA vessels data
+var vesselsCatB = JSON.parse(catB);
+
+for (var keyB in vesselsCatB) {
+  var valB = vesselsCatB[keyB];
+  var objB = {};
+  objB.tag = keyB;
+  arrayOfCat.push(objB);
+  vesselsCat = vesselsCat +  '\"' + keyB + '\":\"' + valB + '\",'; 
 
 }
-*/
 
+}
+if(checkCatC) {
+
+// Load catA vessels data
+var vesselsCatC = JSON.parse(catC);
+
+for (var keyC in vesselsCatC) {
+  var valC = vesselsCatC[keyC];
+  var objC = {};
+  objC.tag = keyC;
+  arrayOfCat.push(objC);
+  vesselsCat = vesselsCat +  '\"' + keyC + '\":\"' + valC + '\",'; 
+
+}
+
+}
+
+vesselsCat = vesselsCat + '\" \":\ null\}';
+objVesselsCat = JSON.parse(vesselsCat);
+
+// Clear chips
+$('#catVesselName').material_chip({});
+
+// Search vessel by name
+$('#catVesselName').material_chip({
+  data: arrayOfCat,
+  autocompleteOptions: {
+    data: objVesselsCat,
+    limit: 20,
+    minLength: 1
+    }
+  });
+
+// recorrer data para cada vessel en categorías
+var catData = $('#catVesselName').material_chip('data');
+var catVesselName = "";
+var catLen = catData.length;
+  
+for (var i2 = 0; i2 < catLen; i2 = i2 + 1) {
+  catVesselName +=  catData[i2].tag + "\n";
+  
+}
+  
+Shiny.onInputChange("catA", checkCatA);
+Shiny.onInputChange("catB", checkCatB);
+Shiny.onInputChange("catC", checkCatC);
+Shiny.onInputChange("catD", checkCatD);
+Shiny.onInputChange("catVesselName", catVesselName);
+  
+}
