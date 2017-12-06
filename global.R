@@ -37,6 +37,3 @@ configCustom.df <- config.df
 
 # Empty df to push data from DB
 positionsQry.df <- data.frame()
-
-# Fishing Vessels categories from URY
-catA <- c("ATLANTIC BEATRICE", "ATLANTIC JANE", "ATLANTIC MARGARET", "ATLANTIC RUTHANN", "CORAL", "MARIAMME", "NILTO I", "PROMOPES I", "PROMOPES 2", "ZAANDAM", "ZURITA")
