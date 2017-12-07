@@ -5,6 +5,13 @@
 
 /*** nav ***/
 
+nav ul li.active {
+  height: 64px;
+}
+
+nav ul a {
+  height: 64px;
+}
 
 /*
 nav {
@@ -113,4 +120,18 @@ label {
 
 nav .fa {
   color: #fff;
+}
+
+.modal .modal-content {
+  padding: 0;
+}
+
+#shiny-notification-panel {
+    position: fixed;
+    bottom: 40%;
+    right: 40%;
+    background-color: rgba(0,0,0,0);
+    padding: 5px;
+    width: 400px;
+    z-index: 99999;
 }
