@@ -148,14 +148,15 @@ function loadPage() {
   $('#catA').click(changeSearchVesselsNames);
   $('#catB').click(changeSearchVesselsNames);
   $('#catC').click(changeSearchVesselsNames);
+  //$('#catD').click(changeSearchVesselsNames);
+  
+  $('select[name=selectVesselCountry]').change(showFormCat);
         
   // Collapsible sections in sidebar
   $('.collapsible').collapsible();
 
   //Tooltip
-  $('.tooltipped').tooltip({
-    delay: 50
-  });
+  $('.tooltipped').tooltip({delay: 50});
 
   // Button menu events
   $('#btnInput').click(showInput);
@@ -163,102 +164,35 @@ function loadPage() {
   // Eventos disparados por Actualizar
   $('#btnReplay').click(settings);
   $('#btnReplay').click(input);
-  $('#btnReplay').onclick = function() {
-    var btnReplay = true;
-    Shiny.onInputChange("btnReplay", btnReplay);
-  };
-
+  
+  // Modal
+  $('.modal').modal({
+      dismissible: false, // Modal can be dismissed by clicking outside of the modal
+      opacity: 0.75, // Opacity of modal background
+      inDuration: 300, // Transition in duration
+      outDuration: 200, // Transition out duration
+      startingTop: '4%', // Starting top style attribute
+      endingTop: '10%', // Ending top style attribute
+      ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+        //alert("Ready");
+        console.log(modal, trigger);
+      },
+      complete: function() { 
+        //alert('Closed'); 
+        } // Callback for Modal close
+    }
+  );
+  
+  Shiny.addCustomMessageHandler("myCallbackHandler", 
+  function(modal) {
+    $('#modal1').modal(modal);
+    //alert(modal);
+  });
 }
+
+//*****************//
 
 // Action functions
-function settings() {
-  
-  var thresholdPoints = $('#thresholdPoints span').html();
-  var opacity = $('#opacity span').html();
-  var radius = $('#radius span').html();
-  var color = $('#color select').val();
-  var blur = $('#blur span').html();
-  
-  Shiny.onInputChange("thresholdPoints", thresholdPoints);
-  Shiny.onInputChange("opacity", opacity);
-  Shiny.onInputChange("radius", radius);
-  Shiny.onInputChange("color", color);
-  Shiny.onInputChange("blur", blur);
-}
-
-function input() {
-
-  var aisCheck = $('#aisData').prop('checked');
-  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
-  var dateUntil = $('input[name=_submit]').attr('value');
-  var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
-  var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
- 
-  // recorrer data para cada vessel
-  var data = $('#searchVesselName').material_chip('data');
-  var searchVesselName = "";
-  var len = data.length;
-  
-  for (var i = 0; i < len; i = i + 1) {
-    searchVesselName +=  data[i].tag + "\n";
-  }
-  
-  Shiny.onInputChange("aisData", aisCheck);
-  Shiny.onInputChange("dateFrom", dateFrom);
-  Shiny.onInputChange("dateUntil", dateUntil);
-  Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
-  Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
-  Shiny.onInputChange("searchVesselName", searchVesselName);
-  
-  //var selectVesselType = $('select[name=selectVesselType]').val();
-  //var selectVesselName = $('select[name=selectVesselName2]').val();
-  //Shiny.onInputChange("selectVesselType", selectVesselType);
-  //Shiny.onInputChange("selectVesselName", selectVesselName);
-  
-}
-
-// Button menu events
-function showMapAllWidth() {
-
-  $('#mainPanel').removeClass("");
-  $('#sidebarPanel').removeClass("");
-  $('#mainPanel').addClass("col s12 m12 l12");
-}
-
-function showMapOriginWidth() {
-
-  $('#mainPanel').removeClass("");
-  $('#sidebarPanel').removeClass("");
-  $('#sidebarPanel').addClass("col s12 m4 l3");
-  $('#mainPanel').addClass("col s12 m8 l9");
-}
-
-function showInput() {
-
-  var inputVisible = $('#input').is(":visible");
-  var settingsVisible = $('#settings').is(":visible");
-
-  if (settingsVisible) {
-    $('#settings').hide();
-  }
-
-  // hide and show
-  if (inputVisible) {
-    $('#input').hide();
-  } else {
-    $('#input').show();
-  }
-
-  /*
-    if (!settingsVisible && !inputVisible) {
-      showMapAllWidth();
-    } else {
-      showMapOriginWidth();
-    }
-  */
-
-}
-
 function changeSearchVesselsNames() {
 
 // Fishing vessels categories
@@ -331,20 +265,134 @@ $('#catVesselName').material_chip({
     }
   });
 
-// recorrer data para cada vessel en categorías
-var catData = $('#catVesselName').material_chip('data');
-var catVesselName = "";
-var catLen = catData.length;
+}
+
+function settings() {
   
-for (var i2 = 0; i2 < catLen; i2 = i2 + 1) {
-  catVesselName +=  catData[i2].tag + "\n";
+  var opacity = $('#opacity span').html();
+  var radius = $('#radius span').html();
+  var color = $('#color select').val();
+  var blur = $('#blur span').html();
+  
+  Shiny.onInputChange("opacity", opacity);
+  Shiny.onInputChange("radius", radius);
+  Shiny.onInputChange("color", color);
+  Shiny.onInputChange("blur", blur);
+}
+
+function input() {
+  
+  var thresholdPoints = $('#thresholdPoints span').html();
+  var aisCheck = $('#aisData').prop('checked');
+  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
+  var dateUntil = $('input[name=_submit]').attr('value');
+  var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
+  var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
+ 
+  // recorrer data para cada vessel
+  var data = $('#searchVesselName').material_chip('data');
+  var searchVesselName = "";
+  var len = data.length;
+  
+  for (var i = 0; i < len; i = i + 1) {
+    searchVesselName +=  data[i].tag + "\n";
+  }
+  
+  Shiny.onInputChange("thresholdPoints", thresholdPoints);
+  Shiny.onInputChange("aisData", aisCheck);
+  Shiny.onInputChange("dateFrom", dateFrom);
+  Shiny.onInputChange("dateUntil", dateUntil);
+  Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
+  Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
+  Shiny.onInputChange("searchVesselName", searchVesselName);
+  
+  // Fishing vessels categories
+  var checkCatA = $('#catA').prop('checked');
+  var checkCatB = $('#catB').prop('checked');
+  var checkCatC = $('#catC').prop('checked');
+  var checkCatD = $('#catD').prop('checked');
+  
+  if(checkCatA | checkCatB | checkCatC | checkCatD) {
+   
+  // recorrer data para cada vessel en categorías
+  var catData = $('#catVesselName').material_chip('data');
+  var catVesselName = "";
+  var catLen = catData.length;
+  
+  for (var i2 = 0; i2 < catLen; i2 = i2 + 1) {
+    catVesselName +=  catData[i2].tag + "\n";
+  
+  }
+  
+  Shiny.onInputChange("catA", checkCatA);
+  Shiny.onInputChange("catB", checkCatB);
+  Shiny.onInputChange("catC", checkCatC);
+  Shiny.onInputChange("catD", checkCatD);
+  Shiny.onInputChange("catVesselName", catVesselName);
+  
+  }
+  
+  //var selectVesselType = $('select[name=selectVesselType]').val();
+  //var selectVesselName = $('select[name=selectVesselName2]').val();
+  //Shiny.onInputChange("selectVesselType", selectVesselType);
+  //Shiny.onInputChange("selectVesselName", selectVesselName);
   
 }
+
+// Button menu events
+function showFormCat() {
   
-Shiny.onInputChange("catA", checkCatA);
-Shiny.onInputChange("catB", checkCatB);
-Shiny.onInputChange("catC", checkCatC);
-Shiny.onInputChange("catD", checkCatD);
-Shiny.onInputChange("catVesselName", catVesselName);
+  var selectVesselCountry = $('select[name=selectVesselCountry]').val();
   
+  if(selectVesselCountry == "ury" | selectVesselCountry == "argury") {
+    $('#formCatUry').attr('class', 'show');
+  } else {
+    $('#formCatUry').attr('class', 'hide');
+  }
+  
+  if(selectVesselCountry == "arg" | selectVesselCountry == "argury") {
+    $('#formCatArg').attr('class', 'show');
+  } else {
+    $('#formCatArg').attr('class', 'hide');
+  }
+}
+
+function showMapAllWidth() {
+
+  $('#mainPanel').removeClass("");
+  $('#sidebarPanel').removeClass("");
+  $('#mainPanel').addClass("col s12 m12 l12");
+}
+
+function showMapOriginWidth() {
+
+  $('#mainPanel').removeClass("");
+  $('#sidebarPanel').removeClass("");
+  $('#sidebarPanel').addClass("col s12 m4 l3");
+  $('#mainPanel').addClass("col s12 m8 l9");
+}
+
+function showInput() {
+
+  var inputVisible = $('#input').is(":visible");
+
+  // hide and show
+  if (inputVisible) {
+    $('#input').hide();
+    $('#mainPanel').attr("class", "col s12 m12 l12");
+    $('#sidebarPanel').attr("class", "col s0 m0 l0 z-depth-0");
+  } else {
+    $('#input').show();
+    $('#mainPanel').attr("class", "col s12 m8 l9");
+    $('#sidebarPanel').attr("class", "col s12 m4 l3 z-depth-0");
+  }
+
+  /*
+    if (!settingsVisible && !inputVisible) {
+      showMapAllWidth();
+    } else {
+      showMapOriginWidth();
+    }
+  */
+
 }
