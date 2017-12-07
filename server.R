@@ -1,6 +1,6 @@
 # Shiny Server -------------------------------------------
 
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   
   # Get client inputs ------------------------------------ 
   
@@ -56,7 +56,6 @@ shinyServer(function(input, output) {
       }
     } else {
       vesselNameQuery <- as.character(catVesselNameCli)
-      print(vesselNameQuery)
     }
     
     # Query vessel speed Min / Max
@@ -72,8 +71,6 @@ shinyServer(function(input, output) {
     else {
       vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli) * 10
     }
-    
-    print(vesselNameQuery)
     
     df <- data.frame('thresholdPoints' = thresholdQuery,
                      'dateFrom' = dateFromQuery,
@@ -116,12 +113,16 @@ shinyServer(function(input, output) {
     message("**** Building Client Query ****")
     
     # Create a Progress object
-    progress <- shiny::Progress$new(min = 0, max = 4)
+    progress <- shiny::Progress$new(min = 0, max = 6)
+    
+    # Send show modal to client
+    modal <- "open"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
     # Close it on exit
     on.exit(progress$close())
     
-    progress$set(message = "Tomando datos del cliente...", value = 0)
+    progress$set(message = "Recibiendo consulta", value = 0)
     
     message("")
     message("************************************")
@@ -153,7 +154,7 @@ shinyServer(function(input, output) {
     # Count returned points in query
     message("*** Get positions count from query ***")
     message("Connect to PostgreSQL")
-    progress$set(message = "Contando elementos...", value = 1)
+    progress$set(message = "Contando registros", value = 1)
     conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
     
     # Build query string
@@ -184,8 +185,9 @@ shinyServer(function(input, output) {
     
     if (getquery.positions.counts$count > thresholdQuery) {
       
+      progress$set(message = paste0(getquery.positions.counts$count, " registros en total"), value = 2)
+      Sys.sleep(time = 1)
       message("    *** Positions > thresholdQuery: Get positions ***")
-      progress$set(message = "Obteniendo datos...", value = 2)
       
       sql.positions <- paste0("SELECT posiciones.wkb_geometry,
                                barcos.name,
@@ -213,13 +215,14 @@ shinyServer(function(input, output) {
       query.positions.expr <- parse(text = query.positions.expr)
       
       # Evaluate expression
+      progress$set(message = "Obteniendo muestra aleatoria", value = 3)
+      Sys.sleep(time = 1)
       getquery.positions <- dbGetQuery(conn, eval(query.positions.expr))
       
     }
     else {
       
       message("   *** Positions < thresholdQuery: Get positions ***")
-      progress$set(message = "Obteniendo datos...", value = 2)
       sql.positions <- paste0("SELECT posiciones.wkb_geometry,
                                barcos.name,
                               posiciones.mmsi,
@@ -244,18 +247,19 @@ shinyServer(function(input, output) {
       query.positions.expr <- parse(text = query.positions.expr)
       
       # Evaluate expression
+      progress$set(message = paste0("Obteniendo ", getquery.positions.counts$count, " registros en total"), value = 4)
       getquery.positions <- dbGetQuery(conn, eval(query.positions.expr))
-      
     }
     
-    progress$set(message = "Desconectando de la BD...", value = 3)
+    progress$set(message = "Desconectando de la Base de Datos", value = 5)
     message("Disconnect from PostgreSQL")
     dbDisconnect(conn)  # Disconnect
     
     # Make points df
     if (nrow(getquery.positions) > 0) {
       
-      message("Creating points")
+      progress$set(message = "Construyendo mapa", value = 6)
+      message("> Creating heatmap <")
       points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
                       getquery.positions[,-1])
     } 
@@ -264,15 +268,19 @@ shinyServer(function(input, output) {
     }
     
     #positionsQry.df <<- points
-    progress$set(message = "Terminado!", value = 4)
+    progress$set(message = "Terminado!", value = 5)
     message("Finished")
+    
+    # Send hide modal to client
+    modal <- "close"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
     # Return
     return(points)
     
   }
   
-  # Mapa ------------------------------------------------- 
+  # Map -------------------------------------------------- 
   
   output$divHtml <- renderUI({
     
