@@ -61,18 +61,18 @@
   <!-- Navigation bar -->
   <div class="navbar-fixed">
     <nav class="blue-grey darken-3">
-      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="tooltipped brand-logo" data-position="top" data-delay="1000" data-tooltip="Ir a página web de DINARA" target="_blank">
+      <a href="http://www.mgap.gub.uy/unidad-ejecutora/direccion-nacional-de-recursos-acuaticos/" class="tooltipped brand-logo" data-position="right" data-delay="1000" data-tooltip="Ir a página web de DINARA" target="_blank">
         <img src="img/logoDINARA.png" alt="Logo Dinara" width="100%" class="">
       </a>
       <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a href="index.html"><i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
+        <li class="active"><a href="index.html"><i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
         <li><a href="table.html"><i class="fa fa-table fa-fw" aria-hidden="true"></i>&nbsp; Tabla</a></li>
         <li><a href="plots.html"><i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>&nbsp; Plots</a></li>
         <li><a href="about.html"><i class="fa fa-question fa-fw" aria-hidden="true"></i>&nbsp; Ayuda</a></li>
       </ul>
       <ul class="side-nav" id="mobile">
-        <li><a href="index.html"><i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
+        <li class="active"><a href="index.html"><i class="fa fa-location-arrow fa-fw" aria-hidden="true"></i>&nbsp; Mapa</a></li>
         <li><a href="table.html"><i class="fa fa-table fa-fw" aria-hidden="true"></i>&nbsp; Tabla</a></li>
         <li><a href="plots.html"><i class="fa fa-line-chart fa-fw" aria-hidden="true"></i>&nbsp; Plots</a></li>
         <li><a href="about.html"><i class="fa fa-question fa-fw" aria-hidden="true"></i>&nbsp; Ayuda</a></li>
@@ -89,7 +89,7 @@
         <div id="input">
           <ul class="collapsible z-depth-0" data-collapsible="accordion">
             <li>
-              <div class="tooltipped collapsible-header active" data-position="top" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
+              <div class="tooltipped collapsible-header active" data-position="right" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
               <div class="collapsible-body" style="display: block;"><span>
                 <div class="row">
                   <div class="col s12">
@@ -122,7 +122,7 @@
     </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por fechas"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; Fechas</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por fechas"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; Fechas</div>
       <div class="collapsible-body">
         <span>
                   <div class="row">
@@ -139,7 +139,7 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Buscar barco"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Buscar barco"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
       <div class="collapsible-body"><span>
 
                    <div class="row">
@@ -166,14 +166,14 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar flota de pesca por país o categoría"><i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; Flota de Pesca</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar flota de pesca por país o categoría"><i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; Flota de Pesca</div>
       <div class="collapsible-body">
         <span>
                   <div class="row">
                     <div class="col s12">
                       <form>
                         <div id="selectVesselCountry2" class="input-field col s12">
-                          <select class="icons" name="selectVesselCountry" disabled>
+                          <select class="icons" name="selectVesselCountry">
                             <!-- <option value="" disabled selected></option> -->
                             <option value="arg" data-icon="img/flags-svg/ar.svg" class="left circle">Argentina</option>
                             <option value="ury" data-icon="img/flags-svg/uy.svg" class="left circle" selected>Uruguay</option>
@@ -185,42 +185,107 @@
                     </div>
                   </div>
                 </span>
-        <span>
+        <span id="formCatUry">
                   <div class="row">
                     <div class="col s12">
+                      <label for="">Categorías de Uruguay:</label>
                       <form>
-                        <label for="">Categoría</label>
+                        <div class="row">
+                          <div class="col s6">
                         <p>
                           <input type="checkbox" class="filled-in" id="catA"/>
                           <label for="catA">Categoría A</label>
                         </p>
+                        </div>
+                        <div class="col s6">
                         <p>
                           <input type="checkbox" class="filled-in" id="catB"/>
                           <label for="catB">Categoría B</label>
                         </p>
+                        </div>
+                        </div>
+                         <div class="row">
+                           <div class="col s6">
                         <p>
                           <input type="checkbox" class="filled-in" id="catC"/>
                           <label for="catC">Categoría C</label>
                         </p>
+                        </div>
+                        <div class="col s6">
                         <p>
                           <input type="checkbox" class="filled-in" id="catD" disabled="disabled"/>
                           <label for="catD">Categoría D</label>
                         </p>
-                        </form>
                     </div>
                     </div>
-                    <div class="row">
+                    </form>
+                    </div>
+                    </div>
+                </span>
+        <span class="hide" id="formCatArg">
+                  <div class="row">
+                    <div class="col s12">
+                      <label for="">Categorías de Argentina:</label>
+                      <form>
+                        <div class="row">
+                           <div class="col s6">
+                        <p>
+                          <input type="checkbox" class="filled-in" id="altura" disabled="disabled"/>
+                          <label for="altura">Altura</label>
+                        </p>
+                        </div>
+                        <div class="col s6">
+                          <p>
+                          <input type="checkbox" class="filled-in" id="factoria" disabled="disabled"/>
+                          <label for="factoria">Factoría</label>
+                        </p>
+                    </div>
+                    </div>
+                        <div class="row">
+                          <div class="col s6">
+                        <p>
+                          <input type="checkbox" class="filled-in" id="costeros" disabled="disabled"/>
+                          <label for="costeros">Costeros</label>
+                        </p>
+                        </div>
+                        <div class="col s6">
+                          <p>
+                          <input type="checkbox" class="filled-in" id="congelador" disabled="disabled"/>
+                          <label for="congelador">Congelador</label>
+                        </p>
+                        </div>
+                        </div>
+                        <div class="row">
+                          <div class="col s6">
+                        <p>
+                          <input type="checkbox" class="filled-in" id="radaoria" disabled="disabled"/>
+                          <label for="radaoria">Rada o ría</label>
+                        </p>
+                        </div>
+                        <div class="col s6">
+                          <p>
+                          <input type="checkbox" class="filled-in" id="fresquero" disabled="disabled"/>
+                          <label for="fresquero">Fresquero</label>
+                        </p>
+                        </div>
+                        </div>
+                    </form>
+                    </div>
+                    </div>
+                </span>
+        <span>
+                  <div class="row">
                     <div class="col s12">
                       <div id="" class="input-field col s12">
                         <div id="catVesselName" type="text" class="chips chips-autocomplete"></div>
                       </div>
                     </div>
                   </div>
-
                 </span>
+      </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por posición en zonas predeterminadas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por posición en zonas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
       <div class="collapsible-body"><span>
                   <div class="row">
                     <div class="col s12">
@@ -247,7 +312,7 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Consultar por actividad del barco"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por actividad"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
       <div class="collapsible-body">
         <span>
                   <div class="row">
@@ -264,7 +329,7 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Agregar capas espaciales al mapa"><i class="fa fa-map fa-fw" aria-hidden="true"></i>&nbsp; Capas</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Agregar capas espaciales al mapa"><i class="fa fa-map fa-fw" aria-hidden="true"></i>&nbsp; Capas</div>
       <div class="collapsible-body"><span>
                   <div class="row">
                     <div class="col s12">
@@ -287,7 +352,7 @@
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="top" data-delay="1000" data-tooltip="Opciones de visualización"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Opciones</div>
+      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Opciones de visualización"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Opciones</div>
       <div class="collapsible-body">
         <span>
           <div class="row">
@@ -344,22 +409,16 @@
       </div>
     </li>
     </ul>
-    </div>
+  </div>
   </div>
 
   <!-- Main Panel -->
-  <div id="mainPanel" class="col s12 m8 l9">
+  <div id="mainPanel" class="col s12 m8 l9" style="padding: 0;">
     <section>
-      <div class="row">
-        <div class="cols 12">
-          <div class="">
-            <div class="z-index-" id="map"></div>
-            <script src="js/makeLeafletMap.js"></script>
-            <div id="divHtml" class="shiny-html-output"></div>
-          </div>
-        </div>
-      </div>
-    </section>
+      <div class="z-index-" id="map" style="position: fixed;"></div>
+      <script src="js/makeLeafletMap.js"></script>
+      <div id="divHtml" class="shiny-html-output"></div>
+      </section>
   </div>
   </div>
   </div>
@@ -373,11 +432,16 @@
       <i class="material-icons">menu</i>
     </a>
     <ul>
-      <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Entrada de datos">input</i></a></li>
-      <li id="btnSettings"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Opciones de mapa">settings</i></a></li>
-      <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Actualizar">refresh</i></a></li>
+      <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Pantalla completa">zoom_out_map</i></a></li>
+       <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Mostrar">play_arrow</i></a></li>
     </ul>
   </div>
+  
+  <!-- Modal Structure -->
+  <div id="modal1" class="modal">
+    <div class="modal-content"></div>
+  </div>
+  
 </main>
 
 <!--
