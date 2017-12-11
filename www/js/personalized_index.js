@@ -5,8 +5,14 @@ function loadPage() {
   //****** Materialize Design ******//
 
   $('select').material_select();
-  //$('select').material_select('destroy');
   $(".button-collapse").sideNav();
+  // Collapsible sections in sidebar
+  $('.collapsible').collapsible();
+
+  //Tooltip
+  $('.tooltipped').tooltip({
+    delay: 50
+  });
 
   // datetime
   $('.datepicker').pickadate({
@@ -34,26 +40,25 @@ function loadPage() {
     closeOnClear: true
   });
 
-  $('#dateFrom').click(function(event) {
+  $('#dateFromDatePicker').click(function(event) {
     event.stopPropagation();
-    $("#dateFrom").first().pickadate("picker").open();
+    $("#dateFromDatePicker").first().pickadate("picker").open();
   });
 
-  $('#dateUntil').click(function(event) {
+  $('#dateUntilDatePicker').click(function(event) {
     event.stopPropagation();
-    $("#dateUntil").first().pickadate("picker").open();
+    $("#dateUntilDatePicker").first().pickadate("picker").open();
   });
 
   // noUiSlider - index.html
-  
-  var sliderVesselSpeed = document.getElementById('vesselSpeed');
+  var sliderVesselSpeed = document.getElementById('vesselSpeedSlider');
   noUiSlider.create(sliderVesselSpeed, {
-    start: [0, 20],
+    start: [0, 12],
     connect: true,
     step: 0.1,
     range: {
       'min': 0,
-      'max': 20
+      'max': 30
     },
     format: wNumb({
       decimals: 0
@@ -61,24 +66,7 @@ function loadPage() {
 
   });
   
-  var sliderThresholdPoints = document.getElementById('thresholdPoints');
-  noUiSlider.create(sliderThresholdPoints, {
-    start: 1,
-    padding: 0.1,
-    connect: false,
-    step: 0.2,
-    range: {
-      'min': 0,
-      'max': 20
-    },
-    format: wNumb({
-      decimals: 0,
-      //thousand: ',', 
-      suffix: 'M'
-    })
-  });
-
-  var sliderOpacity = document.getElementById('opacity');
+  var sliderOpacity = document.getElementById('opacitySlider');
   noUiSlider.create(sliderOpacity, {
     start: [0.8],
     connect: false,
@@ -92,287 +80,357 @@ function loadPage() {
     })
   });
 
-  var sliderRadius = document.getElementById('radius');
+  var sliderRadius = document.getElementById('radiusSlider');
   noUiSlider.create(sliderRadius, {
     start: [1],
     connect: false,
     step: 0.1,
     range: {
       'min': 1,
-      'max': 10
+      'max': 20
     },
     format: wNumb({
       decimals: 0
     })
   });
 
-  var sliderBlur = document.getElementById('blur');
+  var sliderBlur = document.getElementById('blurSlider');
   noUiSlider.create(sliderBlur, {
     start: [1],
     connect: false,
-    step: 0.1,
+    step: 0.25,
     range: {
       'min': 1,
-      'max': 5
+      'max': 15
     },
     format: wNumb({
       decimals: 0
     })
   });
-  
+
   // Load vessels data
   var vesselsData = "";
-  
-  function loadJSON() {
-    vesselsData = JSON.parse(vessels);
-    console.log("Vessels data loaded.");
-  }
+  vesselsData = JSON.parse(vessels);
 
-  loadJSON();
-  
   // Search vessel by name
-  $('#searchVesselName').material_chip({
-    placeholder: '',
+  $('#searchVesselNameInput').material_chip({
+    data: [{tag: 'ALDEBARAN I'}],
     autocompleteOptions: {
       data: vesselsData,
       limit: 20,
       minLength: 1
     }
   });
-  
-  $('.chips').on('chip.add', function(e, chip){});
-  $('.chips').on('chip.delete', function(e, chip){});
-  $('.chips').on('chip.select', function(e, chip){});
-  
-  // Categories
-  $('#catA').click(changeSearchVesselsNames);
-  $('#catB').click(changeSearchVesselsNames);
-  $('#catC').click(changeSearchVesselsNames);
-  //$('#catD').click(changeSearchVesselsNames);
-  
-  $('select[name=selectVesselCountry]').change(showFormCat);
-        
-  // Collapsible sections in sidebar
-  $('.collapsible').collapsible();
 
-  //Tooltip
-  $('.tooltipped').tooltip({delay: 50});
+  //$('.chips').on('chip.add', function(e, chip) {});
+  //$('.chips').on('chip.delete', function(e, chip) {});
+  //$('.chips').on('chip.select', function(e, chip) {});
+
+  // Categories
+  $('#checkCatA').click(changeVesselsNamesByCat);
+  $('#checkCatB').click(changeVesselsNamesByCat);
+  $('#checkCatC').click(changeVesselsNamesByCat);
+  //$('#checkCatD').click(changeVesselsNamesByCat);
+
+  $('select[name=selectVesselCountry]').change(showFormCat);
 
   // Button menu events
-  $('#btnInput').click(showInput);
+  $('#btnInput').click(showMapFullScreen);
 
   // Eventos disparados por Actualizar
-  $('#btnReplay').click(settings);
-  $('#btnReplay').click(input);
-  
+  $('#btnReplay').click(sendDataToServer);
+
   // Modal
   $('.modal').modal({
-      dismissible: false, // Modal can be dismissed by clicking outside of the modal
-      opacity: 0.75, // Opacity of modal background
-      inDuration: 300, // Transition in duration
-      outDuration: 200, // Transition out duration
-      startingTop: '4%', // Starting top style attribute
-      endingTop: '10%', // Ending top style attribute
-      ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
-        //alert("Ready");
-        console.log(modal, trigger);
-      },
-      complete: function() { 
-        //alert('Closed'); 
-        } // Callback for Modal close
-    }
-  );
-  
-  Shiny.addCustomMessageHandler("myCallbackHandler", 
-  function(modal) {
-    $('#modal1').modal(modal);
-    //alert(modal);
+    dismissible: false, // Modal can be dismissed by clicking outside of the modal
+    opacity: 0.6, // Opacity of modal background
+    inDuration: 300, // Transition in duration
+    outDuration: 200, // Transition out duration
+    startingTop: '4%', // Starting top style attribute
+    endingTop: '10%', // Ending top style attribute
+    ready: function(modal, trigger) { // Callback for Modal open. Modal and trigger parameters available.
+      //console.log(modal, trigger);
+    },
+    complete: function() {} // Callback for Modal close
   });
+
+  Shiny.addCustomMessageHandler("myCallbackHandler",
+    function(modal) {
+      $('#modal1').modal(modal);
+    });
 }
 
 //*****************//
 
+// Global variables
+var opacity = $('#opacitySlider span').html();
+var radius = $('#radiusSlider span').html();
+var color = $('#colorSelect select').val();
+var blur = $('#blurSlider span').html();
+var thresholdPoints = $('#thresholdPointsInput').val();
+var dateFrom = $('input[name=dateFrom_submit]').attr('value');
+var dateUntil = $('input[name=_submit]').attr('value');
+var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
+var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+var checkCatA = $('#checkCatA').prop('checked');
+var checkCatB = $('#checkCatB').prop('checked');
+var checkCatC = $('#checkCatC').prop('checked');
+var checkCatD = $('#checkCatD').prop('checked');
+var searchVesselName = "ALDEBARAN I";
+var catVesselName = "";
+
 // Action functions
-function changeSearchVesselsNames() {
+function changeVesselsNamesByCat() {
 
-// Fishing vessels categories
-var checkCatA = $('#catA').prop('checked');
-var checkCatB = $('#catB').prop('checked');
-var checkCatC = $('#catC').prop('checked');
-var checkCatD = $('#catD').prop('checked');
+  checkCatA = $('#checkCatA').prop('checked');
+  checkCatB = $('#checkCatB').prop('checked');
+  checkCatC = $('#checkCatC').prop('checked');
+  checkCatD = $('#checkCatD').prop('checked');
 
-var vesselsCat = "{";
-var arrayOfCat = [];
+  var vesselsCat = "{";
+  var arrayOfCat = [];
 
-if(checkCatA) {
+  if (checkCatA) {
 
-// Load catA vessels data
-var vesselsCatA = JSON.parse(catA);
+    // Load catA vessels data
+    var vesselsCatA = JSON.parse(catA);
 
-for (var keyA in vesselsCatA) {
-  var valA = vesselsCatA[keyA];
-  var objA = {};
-  objA.tag = keyA;
-  arrayOfCat.push(objA);
-  vesselsCat = vesselsCat +  '\"' + keyA + '\":\"' + valA + '\",';   
-}
+    for (var keyA in vesselsCatA) {
+      var valA = vesselsCatA[keyA];
+      var objA = {};
+      objA.tag = keyA;
+      arrayOfCat.push(objA);
+      vesselsCat = vesselsCat + '\"' + keyA + '\":\"' + valA + '\",';
 
-} 
-if(checkCatB) {
+    }
 
-// Load catA vessels data
-var vesselsCatB = JSON.parse(catB);
+  }
+  if (checkCatB) {
 
-for (var keyB in vesselsCatB) {
-  var valB = vesselsCatB[keyB];
-  var objB = {};
-  objB.tag = keyB;
-  arrayOfCat.push(objB);
-  vesselsCat = vesselsCat +  '\"' + keyB + '\":\"' + valB + '\",'; 
+    // Load catA vessels data
+    var vesselsCatB = JSON.parse(catB);
 
-}
+    for (var keyB in vesselsCatB) {
+      var valB = vesselsCatB[keyB];
+      var objB = {};
+      objB.tag = keyB;
+      arrayOfCat.push(objB);
+      vesselsCat = vesselsCat + '\"' + keyB + '\":\"' + valB + '\",';
 
-}
-if(checkCatC) {
+    }
 
-// Load catA vessels data
-var vesselsCatC = JSON.parse(catC);
+  }
+  if (checkCatC) {
 
-for (var keyC in vesselsCatC) {
-  var valC = vesselsCatC[keyC];
-  var objC = {};
-  objC.tag = keyC;
-  arrayOfCat.push(objC);
-  vesselsCat = vesselsCat +  '\"' + keyC + '\":\"' + valC + '\",'; 
+    // Load catA vessels data
+    var vesselsCatC = JSON.parse(catC);
 
-}
+    for (var keyC in vesselsCatC) {
+      var valC = vesselsCatC[keyC];
+      var objC = {};
+      objC.tag = keyC;
+      arrayOfCat.push(objC);
+      vesselsCat = vesselsCat + '\"' + keyC + '\":\"' + valC + '\",';
 
-}
+    }
 
-vesselsCat = vesselsCat + '\" \":\ null\}';
-objVesselsCat = JSON.parse(vesselsCat);
+  }
 
-// Clear chips
-$('#catVesselName').material_chip({});
+  vesselsCat = vesselsCat + '\" \":\ null\}';
+  objVesselsCat = JSON.parse(vesselsCat);
 
-// Search vessel by name
-$('#catVesselName').material_chip({
-  data: arrayOfCat,
-  autocompleteOptions: {
-    data: objVesselsCat,
-    limit: 20,
-    minLength: 1
+  // Clear chips
+  $('#catVesselNameInput').material_chip({});
+  $('#searchVesselNameInput').material_chip({});
+
+  // Search vessel by name
+  $('#catVesselNameInput').material_chip({
+    data: arrayOfCat,
+    autocompleteOptions: {
+      data: objVesselsCat,
+      limit: 20,
+      minLength: 1
     }
   });
 
 }
 
+// Check for settings in heatmap
 function settings() {
-  
-  var opacity = $('#opacity span').html();
-  var radius = $('#radius span').html();
-  var color = $('#color select').val();
-  var blur = $('#blur span').html();
-  
-  Shiny.onInputChange("opacity", opacity);
-  Shiny.onInputChange("radius", radius);
-  Shiny.onInputChange("color", color);
-  Shiny.onInputChange("blur", blur);
+
+  // Return variable
+  var differentSettings = false;
+
+  // Get client data
+  var opacityAux = $('#opacitySlider span').html();
+  var radiusAux = $('#radiusSlider span').html();
+  var colorAux = $('#colorSelect select').val();
+  var blurAux = $('#blurSlider span').html();
+
+  // Check if client data is the same as previous state
+  if (opacity != opacityAux) {
+    differentSettings = true;
+    opacity = opacityAux;
+  }
+
+  if (radius != radiusAux) {
+    differentSettings = true;
+    radius = radiusAux;
+  }
+
+  if (color != colorAux) {
+    differentSettings = true;
+    color = colorAux;
+  }
+
+  if (blur != blurAux) {
+    differentSettings = true;
+    blur = blurAux;
+  }
+
+  return differentSettings;
+
 }
 
-function input() {
-  
-  var thresholdPoints = $('#thresholdPoints span').html();
-  var aisCheck = $('#aisData').prop('checked');
-  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
-  var dateUntil = $('input[name=_submit]').attr('value');
-  var vesselSpeedMin = $('#vesselSpeed .noUi-handle-lower .range-label span').html();
-  var vesselSpeedMax = $('#vesselSpeed .noUi-handle-upper .range-label span').html();
- 
-  // recorrer data para cada vessel
-  var data = $('#searchVesselName').material_chip('data');
-  var searchVesselName = "";
-  var len = data.length;
-  
-  for (var i = 0; i < len; i = i + 1) {
-    searchVesselName +=  data[i].tag + "\n";
+// Check for query parameters
+function query() {
+
+  // Return variable
+  var differentSettings = false;
+
+  // Get data from client
+  var thresholdPointsAux = $('#thresholdPointsInput').val();
+  var dateFromAux = $('input[name=dateFrom_submit]').attr('value');
+  var dateUntilAux = $('input[name=_submit]').attr('value');
+  var vesselSpeedMinAux = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
+  var vesselSpeedMaxAux = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+
+  // Check if client data is the same as previous state
+  if (thresholdPoints != thresholdPointsAux) {
+    differentSettings = true;
+    thresholdPoints = thresholdPointsAux;
   }
-  
-  Shiny.onInputChange("thresholdPoints", thresholdPoints);
-  Shiny.onInputChange("aisData", aisCheck);
-  Shiny.onInputChange("dateFrom", dateFrom);
-  Shiny.onInputChange("dateUntil", dateUntil);
-  Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
-  Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
-  Shiny.onInputChange("searchVesselName", searchVesselName);
-  
+
+  if (dateFrom != dateFromAux) {
+    differentSettings = true;
+    dateFrom = dateFromAux;
+  }
+
+  if (dateUntil != dateUntilAux) {
+    differentSettings = true;
+    dateUntil = dateUntilAux;
+  }
+
+  if (vesselSpeedMin != vesselSpeedMinAux) {
+    differentSettings = true;
+    vesselSpeedMin = vesselSpeedMinAux;
+  }
+
+  if (vesselSpeedMax != vesselSpeedMaxAux) {
+    differentSettings = true;
+    vesselSpeedMax = vesselSpeedMaxAux;
+  }
+
+  // Get search data vessels
+  var dataAux = $('#searchVesselNameInput').material_chip('data');
+  var lenAux = dataAux.length;
+  var searchVesselNameAux = "";
+
+  for (var iAux = 0; iAux < lenAux; iAux = iAux + 1) {
+    searchVesselNameAux += dataAux[iAux].tag + "\n";
+  }
+
+  if (searchVesselName != searchVesselNameAux) {
+    differentSettings = true;
+    searchVesselName = searchVesselNameAux;
+  }
+
   // Fishing vessels categories
-  var checkCatA = $('#catA').prop('checked');
-  var checkCatB = $('#catB').prop('checked');
-  var checkCatC = $('#catC').prop('checked');
-  var checkCatD = $('#catD').prop('checked');
-  
-  if(checkCatA | checkCatB | checkCatC | checkCatD) {
-   
-  // recorrer data para cada vessel en categorías
-  var catData = $('#catVesselName').material_chip('data');
-  var catVesselName = "";
-  var catLen = catData.length;
-  
-  for (var i2 = 0; i2 < catLen; i2 = i2 + 1) {
-    catVesselName +=  catData[i2].tag + "\n";
-  
+  if (checkCatA | checkCatB | checkCatC | checkCatD) {
+
+    // Get data from categories
+    var catDataAux = $('#catVesselNameInput').material_chip('data');
+    var catLenAux = catDataAux.length;
+    var catVesselNameAux = "";
+
+    for (var jAux = 0; jAux < catLenAux; jAux = jAux + 1) {
+      catVesselNameAux += catDataAux[jAux].tag + "\n";
+    }
+
+    if (catVesselName != catVesselNameAux) {
+      differentSettings = true;
+      catVesselName = catVesselNameAux;
+    }
   }
-  
-  Shiny.onInputChange("catA", checkCatA);
-  Shiny.onInputChange("catB", checkCatB);
-  Shiny.onInputChange("catC", checkCatC);
-  Shiny.onInputChange("catD", checkCatD);
-  Shiny.onInputChange("catVesselName", catVesselName);
-  
+
+  return differentSettings;
+}
+
+// Send data to server if data is different
+function sendDataToServer() {
+
+  var differentSettings = settings();
+  var differentQuery = query();
+
+  // Logs
+  console.log("Different settings: " + differentSettings);
+  console.log("Different query: " + differentQuery);
+  console.log("Search vessels: \n" + searchVesselName);
+  console.log("Vessels from categories: \n" + catVesselName);
+
+  if (differentSettings) {
+
+    // Send config data to server
+    Shiny.onInputChange("opacity", opacity);
+    Shiny.onInputChange("radius", radius);
+    Shiny.onInputChange("color", color);
+    Shiny.onInputChange("blur", blur);
   }
-  
+
+  if (differentQuery) {
+
+    // Send query data to server
+    Shiny.onInputChange("thresholdPoints", thresholdPoints);
+    Shiny.onInputChange("dateFrom", dateFrom);
+    Shiny.onInputChange("dateUntil", dateUntil);
+    Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
+    Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
+    Shiny.onInputChange("catA", checkCatA);
+    Shiny.onInputChange("catB", checkCatB);
+    Shiny.onInputChange("catC", checkCatC);
+    Shiny.onInputChange("catD", checkCatD);
+    Shiny.onInputChange("searchVesselName", searchVesselName);
+    Shiny.onInputChange("catVesselName", catVesselName);
+  }
+
+  //var aisCheck = $('#aisDataCheck').prop('checked');
+  //Shiny.onInputChange("aisData", aisCheck);
   //var selectVesselType = $('select[name=selectVesselType]').val();
   //var selectVesselName = $('select[name=selectVesselName2]').val();
   //Shiny.onInputChange("selectVesselType", selectVesselType);
   //Shiny.onInputChange("selectVesselName", selectVesselName);
-  
+
 }
 
-// Button menu events
+// Show and Hide UI events
 function showFormCat() {
-  
+
   var selectVesselCountry = $('select[name=selectVesselCountry]').val();
-  
-  if(selectVesselCountry == "ury" | selectVesselCountry == "argury") {
+
+  if (selectVesselCountry == "ury" | selectVesselCountry == "argury") {
     $('#formCatUry').attr('class', 'show');
   } else {
     $('#formCatUry').attr('class', 'hide');
   }
-  
-  if(selectVesselCountry == "arg" | selectVesselCountry == "argury") {
+
+  if (selectVesselCountry == "arg" | selectVesselCountry == "argury") {
     $('#formCatArg').attr('class', 'show');
   } else {
     $('#formCatArg').attr('class', 'hide');
   }
 }
 
-function showMapAllWidth() {
-
-  $('#mainPanel').removeClass("");
-  $('#sidebarPanel').removeClass("");
-  $('#mainPanel').addClass("col s12 m12 l12");
-}
-
-function showMapOriginWidth() {
-
-  $('#mainPanel').removeClass("");
-  $('#sidebarPanel').removeClass("");
-  $('#sidebarPanel').addClass("col s12 m4 l3");
-  $('#mainPanel').addClass("col s12 m8 l9");
-}
-
-function showInput() {
+function showMapFullScreen() {
 
   var inputVisible = $('#input').is(":visible");
 
@@ -386,13 +444,5 @@ function showInput() {
     $('#mainPanel').attr("class", "col s12 m8 l9");
     $('#sidebarPanel').attr("class", "col s12 m4 l3 z-depth-0");
   }
-
-  /*
-    if (!settingsVisible && !inputVisible) {
-      showMapAllWidth();
-    } else {
-      showMapOriginWidth();
-    }
-  */
 
 }
