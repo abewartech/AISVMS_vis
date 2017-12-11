@@ -31,7 +31,7 @@
   <!--Import Google Icon Font-->
   <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
   <!--Import FontAwesome-->
-  <link rel="stylesheet" href="font/font-awesome-4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="fonts/font-awesome-4.7.0/css/font-awesome.min.css">
   <!--Import materialize.css-->
   <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
   <!-- Personalized style -->
@@ -89,21 +89,29 @@
         <div id="input">
           <ul class="collapsible z-depth-0" data-collapsible="accordion">
             <li>
-              <div class="tooltipped collapsible-header active" data-position="right" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
+              <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Base de datos a consultar"><i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; Base de Datos</div>
               <div class="collapsible-body" style="display: block;"><span>
                 <div class="row">
-                  <div class="col s12">
+                  <div class="col s6">
                     <div class="switch">
                       <label>
                         <img src="img/ais.png" alt="ais logo" width="34px">
-                        <input id="aisData" name="aisData" type="checkbox" checked>
+                        <input id="aisDataCheck" name="aisData" type="checkbox" checked>
                         <span class="lever">
                         </span>
-                <label for="aisData">AIS</label>
+                <label for="aisDataCheck">AIS</label>
                 </label>
               </div>
         </div>
+        <div class="col s6">
+              <form>
+                <!--<div id="thresholdPointsSlider"></div>-->
+                <input min="0" max="20000000" step="25000" value="200000" id="thresholdPointsInput" type="number">
+                <label for="thresholdPointsSlider">Límite de puntos</label>
+              </form>
+            </div>
       </div>
+          
       <!--
       <div class="row">
         <div class="col s12">
@@ -127,31 +135,31 @@
         <span>
                   <div class="row">
                     <div class="col s6">
-                      <label for="dateFrom">Desde</label>
-                      <input id="dateFrom" name="dateFrom" type="date" data-value="2012-05-8"  class="datepicker">
+                      <label for="dateFromDatePicker">Desde</label>
+                      <input id="dateFromDatePicker" name="dateFrom" type="date" data-value="2012-05-8"  class="datepicker">
                     </div>
                     <div class="col s6">
-                      <label for="dateUntil">Hasta</label>
-                      <input id="dateUntil" type="date" data-value="2014-05-17" class="datepicker">
+                      <label for="dateUntilDatePicker">Hasta</label>
+                      <input id="dateUntilDatePicker" type="date" data-value="2014-05-17" class="datepicker">
                     </div>
                   </div>
                 </span>
       </div>
     </li>
     <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Buscar barco"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
+      <div class="tooltipped collapsible-header active" data-position="right" data-delay="1000" data-tooltip="Buscar barco por nombre"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
       <div class="collapsible-body"><span>
 
                    <div class="row">
                     <div class="col s12">
                       <div id="" class="input-field col s12">
-                        <div id="searchVesselName" type="text" class="chips chips-autocomplete"></div>
-                        <label for="searchVesselName">Nombre del barco</label>
+                        <div id="searchVesselNameInput" type="text" class="chips chips-autocomplete"></div>
+                        <label for="searchVesselNameInput">Nombre del barco</label>
                       </div>
                     </div>
                   </div>
 
-                  <div class="row">
+                  <!--<div class="row">
                     <div class="col s12">
                       <div id="selectVesselType2" class="input-field col s12">
                         <select multiple name="selectVesselType" disabled>
@@ -161,7 +169,8 @@
                         <label for="selectVesselType2">Tipo de barco</label>
                       </div>
                     </div>
-                  </div>
+                  </div>-->
+                  
                 </span>
       </div>
     </li>
@@ -193,28 +202,28 @@
                         <div class="row">
                           <div class="col s6">
                         <p>
-                          <input type="checkbox" class="filled-in" id="catA"/>
-                          <label for="catA">Categoría A</label>
+                          <input type="checkbox" class="filled-in" id="checkCatA"/>
+                          <label for="checkCatA">Categoría A</label>
                         </p>
                         </div>
                         <div class="col s6">
                         <p>
-                          <input type="checkbox" class="filled-in" id="catB"/>
-                          <label for="catB">Categoría B</label>
+                          <input type="checkbox" class="filled-in" id="checkCatB"/>
+                          <label for="checkCatB">Categoría B</label>
                         </p>
                         </div>
                         </div>
                          <div class="row">
                            <div class="col s6">
                         <p>
-                          <input type="checkbox" class="filled-in" id="catC"/>
-                          <label for="catC">Categoría C</label>
+                          <input type="checkbox" class="filled-in" id="checkCatC"/>
+                          <label for="checkCatC">Categoría C</label>
                         </p>
                         </div>
                         <div class="col s6">
                         <p>
-                          <input type="checkbox" class="filled-in" id="catD" disabled="disabled"/>
-                          <label for="catD">Categoría D</label>
+                          <input type="checkbox" class="filled-in" id="checkCatD" disabled="disabled"/>
+                          <label for="checkCatD">Categoría D</label>
                         </p>
                     </div>
                     </div>
@@ -277,7 +286,7 @@
                   <div class="row">
                     <div class="col s12">
                       <div id="" class="input-field col s12">
-                        <div id="catVesselName" type="text" class="chips chips-autocomplete"></div>
+                        <div id="catVesselNameInput" type="text" class="chips chips-autocomplete"></div>
                       </div>
                     </div>
                   </div>
@@ -318,8 +327,8 @@
                   <div class="row">
                     <div class="col s12">
                       <form>
-                        <label for="vesselSpeed">Velocidad (kn)</label>
-                        <div id="vesselSpeed"></div>
+                        <label for="vesselSpeedSlider">Velocidad (kn)</label>
+                        <div id="vesselSpeedSlider"></div>
                       </form>
                     </div>
                     <div class="col s12">
@@ -358,8 +367,8 @@
           <div class="row">
             <div class="col s12">
               <form>
-                <label for="thresholdPoints">Umbral (millones)</label>
-                <div id="thresholdPoints"></div>
+                <label for="opacitySlider">Opacidad</label>
+                <div id="opacitySlider"></div>
               </form>
             </div>
           </div>
@@ -367,8 +376,8 @@
           <div class="row">
             <div class="col s12">
               <form>
-                <label for="opacity">Opacidad</label>
-                <div id="opacity"></div>
+                <label for="radiusSlider">Tamaño</label>
+                <div id="radiusSlider"></div>
               </form>
             </div>
           </div>
@@ -376,30 +385,22 @@
           <div class="row">
             <div class="col s12">
               <form>
-                <label for="radius">Tamaño</label>
-                <div id="radius"></div>
+                <label for="blurSlider">Esfumado</label>
+                <div id="blurSlider"></div>
               </form>
             </div>
           </div>
-
-          <div class="row">
-            <div class="col s12">
-              <form>
-                <label for="blur">Esfumado</label>
-                <div id="blur"></div>
-              </form>
-            </div>
-          </div>
+          
           <br />
           <div class="row">
             <div class="col s12">
-              <label for="color">Paleta de colores</label>
-              <div id="color" name="color" class="input-field">
+              <label for="colorSelect">Paleta de colores</label>
+              <div id="colorSelect" name="color" class="input-field">
                 <select>
                         <option value="" disabled selected>Elige paleta</option>
-                        <option value="" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
-                        <option value=", gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
-                        <option value=", gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
+                        <option value="gradient: {0.4:'blue',0.6:'cyan',0.7:'lime',0.8:'yellow',1:'red'}" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
+                        <option value="gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
+                        <option value="gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
                       </select>
               </div>
             </div>
