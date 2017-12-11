@@ -28,7 +28,7 @@ nav {
 
 #map {
   width: 100%;
-  height: 85vh;
+  height: 100vh;
   z-index: 2;
 }
 
@@ -134,4 +134,15 @@ nav .fa {
     padding: 5px;
     width: 400px;
     z-index: 99999;
+}
+
+.shiny-notification-close {
+    float: right;
+    font-weight: bold;
+    font-size: 0;
+    bottom: 9px;
+    position: relative;
+    padding-left: 4px;
+    color: #444;
+    cursor: default;
 }
