@@ -18,17 +18,46 @@ shinyServer(function(input, output, session) {
     catVesselNameCli <- catVesselNameCli[-length(catVesselNameCli)]
     vesselSpeedMinCli <- input$vesselSpeedMin
     vesselSpeedMaxCli <- input$vesselSpeedMax
-    catA <- input$catA
-    catB <- input$catB
-    catC <- input$catC
-    catD <- input$catD
+    catACli <- input$catA
+    catBCli <- input$catB
+    catCCli <- input$catC
+    catDCli <- input$catD
+    
+    # Query threshold number of points
+    if (is.null(catACli) || catACli == "") {
+      catA <- qryVal.df$catA
+    } 
+    else {
+      catA <- catACli
+    }
+    
+    if (is.null(catBCli) || catBCli == "") {
+      catB <- qryVal.df$catB
+    } 
+    else {
+      catB <- catBCli
+    }
+    
+    if (is.null(catCCli) || catCCli == "") {
+      catC <- qryVal.df$catC
+    } 
+    else {
+      catC <- catCCli
+    }
+    
+    if (is.null(catDCli) || catDCli == "") {
+      catD <- qryVal.df$catD
+    } 
+    else {
+      catD <- catDCli
+    }
     
     # Query threshold number of points
     if (is.null(thresholdPointsCli) || thresholdPointsCli == "") {
       thresholdQuery <- qryVal.df$thresholdPoints
     } 
     else {
-      thresholdQuery <- as.numeric(thresholdPointsCli) * 1000000
+      thresholdQuery <- as.numeric(thresholdPointsCli)
     }
     
     # Query datetime From / Until
@@ -48,7 +77,7 @@ shinyServer(function(input, output, session) {
     
     # Query vessel name
     if(!any(catA, catB, catC)) {
-      if (searchVesselNameCli == "" || is.null(searchVesselNameCli)) {
+      if (searchVesselNameCli == "" || is.null(searchVesselNameCli) || length(searchVesselNameCli) == 0) {
         vesselNameQuery <- qryVal.df$searchVesselName
       }
       else {
@@ -92,10 +121,39 @@ shinyServer(function(input, output, session) {
     message("*** Getting Client Config Parameters ***")
     
     # Map config options
-    opacityConf <- input$opacity
-    radiusConf <- input$radius
-    colorGradientConf <- input$color
-    blurConf <- input$blur
+    opacityConfCli <- input$opacity
+    radiusConfCli <- input$radius
+    colorGradientConfCli <- input$color
+    blurConfCli <- input$blur
+    
+    # Query 
+    if (is.null(opacityConfCli) || opacityConfCli == "") {
+      opacityConf <- config.df$opacity
+    } 
+    else {
+      opacityConf <- opacityConfCli
+    }
+    
+    if (is.null(radiusConfCli) || radiusConfCli == "") {
+      radiusConf <- config.df$radius
+    } 
+    else {
+      radiusConf <- radiusConfCli
+    }
+    
+    if (is.null(colorGradientConfCli) || colorGradientConfCli == "") {
+      colorGradientConf <- config.df$colorGradient
+    } 
+    else {
+      colorGradientConf <- colorGradientConfCli
+    }
+    
+    if (is.null(blurConfCli) || blurConfCli == "") {
+      blurConf <- config.df$blur
+    } 
+    else {
+      blurConf <- blurConfCli
+    }
     
     df <- data.frame('opacity' = opacityConf,
                      'radius' = radiusConf,
@@ -284,8 +342,6 @@ shinyServer(function(input, output, session) {
   
   output$divHtml <- renderUI({
     
-    input$btnReplay
-    
     # Default df
     render.df <- positionsQry.df
     renderConfig.df <- configCustom.df
@@ -333,7 +389,7 @@ shinyServer(function(input, output, session) {
       toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
                      positions, " posiciones ', 8000, 'rounded');", sep = "")
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
-                      numberOfVessels, stringBarco, "', 9500, 'rounded');", sep = "")
+                      numberOfVessels, " ", stringBarco, "', 9500, 'rounded');", sep = "")
       
       # Remove latest heat layer and show toasts
       mapa <- HTML(paste0("<script>",
@@ -351,25 +407,25 @@ shinyServer(function(input, output, session) {
       if (numberOfVessels <= 1) {stringBarco <- " barco "}
       
       toast <- paste("Materialize.toast('<i class=material-icons>location_on </i>", 
-                     positions, " posiciones ', 8000, 'rounded');", sep = "")
+                     positions, " posiciones ', 8000, 'rounded'); \n", sep = "")
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
-                      numberOfVessels, stringBarco, "', 9500, 'rounded');", sep = "")
+                      numberOfVessels, "  ", stringBarco, "', 9500, 'rounded'); \n", sep = "")
       
       j <- paste0("[", render.df$y, ",", render.df$x,"]", collapse = ",")
       j <- paste0("[", j, "]")
       
-      mapa <- HTML(paste("<script>", 
-                         sprintf("var buildingsCoords = %s;", j), 
-                         "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];});
-                         if(map.hasLayer(heat)) {map.removeLayer(heat);};
+      mapa <- HTML(paste0("<script> \n", 
+                         sprintf("var buildingsCoords = %s; \n", j), 
+                         "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];}); \n
+                         if(map.hasLayer(heat)) {map.removeLayer(heat);} \n
                          var heat = L.heatLayer(buildingsCoords, {minOpacity:", renderConfig.df$opacity, 
-                         ", radius:", renderConfig.df$radius, renderConfig.df$colorGradient, ", blur:", renderConfig.df$blur, 
-                         "}).addTo(map);", toast, toast2, "</script>"), sep = "")
+                         ", radius:", renderConfig.df$radius, ", ", renderConfig.df$colorGradient, ", blur:", renderConfig.df$blur, 
+                         "}).addTo(map); \n", toast, toast2, "</script>"), sep = "")
     }
     
-    # Add shp layers - REQUIERES FIXING
-    shp <- HTML(paste0("<script>", "var limitesURY = new L.Shapefile('data/shp/limites-URY.zip', {style:function(feature){return {color:'black',fillColor:'red',fillOpacity:.75}}}); console.log(limitesURY); limitesURY.addTo(map);", "</script>"))
-    
+    # Add shp layers - REQUIRES FIX
+    # shp <- HTML(paste0("<script>", "var limitesURY = new L.Shapefile('data/shp/limites-URY.zip', {style:function(feature){return {color:'black',fillColor:'red',fillOpacity:.75}}}); console.log(limitesURY); limitesURY.addTo(map);", "</script>"))
+  
     return(mapa)
     
   })
