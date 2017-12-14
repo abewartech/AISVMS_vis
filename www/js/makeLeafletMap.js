@@ -26,6 +26,10 @@ var Stamen_Toner = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner/{
 */
 
 
+var MapBoxHybridSatellite = L.tileLayer('http://{s}.tiles.mapbox.com/v3/guzman.lgoi91mh/{z}/{x}/{y}.png', {
+  attribution: '<a href=https://www.mapbox.com/about/maps/> &copy; Mapbox &copy; OpenStreetMap</a>'
+});
+
 var CartoDB_DarkMatter = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions">CartoDB</a>',
 	subdomains: 'abcd',
@@ -78,7 +82,7 @@ var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 var map = L.map('map', {
   center: [-35.259, -53.844],
   zoom: 7,
-  layers: [CartoDB_DarkMatter,Esri_WorldImagery,Esri_OceanBasemap,]
+  layers: [CartoDB_DarkMatter,Esri_WorldImagery,Esri_OceanBasemap,MapBoxHybridSatellite]
 });
 
 // Basemaps
@@ -89,7 +93,8 @@ var baseMaps = {
   //"HERE Normal": HERE_normalDay,
   "ESRI World Imagery": Esri_WorldImagery, 
   "CartoDB DarkMatter": CartoDB_DarkMatter,
-  "ESRI Ocean Basemap": Esri_OceanBasemap
+  "ESRI Ocean Basemap": Esri_OceanBasemap,
+  "MapBox Hybrid Satellite": MapBoxHybridSatellite
 };
 
 /// Add a layer control element to the map
