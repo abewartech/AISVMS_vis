@@ -28,6 +28,8 @@ install.packages('shiny')
 
 ## Capturas de pantalla
 
+![Alt Text](https://github.com/guzmanlopez/AISVMS_vis/blob/master/screenshots/AIS_vis-shinyapp-demo.gif)
+
 ![image](https://github.com/guzmanlopez/AISVMS_vis/blob/master/screenshots/mainScreenshot.png)
 
 ## Futuros desarrollos
