@@ -213,7 +213,7 @@ shinyServer(function(input, output, session) {
     message("*** Get positions count from query ***")
     message("Connect to PostgreSQL")
     progress$set(message = "Contando registros", value = 1)
-    conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais")
+    conn <- dbConnect(dbDriver("PostgreSQL"), dbname = "ais", user = "anonimo", host = '10.5.1.50', port = '5432')
     
     # Build query string
     vessels <- paste0("?vesselName", 1:nVessels)
@@ -451,7 +451,7 @@ shinyServer(function(input, output, session) {
     
   })
   
-  # Line Chart -------------------------------------------
+  # Point Plot -------------------------------------------
   
   output$plotSpeed <- renderPlotly({
     
