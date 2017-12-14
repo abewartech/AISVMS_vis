@@ -22,6 +22,8 @@ shinyServer(function(input, output, session) {
     catBCli <- input$catB
     catCCli <- input$catC
     catDCli <- input$catD
+    catAlturaCli <- input$catAltura
+    catCosterosCli <- input$catCosteros
     
     # Query threshold number of points
     if (is.null(catACli) || catACli == "") {
@@ -51,6 +53,18 @@ shinyServer(function(input, output, session) {
     else {
       catD <- catDCli
     }
+    if (is.null(catAlturaCli) || catAlturaCli == "") {
+      catAltura <- qryVal.df$catAltura
+    } 
+    else {
+      catAltura <- catAlturaCli
+    }
+    if (is.null(catCosterosCli) || catCosterosCli == "") {
+      catCosteros <- qryVal.df$catCosteros
+    } 
+    else {
+      catCosteros <- catCosterosCli
+    }
     
     # Query threshold number of points
     if (is.null(thresholdPointsCli) || thresholdPointsCli == "") {
@@ -76,7 +90,7 @@ shinyServer(function(input, output, session) {
     }
     
     # Query vessel name
-    if(!any(catA, catB, catC)) {
+    if(!any(catA, catB, catC, catD, catAltura, catCosteros)) {
       if (searchVesselNameCli == "" || is.null(searchVesselNameCli) || length(searchVesselNameCli) == 0) {
         vesselNameQuery <- qryVal.df$searchVesselName
       }
@@ -110,7 +124,9 @@ shinyServer(function(input, output, session) {
                      'catA' = catA,
                      'catB' = catB,
                      'catC' = catC,
-                     'catD' = catD)
+                     'catD' = catD,
+                     'catAltura' = catAltura,
+                     'catCosteros' = catCosteros)
     
     return(df)
     

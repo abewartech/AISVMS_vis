@@ -22,7 +22,9 @@ qryVal.df <- data.frame('thresholdPoints' = 200000,
                         'catA' = FALSE,
                         'catB' = FALSE,
                         'catC' = FALSE,
-                        'catD' = FALSE)
+                        'catD' = FALSE,
+                        'catAltura' = FALSE,
+                        'catCosteros' = FALSE)
 
 # Initial config values for heatmap - default
 config.df <- data.frame('opacity' = 0.8,

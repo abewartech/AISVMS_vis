@@ -130,7 +130,9 @@ function loadPage() {
   $('#checkCatA').click(changeVesselsNamesByCat);
   $('#checkCatB').click(changeVesselsNamesByCat);
   $('#checkCatC').click(changeVesselsNamesByCat);
-  //$('#checkCatD').click(changeVesselsNamesByCat);
+  $('#checkCatD').click(changeVesselsNamesByCat);
+  $('#checkAltura').click(changeVesselsNamesByCat);
+  $('#checkCosteros').click(changeVesselsNamesByCat);
 
   $('select[name=selectVesselCountry]').change(showFormCat);
 
@@ -176,6 +178,8 @@ var checkCatA = $('#checkCatA').prop('checked');
 var checkCatB = $('#checkCatB').prop('checked');
 var checkCatC = $('#checkCatC').prop('checked');
 var checkCatD = $('#checkCatD').prop('checked');
+var checkAltura = $('#checkAltura').prop('checked');
+var checkCosteros = $('#checkCosteros').prop('checked');
 var searchVesselName = "ALDEBARAN I";
 var catVesselName = "";
 
@@ -186,6 +190,8 @@ function changeVesselsNamesByCat() {
   checkCatB = $('#checkCatB').prop('checked');
   checkCatC = $('#checkCatC').prop('checked');
   checkCatD = $('#checkCatD').prop('checked');
+  checkAltura = $('#checkAltura').prop('checked');
+  checkCosteros = $('#checkCosteros').prop('checked');
 
   var vesselsCat = "{";
   var arrayOfCat = [];
@@ -207,7 +213,7 @@ function changeVesselsNamesByCat() {
   }
   if (checkCatB) {
 
-    // Load catA vessels data
+    // Load catB vessels data
     var vesselsCatB = JSON.parse(catB);
 
     for (var keyB in vesselsCatB) {
@@ -222,7 +228,7 @@ function changeVesselsNamesByCat() {
   }
   if (checkCatC) {
 
-    // Load catA vessels data
+    // Load catC vessels data
     var vesselsCatC = JSON.parse(catC);
 
     for (var keyC in vesselsCatC) {
@@ -231,6 +237,51 @@ function changeVesselsNamesByCat() {
       objC.tag = keyC;
       arrayOfCat.push(objC);
       vesselsCat = vesselsCat + '\"' + keyC + '\":\"' + valC + '\",';
+
+    }
+
+  }
+  if (checkCatD) {
+
+    // Load catC vessels data
+    var vesselsCatD = JSON.parse(catD);
+
+    for (var keyD in vesselsCatD) {
+      var valD = vesselsCatD[keyD];
+      var objD = {};
+      objD.tag = keyD;
+      arrayOfCat.push(objD);
+      vesselsCat = vesselsCat + '\"' + keyD + '\":\"' + valD + '\",';
+
+    }
+
+  }
+  if (checkAltura) {
+
+    // Load catC vessels data
+    var vesselsAltura = JSON.parse(altura);
+
+    for (var keyAltura in vesselsAltura) {
+      var valAltura = vesselsAltura[keyAltura];
+      var objAltura = {};
+      objAltura.tag = keyAltura;
+      arrayOfCat.push(objAltura);
+      vesselsCat = vesselsCat + '\"' + keyAltura + '\":\"' + valAltura + '\",';
+
+    }
+
+  }
+  if (checkCosteros) {
+
+    // Load catC vessels data
+    var vesselsCosteros = JSON.parse(costeros);
+
+    for (var keyCosteros in vesselsCosteros) {
+      var valCosteros = vesselsCosteros[keyCosteros];
+      var objCosteros = {};
+      objCosteros.tag = keyCosteros;
+      arrayOfCat.push(objCosteros);
+      vesselsCat = vesselsCat + '\"' + keyCosteros + '\":\"' + valCosteros + '\",';
 
     }
 
@@ -346,7 +397,7 @@ function query() {
   }
 
   // Fishing vessels categories
-  if (checkCatA | checkCatB | checkCatC | checkCatD) {
+  if (checkCatA | checkCatB | checkCatC | checkCatD | checkAltura | checkCosteros) {
 
     // Get data from categories
     var catDataAux = $('#catVesselNameInput').material_chip('data');
@@ -399,6 +450,8 @@ function sendDataToServer() {
     Shiny.onInputChange("catB", checkCatB);
     Shiny.onInputChange("catC", checkCatC);
     Shiny.onInputChange("catD", checkCatD);
+    Shiny.onInputChange("catAltura", checkAltura);
+    Shiny.onInputChange("catCosteros", checkCosteros);
     Shiny.onInputChange("searchVesselName", searchVesselName);
     Shiny.onInputChange("catVesselName", catVesselName);
   }

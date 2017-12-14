@@ -4,6 +4,7 @@
 library("DBI")
 library("RPostgreSQL")
 library("jsonlite")
+library("tidyverse")
 
 # Get vessel data ---------------------------------------------------------
 
@@ -39,7 +40,6 @@ write_json(getquery.vesselNames.json, path = "~/Documents/GitHub/AISVMS_vis/data
 # Cambios al archivo JSON
 # agregar variable, eliminar paréntesis rectos y agregar ";" al final. No eliminar comillas
 # Tiene que quedar así: vessels = "{\"1\":\".
-
 
 # Load data from cat A ----------------------------------------------------
 
@@ -98,4 +98,93 @@ colnames(catC.t) <- as.character(getquery.vesselNames$name)
 catC.json <- toJSON(catC.t[-1,], 'rows')
 write_json(catC.json, path = "data/catC.json")
 
+# Load data from cat D ----------------------------------------------------
 
+catD <- read.csv("data/fishing_vessels_ARG_URY.csv", header = TRUE)
+catD <- subset(catD, category == 'D')
+
+sql.vesselsNames <- paste0("SELECT name, mmsi FROM barcos WHERE mmsi IN (", stringr::str_c(catD$mmsi, collapse = ","), ") ORDER BY name;")
+query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
+getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
+
+catD.t <- as.data.frame(rbind(as.character(getquery.vesselNames$name), "img/flags-svg/uy.svg"))
+colnames(catD.t) <- as.character(getquery.vesselNames$name)
+catD.json <- toJSON(catD.t[,], 'rows')
+write_json(catD.json, path = "data/catD.json")
+
+
+
+# Load data from altura ---------------------------------------------------
+
+altura <- read.csv("data/fishing_vessels_ARG_URY.csv", header = TRUE)
+altura <- altura[which(stringr::str_detect(altura$category, "ALTURA")),]
+altura <- altura[-which(is.na(altura$mmsi)),]
+
+sql.vesselsNames <- paste0("SELECT name, mmsi FROM barcos WHERE mmsi IN (", stringr::str_c(altura$mmsi, collapse = ","), ") ORDER BY name;")
+query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
+getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
+
+# select(altura, mmsi, name) %>% filter(mmsi == 701000785)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701000785;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'CODEPECA III' WHERE mmsi = 701000785;")
+
+# select(altura, mmsi, name) %>% filter(mmsi == 701000646)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701000646;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'ALVER' WHERE mmsi = 701000646;")
+
+# select(altura, mmsi, name) %>% filter(mmsi == 701007020)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701007020;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'INFINITUS PEZ' WHERE mmsi = 701007020;")
+# 
+# select(altura, mmsi, name) %>% filter(mmsi == 701007017)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701007017;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'CABO DE HORNOS' WHERE mmsi = 701007017;")
+# 
+# select(altura, mmsi, name) %>% filter(mmsi == 701000622)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701000622;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'PETREL' WHERE mmsi = 701000622;")
+# 
+# select(altura, mmsi, name) %>% filter(mmsi == 701000706)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701000706;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'MADRE DIVINA' WHERE mmsi = 701000706;")
+
+altura.t <- as.data.frame(rbind(as.character(getquery.vesselNames$name), "img/flags-svg/ar.svg"))
+colnames(altura.t) <- as.character(getquery.vesselNames$name)
+altura.json <- toJSON(altura.t[-1,], 'rows')
+write_json(altura.json, path = "data/altura.json")
+
+
+# Load data from costeros -------------------------------------------------
+
+costeros <- read.csv("data/fishing_vessels_ARG_URY.csv", header = TRUE)
+costeros <- costeros[which(stringr::str_detect(costeros$category, "COSTEROS")),]
+costeros <- costeros[-which(is.na(costeros$mmsi)),]
+
+sql.vesselsNames <- paste0("SELECT name, mmsi FROM barcos WHERE mmsi IN (", stringr::str_c(costeros$mmsi, collapse = ","), ") ORDER BY name;")
+query.vesselsNames <- sqlInterpolate(conn, sql.vesselsNames)
+getquery.vesselNames <- dbGetQuery(conn, query.vesselsNames)
+
+# select(costeros, mmsi, name) %>% filter(mmsi == 701006236)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701006236;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'ALVAREZ ENTRENA IV' WHERE mmsi = 701006236;")
+# 
+# select(costeros, mmsi, name) %>% filter(mmsi == 701006197)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701006197;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'SIEMPRE DON VICENTE' WHERE mmsi = 701006197;")
+# 
+# select(costeros, mmsi, name) %>% filter(mmsi == 701006502)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701006502;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'NONO PASCUAL' WHERE mmsi = 701006502;")
+#  
+# select(costeros, mmsi, name) %>% filter(mmsi == 701006426)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701006426;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'VIRGEN DEL MILAGRO' WHERE mmsi = 701006426;")
+#  
+# select(costeros, mmsi, name) %>% filter(mmsi == 701006162)
+# dbGetQuery(conn, "SELECT name, mmsi FROM barcos WHERE mmsi = 701006162;")
+# dbGetQuery(conn, "UPDATE barcos SET name = 'DON RAUL' WHERE mmsi = 701006162;")
+
+costeros.t <- as.data.frame(rbind(as.character(getquery.vesselNames$name), "img/flags-svg/ar.svg"))
+colnames(costeros.t) <- as.character(getquery.vesselNames$name)
+costeros.json <- toJSON(costeros.t[-1,], 'rows')
+write_json(costeros.json, path = "data/costeros.json")
