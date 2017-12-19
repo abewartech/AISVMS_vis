@@ -431,17 +431,17 @@ shinyServer(function(input, output, session) {
       j <- paste0("[", j, "]")
       
       mapa <- HTML(paste0("<script> \n", 
-                         sprintf("var buildingsCoords = %s; \n", j), 
-                         "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];}); \n
+                          sprintf("var buildingsCoords = %s; \n", j), 
+                          "buildingsCoords = buildingsCoords.map(function(p) {return [p[0], p[1]];}); \n
                          if(map.hasLayer(heat)) {map.removeLayer(heat);} \n
                          var heat = L.heatLayer(buildingsCoords, {minOpacity:", renderConfig.df$opacity, 
-                         ", radius:", renderConfig.df$radius, ", ", renderConfig.df$colorGradient, ", blur:", renderConfig.df$blur, 
-                         "}).addTo(map); \n", toast, toast2, "</script>"), sep = "")
+                          ", radius:", renderConfig.df$radius, ", ", renderConfig.df$colorGradient, ", blur:", renderConfig.df$blur, 
+                          "}).addTo(map); \n", toast, toast2, "</script>"), sep = "")
     }
     
     # Add shp layers - REQUIRES FIX
     # shp <- HTML(paste0("<script>", "var limitesURY = new L.Shapefile('data/shp/limites-URY.zip', {style:function(feature){return {color:'black',fillColor:'red',fillOpacity:.75}}}); console.log(limitesURY); limitesURY.addTo(map);", "</script>"))
-  
+    
     return(mapa)
     
   })
@@ -467,9 +467,10 @@ shinyServer(function(input, output, session) {
     
   })
   
-  # Point Plot -------------------------------------------
-  
-  output$plotSpeed <- renderPlotly({
+
+# ScatterPlot Speed -------------------------------------------------------
+
+  output$plotScatterPlotSpeed <- renderPlot({
     
     message("*** Rendering speed plot ***")
     
@@ -485,21 +486,106 @@ shinyServer(function(input, output, session) {
       table$heading <- table$heading / 10
       colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
     }
-
+    
     # Random sampling if nrows exceeds 10.000 
     if (nrow(table) >= 10000) {
       table <- table[sample(x = 1:nrow(table), size = 10000),]
     }
     
-    p <- plot_ly(table, x = ~Tiempo, y = ~Velocidad, color = ~Nombre,
-                 type = 'scatter', mode = 'markers', 
-                 marker = list(size = 5, opacity = 0.8),
-                 symbols = 'circle', text = paste(" Barco:", table$Nombre, "<br> Velocidad:", table$Velocidad, "kn", '<br> Fecha:', table$Tiempo))
+    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
+    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
     
-    p %>%
-      layout(title = "Perfil de Velocidad",
-             xaxis = list(title = "Tiempo"),
-             yaxis = list (title = "Velocidad (kn)"))
+    ggScatterPlot <- ggplot(table) + 
+      geom_point(aes(x = Tiempo, y = Velocidad, color = Nombre), alpha = 0.5, shape = 19, size = 2, show.legend = TRUE) + 
+      scale_x_datetime(name = "Tiempo", date_labels = "%b %y", date_breaks = "1 month", date_minor_breaks = "1 week", limits = start.end) + 
+      scale_y_continuous(name = "Velocidad (kn)", breaks = seq(0, 11, by = 0.5), limits = c(0, 11)) + 
+      scale_color_brewer("Barcos", palette = "Accent") + 
+      theme_dark() + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "bottom", 
+            plot.margin = margin(t = 0, unit = "cm"))
+    
+    return(ggScatterPlot)
+    
+  })
+  
+
+# Histogram speed ---------------------------------------------------------
+
+  output$plotHistSpeed <- renderPlot({
+    
+    message("*** Rendering speed plot ***")
+    
+    if (is.null(positionsQry.df)) {
+      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
+                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
+                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
+    } 
+    else {
+      table <- positionsQry.df
+      table$speed <- table$speed / 10
+      table$course <- table$course / 10
+      table$heading <- table$heading / 10
+      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
+    }
+    
+    # Random sampling if nrows exceeds 10.000 
+    if (nrow(table) >= 10000) {
+      table <- table[sample(x = 1:nrow(table), size = 10000),]
+    }
+    
+    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
+    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
+    
+    ggHistogramRight <- ggplot(table) + 
+      geom_histogram(aes(Velocidad, fill = ..count..), alpha = 0.75, breaks = seq(0, 11, by = 0.2), show.legend = FALSE) + 
+      scale_x_continuous(name = "Velocidad (kn)", breaks = seq(0, 11, by = 0.5), limits = c(0, 11)) +
+      scale_y_continuous(name = "Frecuencia") + 
+      scale_fill_distiller("Frecuencia velocidades", palette = "PuBu", direction = 1) + 
+      coord_flip() + 
+      theme_dark() + 
+      theme(plot.margin = margin(t = 0, b = 2.3, unit = "cm"))
+    
+    return(ggHistogramRight)
+    
+  })
+
+# Histogram signals -------------------------------------------------------
+
+  output$plotHistSignals <- renderPlot({
+    
+    message("*** Rendering speed plot ***")
+    
+    if (is.null(positionsQry.df)) {
+      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
+                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
+                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
+    } 
+    else {
+      table <- positionsQry.df
+      table$speed <- table$speed / 10
+      table$course <- table$course / 10
+      table$heading <- table$heading / 10
+      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
+    }
+    
+    # Random sampling if nrows exceeds 10.000 
+    if (nrow(table) >= 10000) {
+      table <- table[sample(x = 1:nrow(table), size = 10000),]
+    }
+    
+    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
+    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
+    
+    ggHistogramTop <- ggplot(table) + 
+      geom_histogram(aes(Tiempo, fill = ..count..), alpha = 0.75, bins = as.numeric(ndays)/2, show.legend = FALSE) + 
+      scale_y_continuous(name = "Emisiones") +
+      scale_x_datetime(name = "Tiempo", date_labels = "%b %y", date_breaks = "1 month", date_minor_breaks = "1 week", limits = start.end) + 
+      scale_fill_distiller("Frecuencia emisiones", palette = "PuBu", direction = 1) + 
+      theme_dark() + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    
+    return(ggHistogramTop)
+    
   })
   
 })
