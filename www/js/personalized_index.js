@@ -53,7 +53,7 @@ function loadPage() {
   // noUiSlider - index.html
   var sliderVesselSpeed = document.getElementById('vesselSpeedSlider');
   noUiSlider.create(sliderVesselSpeed, {
-    start: [0, 12],
+    start: [0, 15],
     connect: true,
     step: 0.1,
     range: {
