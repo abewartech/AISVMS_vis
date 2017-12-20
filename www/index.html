@@ -11,23 +11,23 @@
   <meta property="og:description" content="Aplicación web interactiva basada en R con Shiny, Material Design de Google y consultas a Base de Datos PostgreSQL">
   <link rel="shortcut icon" href="img/ais.png" type="image/x-icon">
   <meta name="author" content="Guzmán López - Data Scientist / Marine Biologist - guzilop@gmail.com">
-
+  
   <title>AIS - DINARA | Mapas</title>
-
+  
   <!-- Shiny -->
   <script src="shared/jquery.js" type="text/javascript"></script>
   <script src="shared/shiny.js" type="text/javascript"></script>
   <link rel="stylesheet" type="text/css" href="shared/shiny.css" />
-
+  
   <!-- Leaflet and leaf heatmap -->
   <script src="leaflet/leaflet.js" type=" text/javascript"></script>
   <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css" />
   <script src="leaflet/leaflet-heat.js" type="text/javascript"></script>
-
+  
   <!-- Leaflet shapefile plugin -->
   <script type="text/javascript" src="js/leaflet.shpfile.js"></script>
   <script type="text/javascript" src="js/shp.js"></script>
-
+  
   <!--Import Google Icon Font-->
   <link type="text/css" href="css/callFontIcons.css" rel="stylesheet">
   <!--Import FontAwesome-->
@@ -36,15 +36,15 @@
   <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection" />
   <!-- Personalized style -->
   <link type="text/css" rel="stylesheet" href="css/personalized.css" media="screen,projection" />
-
+  
   <!--Import jQuery before materialize.js-->
   <script type="text/javascript" src="js/jquery-2.2.1.min.js"></script>
   <script type="text/javascript" src="js/materialize.min.js"></script>
-
+  
   <!-- noUiSlider -->
   <link type="text/css" rel="stylesheet" href="css/nouislider.css">
   <script type="text/javascript" src="js/nouislider.js"></script>
-
+  
   <!-- Personalized js -->
   <script type="text/javascript" src="js/vessels.json"></script>
   <script type="text/javascript" src="js/catA.json"></script>
@@ -54,13 +54,13 @@
   <script type="text/javascript" src="js/altura.json"></script>
   <script type="text/javascript" src="js/costeros.json"></script>
   <script type="text/javascript" src="js/personalized_index.js"></script>
-
+  
 </head>
 
 <header></header>
 
 <main>
-
+  
   <!-- Navigation bar -->
   <div class="navbar-fixed">
     <nav class="blue-grey darken-3">
@@ -82,9 +82,9 @@
       </ul>
     </nav>
   </div>
-
+  
   <div class="content-fluid" id="top">
-
+    
     <!-- Page Layout here -->
     <div class="row">
       <!-- Input Sidebar panel -->
@@ -102,378 +102,378 @@
                         <input id="aisDataCheck" name="aisData" type="checkbox" checked>
                         <span class="lever">
                         </span>
-                <label for="aisDataCheck">AIS</label>
-                </label>
-              </div>
+                        <label for="aisDataCheck">AIS</label>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col s6">
+                    <form>
+                      <!--<div id="thresholdPointsSlider"></div>-->
+                      <input min="0" max="20000000" step="25000" value="200000" id="thresholdPointsInput" type="number">
+                      <label for="thresholdPointsSlider">Límite de puntos</label>
+                    </form>
+                  </div>
+                </div>
+                
+                <!--
+                <div class="row">
+                <div class="col s12">
+                <div class="switch">
+                <label>
+                <img src="img/vms.png" alt="vms logo" width="36px">
+                <input id="vmsData" name="vmsData" type="checkbox">
+                <span class="lever"></span>
+                <label for="vmsData">VMS</label>
+              </label>
+            </div>
+          </div>
+        </div>
+      -->
+    </span>
+  </div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por fechas"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; Fechas</div>
+  <div class="collapsible-body">
+    <span>
+      <div class="row">
+        <div class="col s6">
+          <label for="dateFromDatePicker">Desde</label>
+          <input id="dateFromDatePicker" name="dateFrom" type="date" data-value="2012-05-8"  class="datepicker">
         </div>
         <div class="col s6">
-              <form>
-                <!--<div id="thresholdPointsSlider"></div>-->
-                <input min="0" max="20000000" step="25000" value="200000" id="thresholdPointsInput" type="number">
-                <label for="thresholdPointsSlider">Límite de puntos</label>
-              </form>
-            </div>
+          <label for="dateUntilDatePicker">Hasta</label>
+          <input id="dateUntilDatePicker" type="date" data-value="2014-05-17" class="datepicker">
+        </div>
       </div>
-          
-      <!--
+    </span>
+  </div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header active" data-position="right" data-delay="1000" data-tooltip="Buscar barco por nombre"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
+  <div class="collapsible-body"><span>
+    
+    <div class="row">
+      <div class="col s12">
+        <div id="" class="input-field col s12">
+          <div id="searchVesselNameInput" type="text" class="chips chips-autocomplete"></div>
+          <label for="searchVesselNameInput">Nombre del barco</label>
+        </div>
+      </div>
+    </div>
+    
+    <!--<div class="row">
+    <div class="col s12">
+    <div id="selectVesselType2" class="input-field col s12">
+    <select multiple name="selectVesselType" disabled>
+    <option value="fishingVesselType" selected>Pesca</option>
+    <option value="cargoVesselType">Carga</option>
+  </select>
+  <label for="selectVesselType2">Tipo de barco</label>
+</div>
+</div>
+</div>-->
+
+</span>
+</div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar flota de pesca por país o categoría"><i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; Flota de Pesca</div>
+  <div class="collapsible-body">
+    <span>
       <div class="row">
         <div class="col s12">
-          <div class="switch">
-            <label>
-                        <img src="img/vms.png" alt="vms logo" width="36px">
-                        <input id="vmsData" name="vmsData" type="checkbox">
-                        <span class="lever"></span>
-                        <label for="vmsData">VMS</label>
-            </label>
+          <form>
+            <div id="selectVesselCountry2" class="input-field col s12">
+              <select class="icons" name="selectVesselCountry">
+                <!-- <option value="" disabled selected></option> -->
+                <option value="arg" data-icon="img/flags-svg/ar.svg" class="left circle">Argentina</option>
+                <option value="ury" data-icon="img/flags-svg/uy.svg" class="left circle" selected>Uruguay</option>
+                <option value="argury" data-icon="img/flags-svg/aruy.svg" class="left circle">Argentina y Uruguay</option>
+              </select>
+              <label for="selectVesselCountry2">País</label>
+            </div>
+          </form>
+        </div>
+      </div>
+    </span>
+    <span id="formCatUry">
+      <div class="row">
+        <div class="col s12">
+          <label for="">Categorías de Uruguay:</label>
+          <form>
+            <div class="row">
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCatA"/>
+                  <label for="checkCatA">Categoría A</label>
+                </p>
+              </div>
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCatB"/>
+                  <label for="checkCatB">Categoría B</label>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCatC"/>
+                  <label for="checkCatC">Categoría C</label>
+                </p>
+              </div>
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCatD"/>
+                  <label for="checkCatD">Categoría D</label>
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </span>
+    <span class="hide" id="formCatArg">
+      <div class="row">
+        <div class="col s12">
+          <label for="">Categorías de Argentina:</label>
+          <form>
+            <div class="row">
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkAltura"/>
+                  <label for="checkAltura">Altura</label>
+                </p>
+              </div>
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkFactoria" disabled="disabled"/>
+                  <label for="checkFactoria">Factoría</label>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCosteros"/>
+                  <label for="checkCosteros">Costeros</label>
+                </p>
+              </div>
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkCongelador" disabled="disabled"/>
+                  <label for="checkCongelador">Congelador</label>
+                </p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkRadaoria" disabled="disabled"/>
+                  <label for="checkRadaoria">Rada o ría</label>
+                </p>
+              </div>
+              <div class="col s6">
+                <p>
+                  <input type="checkbox" class="filled-in" id="checkFresquero" disabled="disabled"/>
+                  <label for="checkFresquero">Fresquero</label>
+                </p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </span>
+    <span>
+      <div class="row">
+        <div class="col s12">
+          <div id="" class="input-field col s12">
+            <div id="catVesselNameInput" type="text" class="chips chips-autocomplete"></div>
           </div>
         </div>
       </div>
-      -->
-      </span>
+    </span>
+  </div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por posición en zonas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
+  <div class="collapsible-body"><span>
+    <div class="row">
+      <div class="col s12">
+        <form>
+          <label for="">Espacio marítimo</label>
+          <p>
+            <input type="checkbox" class="filled-in" id="enPuerto" disabled="disabled"/>
+            <label for="enPuerto">Puerto</label>
+          </p>
+          <p>
+            <input type="checkbox" class="filled-in" id="en7mn" disabled="disabled"/>
+            <label for="en7mn">Área de 7 mn desde la costa</label>
+          </p>
+          <p>
+            <input type="checkbox" class="filled-in" id="enZcpau" disabled="disabled"/>
+            <label for="enZcpau">Zona Común de Pesca Argentina Uruguaya</label>
+          </p>
+        </form>
+      </div>
+      <div class="col s12">
+      </div>
     </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por fechas"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; Fechas</div>
-      <div class="collapsible-body">
-        <span>
-                  <div class="row">
-                    <div class="col s6">
-                      <label for="dateFromDatePicker">Desde</label>
-                      <input id="dateFromDatePicker" name="dateFrom" type="date" data-value="2012-05-8"  class="datepicker">
-                    </div>
-                    <div class="col s6">
-                      <label for="dateUntilDatePicker">Hasta</label>
-                      <input id="dateUntilDatePicker" type="date" data-value="2014-05-17" class="datepicker">
-                    </div>
-                  </div>
-                </span>
+  </span>
+</div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por actividad"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
+  <div class="collapsible-body">
+    <span>
+      <div class="row">
+        <div class="col s12">
+          <form>
+            <label for="vesselSpeedSlider">Velocidad (kn)</label>
+            <div id="vesselSpeedSlider"></div>
+          </form>
+        </div>
+        <div class="col s12">
+        </div>
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header active" data-position="right" data-delay="1000" data-tooltip="Buscar barco por nombre"><i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; Búsqueda</div>
-      <div class="collapsible-body"><span>
-
-                   <div class="row">
-                    <div class="col s12">
-                      <div id="" class="input-field col s12">
-                        <div id="searchVesselNameInput" type="text" class="chips chips-autocomplete"></div>
-                        <label for="searchVesselNameInput">Nombre del barco</label>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!--<div class="row">
-                    <div class="col s12">
-                      <div id="selectVesselType2" class="input-field col s12">
-                        <select multiple name="selectVesselType" disabled>
-                          <option value="fishingVesselType" selected>Pesca</option>
-                          <option value="cargoVesselType">Carga</option>
-                        </select>
-                        <label for="selectVesselType2">Tipo de barco</label>
-                      </div>
-                    </div>
-                  </div>-->
-                  
-                </span>
+    </span>
+  </div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Agregar capas espaciales al mapa"><i class="fa fa-map fa-fw" aria-hidden="true"></i>&nbsp; Capas</div>
+  <div class="collapsible-body"><span>
+    <div class="row">
+      <div class="col s12">
+        <form>
+          <label for="">Límites políticos</label>
+          <p>
+            <input type="checkbox" class="filled-in" id="limURY" disabled="disabled"/>
+            <label for="limURY">Límites territoriales de Uruguay</label>
+          </p>
+          <p>
+            <input type="checkbox" class="filled-in" id="zcpau" disabled="disabled"/>
+            <label for="zcpau">Zona Común de Pesca Argentina Uruguaya</label>
+          </p>
+        </form>
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar flota de pesca por país o categoría"><i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; Flota de Pesca</div>
-      <div class="collapsible-body">
-        <span>
-                  <div class="row">
-                    <div class="col s12">
-                      <form>
-                        <div id="selectVesselCountry2" class="input-field col s12">
-                          <select class="icons" name="selectVesselCountry">
-                            <!-- <option value="" disabled selected></option> -->
-                            <option value="arg" data-icon="img/flags-svg/ar.svg" class="left circle">Argentina</option>
-                            <option value="ury" data-icon="img/flags-svg/uy.svg" class="left circle" selected>Uruguay</option>
-                            <option value="argury" data-icon="img/flags-svg/aruy.svg" class="left circle">Argentina y Uruguay</option>
-                            </select>
-                            <label for="selectVesselCountry2">País</label>
-                            </div>
-                      </form>
-                    </div>
-                  </div>
-                </span>
-        <span id="formCatUry">
-                  <div class="row">
-                    <div class="col s12">
-                      <label for="">Categorías de Uruguay:</label>
-                      <form>
-                        <div class="row">
-                          <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkCatA"/>
-                          <label for="checkCatA">Categoría A</label>
-                        </p>
-                        </div>
-                        <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkCatB"/>
-                          <label for="checkCatB">Categoría B</label>
-                        </p>
-                        </div>
-                        </div>
-                         <div class="row">
-                           <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkCatC"/>
-                          <label for="checkCatC">Categoría C</label>
-                        </p>
-                        </div>
-                        <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkCatD"/>
-                          <label for="checkCatD">Categoría D</label>
-                        </p>
-                    </div>
-                    </div>
-                    </form>
-                    </div>
-                    </div>
-                </span>
-        <span class="hide" id="formCatArg">
-                  <div class="row">
-                    <div class="col s12">
-                      <label for="">Categorías de Argentina:</label>
-                      <form>
-                        <div class="row">
-                           <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkAltura"/>
-                          <label for="checkAltura">Altura</label>
-                        </p>
-                        </div>
-                        <div class="col s6">
-                          <p>
-                          <input type="checkbox" class="filled-in" id="checkFactoria" disabled="disabled"/>
-                          <label for="checkFactoria">Factoría</label>
-                        </p>
-                    </div>
-                    </div>
-                        <div class="row">
-                          <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkCosteros"/>
-                          <label for="checkCosteros">Costeros</label>
-                        </p>
-                        </div>
-                        <div class="col s6">
-                          <p>
-                          <input type="checkbox" class="filled-in" id="checkCongelador" disabled="disabled"/>
-                          <label for="checkCongelador">Congelador</label>
-                        </p>
-                        </div>
-                        </div>
-                        <div class="row">
-                          <div class="col s6">
-                        <p>
-                          <input type="checkbox" class="filled-in" id="checkRadaoria" disabled="disabled"/>
-                          <label for="checkRadaoria">Rada o ría</label>
-                        </p>
-                        </div>
-                        <div class="col s6">
-                          <p>
-                          <input type="checkbox" class="filled-in" id="checkFresquero" disabled="disabled"/>
-                          <label for="checkFresquero">Fresquero</label>
-                        </p>
-                        </div>
-                        </div>
-                    </form>
-                    </div>
-                    </div>
-                </span>
-        <span>
-                  <div class="row">
-                    <div class="col s12">
-                      <div id="" class="input-field col s12">
-                        <div id="catVesselNameInput" type="text" class="chips chips-autocomplete"></div>
-                      </div>
-                    </div>
-                  </div>
-                </span>
+      <div class="col s12">
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por posición en zonas"><i class="fa fa-map-marker fa-fw" aria-hidden="true"></i>&nbsp; Posición</div>
-      <div class="collapsible-body"><span>
-                  <div class="row">
-                    <div class="col s12">
-                      <form>
-                        <label for="">Espacio marítimo</label>
-                        <p>
-                          <input type="checkbox" class="filled-in" id="enPuerto" disabled="disabled"/>
-                          <label for="enPuerto">Puerto</label>
-                        </p>
-                        <p>
-                          <input type="checkbox" class="filled-in" id="en7mn" disabled="disabled"/>
-                          <label for="en7mn">Área de 7 mn desde la costa</label>
-                        </p>
-                        <p>
-                          <input type="checkbox" class="filled-in" id="enZcpau" disabled="disabled"/>
-                          <label for="enZcpau">Zona Común de Pesca Argentina Uruguaya</label>
-                        </p>
-                        </form>
-                    </div>
-                    <div class="col s12">
-                    </div>
-                  </div>
-                </span>
+    </div>
+  </span>
+</div>
+</li>
+<li>
+  <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Opciones de visualización"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Opciones</div>
+  <div class="collapsible-body">
+    <span>
+      <div class="row">
+        <div class="col s12">
+          <form>
+            <label for="opacitySlider">Opacidad</label>
+            <div id="opacitySlider"></div>
+          </form>
+        </div>
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Consultar por actividad"><i class="fa fa-sliders fa-fw" aria-hidden="true"></i>&nbsp; Operativa</div>
-      <div class="collapsible-body">
-        <span>
-                  <div class="row">
-                    <div class="col s12">
-                      <form>
-                        <label for="vesselSpeedSlider">Velocidad (kn)</label>
-                        <div id="vesselSpeedSlider"></div>
-                      </form>
-                    </div>
-                    <div class="col s12">
-                    </div>
-                  </div>
-                </span>
+      
+      <div class="row">
+        <div class="col s12">
+          <form>
+            <label for="radiusSlider">Tamaño</label>
+            <div id="radiusSlider"></div>
+          </form>
+        </div>
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Agregar capas espaciales al mapa"><i class="fa fa-map fa-fw" aria-hidden="true"></i>&nbsp; Capas</div>
-      <div class="collapsible-body"><span>
-                  <div class="row">
-                    <div class="col s12">
-                      <form>
-                        <label for="">Límites políticos</label>
-                        <p>
-                          <input type="checkbox" class="filled-in" id="limURY" disabled="disabled"/>
-                          <label for="limURY">Límites territoriales de Uruguay</label>
-                        </p>
-                        <p>
-                          <input type="checkbox" class="filled-in" id="zcpau" disabled="disabled"/>
-                          <label for="zcpau">Zona Común de Pesca Argentina Uruguaya</label>
-                        </p>
-                        </form>
-                    </div>
-                    <div class="col s12">
-                    </div>
-                  </div>
-                </span>
+      
+      <div class="row">
+        <div class="col s12">
+          <form>
+            <label for="blurSlider">Esfumado</label>
+            <div id="blurSlider"></div>
+          </form>
+        </div>
       </div>
-    </li>
-    <li>
-      <div class="tooltipped collapsible-header" data-position="right" data-delay="1000" data-tooltip="Opciones de visualización"><i class="fa fa-cog fa-fw" aria-hidden="true"></i>&nbsp; Opciones</div>
-      <div class="collapsible-body">
-        <span>
-          <div class="row">
-            <div class="col s12">
-              <form>
-                <label for="opacitySlider">Opacidad</label>
-                <div id="opacitySlider"></div>
-              </form>
-            </div>
+      
+      <br />
+      <div class="row">
+        <div class="col s12">
+          <label for="colorSelect">Paleta de colores</label>
+          <div id="colorSelect" name="color" class="input-field">
+            <select>
+              <option value="" disabled selected>Elige paleta</option>
+              <option value="gradient: {0.4:'blue',0.6:'cyan',0.7:'lime',0.8:'yellow',1:'red'}" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
+              <option value="gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
+              <option value="gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
+            </select>
           </div>
-
-          <div class="row">
-            <div class="col s12">
-              <form>
-                <label for="radiusSlider">Tamaño</label>
-                <div id="radiusSlider"></div>
-              </form>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col s12">
-              <form>
-                <label for="blurSlider">Esfumado</label>
-                <div id="blurSlider"></div>
-              </form>
-            </div>
-          </div>
-          
-          <br />
-          <div class="row">
-            <div class="col s12">
-              <label for="colorSelect">Paleta de colores</label>
-              <div id="colorSelect" name="color" class="input-field">
-                <select>
-                        <option value="" disabled selected>Elige paleta</option>
-                        <option value="gradient: {0.4:'blue',0.6:'cyan',0.7:'lime',0.8:'yellow',1:'red'}" data-icon="img/spectral.png" class="circle" selected>Espectral</option>
-                        <option value="gradient: {0: &#39;#fff800&#39;, 0.25: &#39;#ffcb00&#39;, 0.5: &#39;#ffa900&#39;, 0.75: &#39;#ff7100&#39;, 1: &#39;#ff0000&#39;}" data-icon="img/reds.png" class="circle">Cálida</option>
-                        <option value="gradient: {0: &#39;#0ee1f1&#39;, 0.25: &#39;#00b8ff&#39;, 0.5: &#39;#0083ff&#39;, 0.75: &#39;#005cff&#39;, 1: &#39;#0019ff&#39;}" data-icon="img/blues.png" class="circle">Fría</option>
-                      </select>
-              </div>
-            </div>
-          </div>
-
-        </span>
+        </div>
       </div>
-    </li>
-    </ul>
+      
+    </span>
   </div>
-  </div>
+</li>
+</ul>
+</div>
+</div>
 
-  <!-- Main Panel -->
-  <div id="mainPanel" class="col s12 m8 l9" style="padding: 0;">
-    <section>
-      <div class="z-index-" id="map" style="position: fixed;"></div>
-      <script src="js/makeLeafletMap.js"></script>
-      <div id="divHtml" class="shiny-html-output"></div>
-      </section>
-  </div>
-  </div>
-  </div>
+<!-- Main Panel -->
+<div id="mainPanel" class="col s12 m8 l9" style="padding: 0;">
+  <section>
+    <div class="z-index-" id="map" style="position: fixed;"></div>
+    <script src="js/makeLeafletMap.js"></script>
+    <div id="divHtml" class="shiny-html-output"></div>
+  </section>
+</div>
+</div>
+</div>
 
-  <!-- noUiSlider -->
-  <script type="text/javascript" src="js/nouislider.js"></script>
+<!-- noUiSlider -->
+<script type="text/javascript" src="js/nouislider.js"></script>
 
-  <!-- button menu -->
-  <div class="fixed-action-btn vertical click-to-toggle z-depth-10" style="bottom: 45px; right: 24px;">
-    <a class="btn-floating btn-large blue-grey darken-3">
-      <i class="material-icons">menu</i>
-    </a>
-    <ul>
-      <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Pantalla completa">zoom_out_map</i></a></li>
-       <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Mostrar">play_arrow</i></a></li>
-    </ul>
-  </div>
-  
-  <!-- Modal Structure -->
-  <div id="modal1" class="modal">
-    <div class="modal-content"></div>
-  </div>
-  
+<!-- button menu -->
+<div class="fixed-action-btn vertical click-to-toggle z-depth-10" style="bottom: 45px; right: 24px;">
+  <a class="btn-floating btn-large blue-grey darken-3">
+    <i class="material-icons">menu</i>
+  </a>
+  <ul>
+    <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Pantalla completa">zoom_out_map</i></a></li>
+    <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Mostrar">play_arrow</i></a></li>
+  </ul>
+</div>
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+  <div class="modal-content"></div>
+</div>
+
 </main>
 
 <!--
 <footer class="page-footer blue-grey darken-3">
-  <div class="container">
-    <div class="row">
-      <div class="col l6 s12">
-        <h6 class="white-text"></h6>
-        <p class="grey-text text-darken-4">
-          <img src="img/logoDinara.png" alt="Logo Dinara" width="80%" class="">
-        </p>
-      </div>
-      <div class="col l4 offset-l2 s12">
-        <h6 class="white-text">Enlaces</h6>
-        <ul>
-          <li><a class="grey-text text-lighten-3" href="#top"><i class="tiny material-icons">navigation</i> Ir hacia arriba </a></li>
-          <li><a class="grey-text text-lighten-3" href="http://www.dinara.gub.uy" target="_blank"><i class="tiny material-icons">info</i> Página web de DINARA </a></li>
-          <li><a class="grey-text text-lighten-3" href="https://github.com/guzmanlopez/AISVMS_vis" target="_blank"><i class="tiny material-icons">code</i> Ver código en GitHub </a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="footer-copyright">
-    <div class="container">
-      © 2017 Copyright - GPLv3
-      <a class="grey-text text-lighten-3 right" href="https://github.com/guzmanlopez" target="_blank"><i class="tiny material-icons">perm_identity</i> Por Guzmán López - glopez@dinara.gub.uy</a>
-    </div>
-  </div>
+<div class="container">
+<div class="row">
+<div class="col l6 s12">
+<h6 class="white-text"></h6>
+<p class="grey-text text-darken-4">
+<img src="img/logoDinara.png" alt="Logo Dinara" width="80%" class="">
+</p>
+</div>
+<div class="col l4 offset-l2 s12">
+<h6 class="white-text">Enlaces</h6>
+<ul>
+<li><a class="grey-text text-lighten-3" href="#top"><i class="tiny material-icons">navigation</i> Ir hacia arriba </a></li>
+<li><a class="grey-text text-lighten-3" href="http://www.dinara.gub.uy" target="_blank"><i class="tiny material-icons">info</i> Página web de DINARA </a></li>
+<li><a class="grey-text text-lighten-3" href="https://github.com/guzmanlopez/AISVMS_vis" target="_blank"><i class="tiny material-icons">code</i> Ver código en GitHub </a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="footer-copyright">
+<div class="container">
+© 2017 Copyright - GPLv3
+<a class="grey-text text-lighten-3 right" href="https://github.com/guzmanlopez" target="_blank"><i class="tiny material-icons">perm_identity</i> Por Guzmán López - glopez@dinara.gub.uy</a>
+</div>
+</div>
 </footer>
 -->
 
