@@ -180,6 +180,80 @@ shinyServer(function(input, output, session) {
     
   })
   
+  getClientPlot <- reactive({
+    
+    # Plot input vars
+    vesselSpeedMinCli <- input$vesselSpeedMinPlot
+    vesselSpeedMaxCli <- input$vesselSpeedMaxPlot
+    dateFromCli <- input$dateFromPlot 
+    dateUntilCli <- input$dateUntilPlot    
+    
+    # Validation of inputs
+    
+    # Vessel speed Min / Max
+    if (vesselSpeedMinCli == "" || is.null(vesselSpeedMinCli)) {
+      vesselSpeedMinQuery <- qryVal.df$vesselSpeedMin * 10
+    }
+    else {
+      vesselSpeedMinQuery <- as.numeric(vesselSpeedMinCli)
+    }
+    if (vesselSpeedMaxCli == "" || is.null(vesselSpeedMaxCli)) {
+      vesselSpeedMaxQuery <- qryVal.df$vesselSpeedMax * 10
+    }
+    else {
+      vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli)
+    }
+    
+    # Query datetime From / Until
+    if (dateFromCli == "" || is.null(dateFromCli) || dateFromCli == "08 Junio, 2012") {
+      dateFromQuery <- qryVal.df$dateFrom
+    }
+    else {
+      dateFromQuery <- dateFromCli
+    }
+    
+    if (dateUntilCli == "" || is.null(dateUntilCli) || dateUntilCli == "17 Mayo, 2014") {
+      dateUntilQuery <- qryVal.df$dateUntil
+    }
+    else {
+      dateUntilQuery <- dateUntilCli
+    }
+    
+    if (is.null(positionsQry.df)) {
+      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
+                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
+                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
+    } 
+    else {
+      table <- positionsQry.df
+      table$speed <- table$speed / 10
+      table$course <- table$course / 10
+      table$heading <- table$heading / 10
+      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
+    }
+    
+    # Subset data based on input
+    table <- subset(table, Velocidad >= vesselSpeedMinQuery & Velocidad <= vesselSpeedMaxQuery & Tiempo >= as.POSIXct(as.character(dateFromQuery)) & Tiempo <= as.POSIXct(as.character(dateUntilQuery)))
+    
+    # Random sampling if nrows exceeds 10.000 
+    if (nrow(table) >= 10000) {
+      table <- table[sample(x = 1:nrow(table), size = 10000),]
+    }
+    
+    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
+    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
+    
+    # Create list 
+    listInputPlot <- list()
+    listInputPlot[[1]] <- table
+    listInputPlot[[2]] <- start.end
+    listInputPlot[[3]] <- ndays
+    names(listInputPlot) <- c("plotData", "startEnd", "nDays")
+  
+    return(listInputPlot)
+    
+  })
+  
   # Retrieve Data ----------------------------------------
   
   positionsQry <- function(thresholdQuery, dateFromQuery, dateUntilQuery, vesselNameQuery, vesselSpeedMinQuery, vesselSpeedMaxQuery) {
@@ -466,18 +540,10 @@ shinyServer(function(input, output, session) {
     return(table)
     
   })
-  
 
-# ScatterPlot Speed -------------------------------------------------------
+  # ScatterPlot Speed ------------------------------------
 
-  output$plotScatterPlotSpeed <- renderPlot({
-    
-    # Input vars
-    speedMin <- as.numeric(input$vesselSpeedMinPlot)
-    speedMax <- as.numeric(input$vesselSpeedMaxPlot)
-    
-    if (length(speedMin) == 0) { speedMin <- 0 }
-    if (length(speedMax) == 0) { speedMax <- 12 }
+  output$scatterPlotSpeed <- renderPlot({
     
     # Create a Progress object
     progress <- shiny::Progress$new(min = 0, max = 1)
@@ -489,41 +555,24 @@ shinyServer(function(input, output, session) {
     # Close it on exit
     on.exit(progress$close())
     
+    # Get input data
+    plotInputs <- getClientPlot()
+    
     progress$set(message = "Construyendo gráfica", value = 0)
     
-    message("*** Rendering speed plot ***")
+    message("*** Rendering speed scatterplot ***")
     
-    if (is.null(positionsQry.df)) {
-      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
-                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
-                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
-    } 
-    else {
-      table <- positionsQry.df
-      table$speed <- table$speed / 10
-      table$course <- table$course / 10
-      table$heading <- table$heading / 10
-      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
-    }
+    speedMin <- min(plotInputs$plotData$Velocidad, na.rm = TRUE)
+    speedMax <- max(plotInputs$plotData$Velocidad, na.rm = TRUE)
+    start.end <- plotInputs$startEnd
     
-    # Subset data based on input
-    table <- subset(table, Velocidad >= speedMin & Velocidad <= speedMax)
-    
-    # Random sampling if nrows exceeds 10.000 
-    if (nrow(table) >= 10000) {
-      table <- table[sample(x = 1:nrow(table), size = 10000),]
-    }
-    
-    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
-    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
-    
-    ggScatterPlot <- ggplot(table) + 
+    # ggplot
+    ggScatterPlot <- ggplot(plotInputs$plotData) + 
       geom_point(aes(x = Tiempo, y = Velocidad, color = Nombre), alpha = 0.5, shape = 19, stroke = 0.5, size = 2, show.legend = TRUE) + 
       scale_x_datetime(name = "Tiempo", date_labels = "%b %y", date_breaks = "1 month", date_minor_breaks = "1 week", limits = start.end) + 
       scale_y_continuous(name = "Velocidad (kn)", breaks = seq(speedMin, speedMax, by = 0.5), limits = c(speedMin, speedMax)) + 
       scale_color_discrete("Barcos") + 
-      # theme_dark() + 
-      theme(axis.text.x = element_text(angle = 90, hjust = 1), legend.position = "bottom", 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1), legend.position = "bottom", 
             plot.margin = margin(t = 0, unit = "cm"))
     
     progress$set(message = "Finalizado", value = 1)
@@ -536,100 +585,90 @@ shinyServer(function(input, output, session) {
     
   })
 
-# Histogram speed ---------------------------------------------------------
+  # Histogram speed --------------------------------------
 
   output$plotHistSpeed <- renderPlot({
+   
+    # Create a Progress object
+    progress <- shiny::Progress$new(min = 0, max = 1)
     
-    # Input vars
-    speedMin <- as.numeric(input$vesselSpeedMinPlot)
-    speedMax <- as.numeric(input$vesselSpeedMaxPlot)
+    # Send show modal to client
+    modal <- "open"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
-    if (length(speedMin) == 0) { speedMin <- 0 }
-    if (length(speedMax) == 0) { speedMax <- 12 }
+    # Close it on exit
+    on.exit(progress$close())
     
-    message("*** Rendering histogram speed plot ***")
+    # Get input data
+    plotInputs <- getClientPlot()
     
-    if (is.null(positionsQry.df)) {
-      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
-                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
-                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
-    } 
-    else {
-      table <- positionsQry.df
-      table$speed <- table$speed / 10
-      table$course <- table$course / 10
-      table$heading <- table$heading / 10
-      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
-    }
+    progress$set(message = "Construyendo gráfica", value = 0)
     
-    # Subset data based on input
-    table <- subset(table, Velocidad >= speedMin & Velocidad <= speedMax)
+    message("*** Rendering Histogram of speeds ***")
     
-    # Random sampling if nrows exceeds 10.000 
-    if (nrow(table) >= 10000) {
-      table <- table[sample(x = 1:nrow(table), size = 10000),]
-    }
+    speedMin <- min(plotInputs$plotData$Velocidad, na.rm = TRUE)
+    speedMax <- max(plotInputs$plotData$Velocidad, na.rm = TRUE) 
     
-    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
-    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
-    
-    ggHistogramRight <- ggplot(table) + 
-      geom_histogram(aes(Velocidad, fill = ..count..), alpha = 0.75, breaks = seq(0, 11, by = 0.2), show.legend = FALSE) + 
-      scale_x_continuous(name = "Velocidad (kn)", breaks = seq(speedMin, speedMax, by = 0.25), limits = c(speedMin, speedMax)) +
+    # ggplot
+    ggHistogramRight <- ggplot(plotInputs$plotData) + 
+      geom_histogram(aes(Velocidad, fill = ..count..), alpha = 0.75, breaks = seq(speedMin, speedMax, by = 0.2), show.legend = FALSE) + 
+      scale_x_continuous(name = "Velocidad (kn)", breaks = seq(speedMin, speedMax, by = 0.5), limits = c(speedMin, speedMax), labels = waiver()) +
       scale_y_continuous(name = "Frecuencia") + 
       scale_fill_distiller("Frecuencia velocidades", palette = "PuBu", direction = 1) + 
       coord_flip() + 
-      # theme_dark() + 
       theme(plot.margin = margin(t = 0, b = 2.3, unit = "cm"))
+    
+    progress$set(message = "Finalizado", value = 1)
+    
+    # Send hide modal to client
+    modal <- "close"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
     return(ggHistogramRight)
     
   })
 
-# Histogram signals -------------------------------------------------------
+  # Histogram signals ------------------------------------
 
   output$plotHistSignals <- renderPlot({
     
     message("*** Rendering Histogram of signals ***")
     
-    # Input vars
-    speedMin <- as.numeric(input$vesselSpeedMinPlot)
-    speedMax <- as.numeric(input$vesselSpeedMaxPlot)
+    # Create a Progress object
+    progress <- shiny::Progress$new(min = 0, max = 1)
     
-    if (length(speedMin) == 0) { speedMin <- 0 }
-    if (length(speedMax) == 0) { speedMax <- 12 }
+    # Send show modal to client
+    modal <- "open"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
-    if (is.null(positionsQry.df)) {
-      table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
-                          "MMSI" = NA, "Estado" = NA, "Velocidad" = NA, 
-                          "Curso" = NA, "Orientación" = NA, "Tiempo" = NA)
-    } 
-    else {
-      table <- positionsQry.df
-      table$speed <- table$speed / 10
-      table$course <- table$course / 10
-      table$heading <- table$heading / 10
-      colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
-    }
+    # Close it on exit
+    on.exit(progress$close())
     
-    # Subset data based on input
-    table <- subset(table, Velocidad >= speedMin & Velocidad <= speedMax)
+    # Get input data
+    plotInputs <- getClientPlot()
     
-    # Random sampling if nrows exceeds 10.000 
-    if (nrow(table) >= 10000) {
-      table <- table[sample(x = 1:nrow(table), size = 10000),]
-    }
+    progress$set(message = "Construyendo gráfica", value = 0)
     
-    start.end <- c(min(table$Tiempo, na.rm = TRUE), max(table$Tiempo, na.rm = TRUE))
-    ndays <- difftime(time1 = start.end[2], time2 = start.end[1], units = "days")
+    message("*** Rendering Histogram of speeds ***")
     
-    ggHistogramTop <- ggplot(table) + 
-      geom_histogram(aes(Tiempo, fill = ..count..), alpha = 0.75, bins = as.numeric(ndays)/2, show.legend = FALSE) + 
+    speedMin <- min(plotInputs$plotData$Velocidad, na.rm = TRUE)
+    speedMax <- max(plotInputs$plotData$Velocidad, na.rm = TRUE) 
+    start.end <- plotInputs$startEnd
+    ndays <- plotInputs$nDays
+    
+   # ggplot
+    ggHistogramTop <- ggplot(plotInputs$plotData) + 
+      geom_histogram(aes(Tiempo, fill = ..count..), alpha = 0.75, bins = as.numeric(ndays)/4, show.legend = FALSE) + 
       scale_y_continuous(name = "Emisiones") +
       scale_x_datetime(name = "Tiempo", date_labels = "%b %y", date_breaks = "1 month", date_minor_breaks = "1 week", limits = start.end) + 
       scale_fill_distiller("Frecuencia emisiones", palette = "PuBu", direction = 1) + 
-      # theme_dark() + 
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    
+    progress$set(message = "Finalizado", value = 1)
+    
+    # Send hide modal to client
+    modal <- "close"
+    session$sendCustomMessage(type = "myCallbackHandler", modal)
     
     return(ggHistogramTop)
     
