@@ -1,11 +1,13 @@
 # Packages -----------------------------------------------
 
-library("shiny")
-library("DBI")
-library("RPostgreSQL")
-library("sf")
-library("wkb")
-library("plotly")
+library(shiny)
+library(DBI)
+library(RPostgreSQL)
+library(jsonlite)
+library(wkb)
+library(sf)
+library(leaflet)
+
 
 # Disable scientific notation 
 options(scipen = 999)
@@ -41,3 +43,6 @@ configCustom.df <- config.df
 
 # Empty df to push data from DB
 positionsQry.df <- data.frame()
+
+# Shapefiles
+limitesURY <- read_sf("data/shp/c100Polygon.shp")
