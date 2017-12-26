@@ -112,16 +112,6 @@ function loadPage() {
   var vesselsData = "";
   vesselsData = JSON.parse(vessels);
 
-  // Search vessel by name
-  $('#searchVesselNameInput').material_chip({
-    data: [{tag: 'ALDEBARAN I'}],
-    autocompleteOptions: {
-      data: vesselsData,
-      limit: 20,
-      minLength: 1
-    }
-  });
-
   //$('.chips').on('chip.add', function(e, chip) {});
   //$('.chips').on('chip.delete', function(e, chip) {});
   //$('.chips').on('chip.select', function(e, chip) {});
@@ -141,6 +131,9 @@ function loadPage() {
 
   // Eventos disparados por Actualizar
   $('#btnReplay').click(sendDataToServer);
+  
+  // Eventos disparados al hacer check en capas
+  $('#checkLimURY').click(addShapefile);
 
   // Modal
   $('.modal').modal({
@@ -156,15 +149,42 @@ function loadPage() {
     complete: function() {} // Callback for Modal close
   });
 
-  Shiny.addCustomMessageHandler("myCallbackHandler",
+  Shiny.addCustomMessageHandler("modal",
     function(modal) {
       $('#modal1').modal(modal);
     });
+    
+    Shiny.addCustomMessageHandler("searchVessels",
+    function(searchVessels) {
+      
+      var searchVesselsData = [];
+      
+      for (var i = 0; i < searchVessels.length; i++) {
+        var obj = {};
+        obj.tag = searchVessels[i];
+        searchVesselsData.push(obj);
+      }
+      
+      // Search vessel by name
+      $('#searchVesselNameInput').material_chip({
+        data: searchVesselsData,
+        autocompleteOptions: {
+          data: vesselsData,
+          limit: 20,
+          minLength: 1
+          
+        }
+        
+      });
+      
+    });
+
 }
 
 //*****************//
 
 // Global variables
+
 var opacity = $('#opacitySlider span').html();
 var radius = $('#radiusSlider span').html();
 var color = $('#colorSelect select').val();
@@ -481,6 +501,30 @@ function showFormCat() {
   } else {
     $('#formCatArg').attr('class', 'hide');
   }
+}
+
+// Add shapefiles
+function addShapefile() {
+  
+  var limURYshpfile = new L.Shapefile('limitesURY.zip', {
+			onEachFeature: function(feature, layer) {
+				if (feature.properties) {
+					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+						return k + ": " + feature.properties[k];
+					}).join("<br />"), {
+						maxHeight: 200
+					});
+				}
+			}
+		});
+		
+		limURYshpfile.addTo(map);
+		limURYshpfile.once("data:loaded", function() {
+			console.log("finished loaded shapefile");
+		});
+  
+  console.log(limURYshpfile);
+
 }
 
 function showMapFullScreen() {
