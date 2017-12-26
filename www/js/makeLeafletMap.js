@@ -82,7 +82,7 @@ var Esri_OceanBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest
 var map = L.map('map', {
   center: [-35.259, -53.844],
   zoom: 7,
-  layers: [CartoDB_DarkMatter,Esri_WorldImagery,Esri_OceanBasemap,MapBoxHybridSatellite]
+  layers: [CartoDB_DarkMatter, Esri_WorldImagery, Esri_OceanBasemap, MapBoxHybridSatellite]
 });
 
 // Basemaps
