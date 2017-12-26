@@ -128,6 +128,24 @@ shinyServer(function(input, output, session) {
                      'catAltura' = catAltura,
                      'catCosteros' = catCosteros)
     
+    # Update data in global qryVal.df 
+    qryVal.df <<- data.frame('thresholdPoints' = thresholdQuery,
+                             'dateFrom' = dateFromQuery,
+                             'dateUntil' = dateUntilQuery,
+                             'searchVesselName' = vesselNameQuery,
+                             'vesselSpeedMin' = vesselSpeedMinQuery / 10,
+                             'vesselSpeedMax' = vesselSpeedMaxQuery / 10,
+                             'catA' = catA,
+                             'catB' = catB,
+                             'catC' = catC,
+                             'catD' = catD,
+                             'catAltura' = catAltura,
+                             'catCosteros' = catCosteros)
+    
+    # Update searchVessels input
+    searchVessels <- vesselNameQuery
+    session$sendCustomMessage(type = "searchVessels", message = toJSON(vesselNameQuery))
+  
     return(df)
     
   })
@@ -175,6 +193,9 @@ shinyServer(function(input, output, session) {
                      'radius' = radiusConf,
                      'colorGradient' = colorGradientConf,
                      'blur' = blurConf)
+    
+    # Update data in config.df
+    config.df <<- df
     
     return(df)
     
@@ -249,7 +270,7 @@ shinyServer(function(input, output, session) {
     listInputPlot[[2]] <- start.end
     listInputPlot[[3]] <- ndays
     names(listInputPlot) <- c("plotData", "startEnd", "nDays")
-  
+    
     return(listInputPlot)
     
   })
@@ -265,7 +286,7 @@ shinyServer(function(input, output, session) {
     
     # Send show modal to client
     modal <- "open"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     # Close it on exit
     on.exit(progress$close())
@@ -421,7 +442,7 @@ shinyServer(function(input, output, session) {
     
     # Send hide modal to client
     modal <- "close"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     # Return
     return(points)
@@ -513,9 +534,6 @@ shinyServer(function(input, output, session) {
                           "}).addTo(map); \n", toast, toast2, "</script>"), sep = "")
     }
     
-    # Add shp layers - REQUIRES FIX
-    # shp <- HTML(paste0("<script>", "var limitesURY = new L.Shapefile('data/shp/limites-URY.zip', {style:function(feature){return {color:'black',fillColor:'red',fillOpacity:.75}}}); console.log(limitesURY); limitesURY.addTo(map);", "</script>"))
-    
     return(mapa)
     
   })
@@ -523,6 +541,23 @@ shinyServer(function(input, output, session) {
   # Table of data ----------------------------------------
   
   output$table <- renderDataTable({
+    
+    # Send hide modal to client
+    modal <- "open"
+    session$sendCustomMessage(type = "modal", modal)
+    
+    # Create a Progress object
+    progress <- shiny::Progress$new(min = 0, max = 1)
+    
+    # Send show modal to client
+    modal <- "open"
+    session$sendCustomMessage(type = "modal", modal)
+    
+    # Close it on exit
+    on.exit(progress$close())
+    
+    progress$set(message = "Creando tabla", value = 0)
+    
     
     if (is.null(positionsQry.df)) {
       table <- data.frame("Longitud" = NA, "Latitud" = NA, "Nombre" = NA, 
@@ -537,12 +572,18 @@ shinyServer(function(input, output, session) {
       colnames(table) <- c("Longitud", "Latitud", "Nombre", "MMSI", "Estado", "Velocidad", "Curso", "Orientación", "Tiempo")
     }
     
+    progress$set(message = "Termiando", value = 1)
+    
+    # Send hide modal to client
+    modal <- "close"
+    session$sendCustomMessage(type = "modal", modal)
+    
     return(table)
     
   })
-
+  
   # ScatterPlot Speed ------------------------------------
-
+  
   output$scatterPlotSpeed <- renderPlot({
     
     # Create a Progress object
@@ -550,7 +591,7 @@ shinyServer(function(input, output, session) {
     
     # Send show modal to client
     modal <- "open"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     # Close it on exit
     on.exit(progress$close())
@@ -579,22 +620,22 @@ shinyServer(function(input, output, session) {
     
     # Send hide modal to client
     modal <- "close"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     return(ggScatterPlot)
     
   })
-
+  
   # Histogram speed --------------------------------------
-
+  
   output$plotHistSpeed <- renderPlot({
-   
+    
     # Create a Progress object
     progress <- shiny::Progress$new(min = 0, max = 1)
     
     # Send show modal to client
     modal <- "open"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     # Close it on exit
     on.exit(progress$close())
@@ -622,14 +663,14 @@ shinyServer(function(input, output, session) {
     
     # Send hide modal to client
     modal <- "close"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     return(ggHistogramRight)
     
   })
-
+  
   # Histogram signals ------------------------------------
-
+  
   output$plotHistSignals <- renderPlot({
     
     message("*** Rendering Histogram of signals ***")
@@ -639,7 +680,7 @@ shinyServer(function(input, output, session) {
     
     # Send show modal to client
     modal <- "open"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     # Close it on exit
     on.exit(progress$close())
@@ -656,7 +697,7 @@ shinyServer(function(input, output, session) {
     start.end <- plotInputs$startEnd
     ndays <- plotInputs$nDays
     
-   # ggplot
+    # ggplot
     ggHistogramTop <- ggplot(plotInputs$plotData) + 
       geom_histogram(aes(Tiempo, fill = ..count..), alpha = 0.75, bins = as.numeric(ndays)/4, show.legend = FALSE) + 
       scale_y_continuous(name = "Emisiones") +
@@ -668,7 +709,7 @@ shinyServer(function(input, output, session) {
     
     # Send hide modal to client
     modal <- "close"
-    session$sendCustomMessage(type = "myCallbackHandler", modal)
+    session$sendCustomMessage(type = "modal", modal)
     
     return(ggHistogramTop)
     
