@@ -194,8 +194,6 @@ function sendDataToServer() {
 
 }
 
-
-
 function showPlotsFullScreen() {
 
   var inputVisible = $('#input').is(":visible");
