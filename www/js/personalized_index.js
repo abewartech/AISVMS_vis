@@ -65,7 +65,7 @@ function loadPage() {
     })
 
   });
-  
+
   var sliderOpacity = document.getElementById('opacitySlider');
   noUiSlider.create(sliderOpacity, {
     start: [0.8],
@@ -131,7 +131,7 @@ function loadPage() {
 
   // Eventos disparados por Actualizar
   $('#btnReplay').click(sendDataToServer);
-  
+
   // Eventos disparados al hacer check en capas
   $('#checkLimURY').click(addShapefile);
 
@@ -152,19 +152,23 @@ function loadPage() {
   Shiny.addCustomMessageHandler("modal",
     function(modal) {
       $('#modal1').modal(modal);
+
     });
-    
-    Shiny.addCustomMessageHandler("searchVessels",
+
+  // Set session storage
+  setSessionStorage();
+
+  Shiny.addCustomMessageHandler("searchVessels",
     function(searchVessels) {
-      
+
       var searchVesselsData = [];
-      
+
       for (var i = 0; i < searchVessels.length; i++) {
         var obj = {};
         obj.tag = searchVessels[i];
         searchVesselsData.push(obj);
       }
-      
+
       // Search vessel by name
       $('#searchVesselNameInput').material_chip({
         data: searchVesselsData,
@@ -172,46 +176,32 @@ function loadPage() {
           data: vesselsData,
           limit: 20,
           minLength: 1
-          
         }
-        
+
       });
-      
+
     });
+
+  // Modal query Info
+  $('#btnQueryInfo').click(showModalQueryInfo);
+
 
 }
 
-//*****************//
 
-// Global variables
+//****************************************************************************//
 
-var opacity = $('#opacitySlider span').html();
-var radius = $('#radiusSlider span').html();
-var color = $('#colorSelect select').val();
-var blur = $('#blurSlider span').html();
-var thresholdPoints = $('#thresholdPointsInput').val();
-var dateFrom = $('input[name=dateFrom_submit]').attr('value');
-var dateUntil = $('input[name=_submit]').attr('value');
-var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
-var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
-var checkCatA = $('#checkCatA').prop('checked');
-var checkCatB = $('#checkCatB').prop('checked');
-var checkCatC = $('#checkCatC').prop('checked');
-var checkCatD = $('#checkCatD').prop('checked');
-var checkAltura = $('#checkAltura').prop('checked');
-var checkCosteros = $('#checkCosteros').prop('checked');
-var searchVesselName = "ALDEBARAN I";
-var catVesselName = "";
 
 // Action functions
 function changeVesselsNamesByCat() {
 
-  checkCatA = $('#checkCatA').prop('checked');
-  checkCatB = $('#checkCatB').prop('checked');
-  checkCatC = $('#checkCatC').prop('checked');
-  checkCatD = $('#checkCatD').prop('checked');
-  checkAltura = $('#checkAltura').prop('checked');
-  checkCosteros = $('#checkCosteros').prop('checked');
+  // Get client data
+  var checkCatA = $('#checkCatA').prop('checked');
+  var checkCatB = $('#checkCatB').prop('checked');
+  var checkCatC = $('#checkCatC').prop('checked');
+  var checkCatD = $('#checkCatD').prop('checked');
+  var checkAltura = $('#checkAltura').prop('checked');
+  var checkCosteros = $('#checkCosteros').prop('checked');
 
   var vesselsCat = "{";
   var arrayOfCat = [];
@@ -220,8 +210,9 @@ function changeVesselsNamesByCat() {
 
     // Load catA vessels data
     var vesselsCatA = JSON.parse(catA);
+    var keyA;
 
-    for (var keyA in vesselsCatA) {
+    for (keyA in vesselsCatA) {
       var valA = vesselsCatA[keyA];
       var objA = {};
       objA.tag = keyA;
@@ -235,8 +226,9 @@ function changeVesselsNamesByCat() {
 
     // Load catB vessels data
     var vesselsCatB = JSON.parse(catB);
+    var keyB;
 
-    for (var keyB in vesselsCatB) {
+    for (keyB in vesselsCatB) {
       var valB = vesselsCatB[keyB];
       var objB = {};
       objB.tag = keyB;
@@ -250,8 +242,9 @@ function changeVesselsNamesByCat() {
 
     // Load catC vessels data
     var vesselsCatC = JSON.parse(catC);
+    var keyC;
 
-    for (var keyC in vesselsCatC) {
+    for (keyC in vesselsCatC) {
       var valC = vesselsCatC[keyC];
       var objC = {};
       objC.tag = keyC;
@@ -265,8 +258,9 @@ function changeVesselsNamesByCat() {
 
     // Load catC vessels data
     var vesselsCatD = JSON.parse(catD);
+    var keyD;
 
-    for (var keyD in vesselsCatD) {
+    for (keyD in vesselsCatD) {
       var valD = vesselsCatD[keyD];
       var objD = {};
       objD.tag = keyD;
@@ -280,8 +274,9 @@ function changeVesselsNamesByCat() {
 
     // Load catC vessels data
     var vesselsAltura = JSON.parse(altura);
+    var keyAltura;
 
-    for (var keyAltura in vesselsAltura) {
+    for (keyAltura in vesselsAltura) {
       var valAltura = vesselsAltura[keyAltura];
       var objAltura = {};
       objAltura.tag = keyAltura;
@@ -295,8 +290,9 @@ function changeVesselsNamesByCat() {
 
     // Load catC vessels data
     var vesselsCosteros = JSON.parse(costeros);
+    var keyCosteros;
 
-    for (var keyCosteros in vesselsCosteros) {
+    for (keyCosteros in vesselsCosteros) {
       var valCosteros = vesselsCosteros[keyCosteros];
       var objCosteros = {};
       objCosteros.tag = keyCosteros;
@@ -304,7 +300,6 @@ function changeVesselsNamesByCat() {
       vesselsCat = vesselsCat + '\"' + keyCosteros + '\":\"' + valCosteros + '\",';
 
     }
-
   }
 
   vesselsCat = vesselsCat + '\" \":\ null\}';
@@ -324,6 +319,14 @@ function changeVesselsNamesByCat() {
     }
   });
 
+  // Set session storage
+  sessionStorage.setItem("checkCatA", checkCatA);
+  sessionStorage.setItem("checkCatB", checkCatB);
+  sessionStorage.setItem("checkCatC", checkCatC);
+  sessionStorage.setItem("checkCatD", checkCatD);
+  sessionStorage.setItem("checkAltura", checkAltura);
+  sessionStorage.setItem("checkCosteros", checkCosteros);
+
 }
 
 // Check for settings in heatmap
@@ -333,30 +336,36 @@ function settings() {
   var differentSettings = false;
 
   // Get client data
-  var opacityAux = $('#opacitySlider span').html();
-  var radiusAux = $('#radiusSlider span').html();
-  var colorAux = $('#colorSelect select').val();
-  var blurAux = $('#blurSlider span').html();
+  var opacity = $('#opacitySlider span').html();
+  var radius = $('#radiusSlider span').html();
+  var color = $('#colorSelect select').val();
+  var blur = $('#blurSlider span').html();
+
+  // Get session data 
+  var opacityOld = sessionStorage.getItem("opacity");
+  var radiusOld = sessionStorage.getItem("radius");
+  var colorOld = sessionStorage.getItem("color");
+  var blurOld = sessionStorage.getItem("blur");
 
   // Check if client data is the same as previous state
-  if (opacity != opacityAux) {
+  if (opacity != opacityOld) {
     differentSettings = true;
-    opacity = opacityAux;
+    sessionStorage.setItem("opacity", opacity);
   }
 
-  if (radius != radiusAux) {
+  if (radius != radiusOld) {
     differentSettings = true;
-    radius = radiusAux;
+    sessionStorage.setItem("radius", radius);
   }
 
-  if (color != colorAux) {
+  if (color != colorOld) {
     differentSettings = true;
-    color = colorAux;
+    sessionStorage.setItem("color", color);
   }
 
-  if (blur != blurAux) {
+  if (blur != blurOld) {
     differentSettings = true;
-    blur = blurAux;
+    sessionStorage.setItem("blur", blur);
   }
 
   return differentSettings;
@@ -370,67 +379,86 @@ function query() {
   var differentSettings = false;
 
   // Get data from client
-  var thresholdPointsAux = $('#thresholdPointsInput').val();
-  var dateFromAux = $('input[name=dateFrom_submit]').attr('value');
-  var dateUntilAux = $('input[name=_submit]').attr('value');
-  var vesselSpeedMinAux = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
-  var vesselSpeedMaxAux = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+  var thresholdPoints = $('#thresholdPointsInput').val();
+  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
+  var dateUntil = $('input[name=_submit]').attr('value');
+  var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
+  var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+  var checkCatA = $('#checkCatA').prop('checked');
+  var checkCatB = $('#checkCatB').prop('checked');
+  var checkCatC = $('#checkCatC').prop('checked');
+  var checkCatD = $('#checkCatD').prop('checked');
+  var checkAltura = $('#checkAltura').prop('checked');
+  var checkCosteros = $('#checkCosteros').prop('checked');
+
+  // Get session data 
+  var thresholdPointsOld = sessionStorage.getItem("thresholdPoints");
+  var dateFromOld = sessionStorage.getItem("dateFrom");
+  var dateUntilOld = sessionStorage.getItem("dateUntil");
+  var vesselSpeedMinOld = sessionStorage.getItem("vesselSpeedMin");
+  var vesselSpeedMaxOld = sessionStorage.getItem("vesselSpeedMax");
 
   // Check if client data is the same as previous state
-  if (thresholdPoints != thresholdPointsAux) {
+  if (thresholdPoints != thresholdPointsOld) {
     differentSettings = true;
-    thresholdPoints = thresholdPointsAux;
+    sessionStorage.setItem("thresholdPoints", thresholdPoints);
   }
 
-  if (dateFrom != dateFromAux) {
+  if (dateFrom != dateFromOld) {
     differentSettings = true;
-    dateFrom = dateFromAux;
+    sessionStorage.setItem("dateFrom", dateFrom);
   }
 
-  if (dateUntil != dateUntilAux) {
+  if (dateUntil != dateUntilOld) {
     differentSettings = true;
-    dateUntil = dateUntilAux;
+    sessionStorage.setItem("dateUntil", dateUntil);
   }
 
-  if (vesselSpeedMin != vesselSpeedMinAux) {
+  if (vesselSpeedMin != vesselSpeedMinOld) {
     differentSettings = true;
-    vesselSpeedMin = vesselSpeedMinAux;
+    sessionStorage.setItem("vesselSpeedMin", vesselSpeedMin);
   }
 
-  if (vesselSpeedMax != vesselSpeedMaxAux) {
+  if (vesselSpeedMax != vesselSpeedMaxOld) {
     differentSettings = true;
-    vesselSpeedMax = vesselSpeedMaxAux;
+    sessionStorage.setItem("vesselSpeedMax", vesselSpeedMax);
   }
 
   // Get search data vessels
-  var dataAux = $('#searchVesselNameInput').material_chip('data');
-  var lenAux = dataAux.length;
-  var searchVesselNameAux = "";
+  var data = $('#searchVesselNameInput').material_chip('data');
+  var len = data.length;
+  var searchVesselName = "";
+  var searchVesselNameOld = sessionStorage.getItem("searchVesselName");
 
-  for (var iAux = 0; iAux < lenAux; iAux = iAux + 1) {
-    searchVesselNameAux += dataAux[iAux].tag + "\n";
+  var i = 0;
+
+  for (i; i < len; i = i + 1) {
+    searchVesselName += data[i].tag + "\n";
   }
 
-  if (searchVesselName != searchVesselNameAux) {
+  if (searchVesselName != searchVesselNameOld) {
     differentSettings = true;
-    searchVesselName = searchVesselNameAux;
+    sessionStorage.setItem("searchVesselName", searchVesselName);
   }
 
   // Fishing vessels categories
   if (checkCatA | checkCatB | checkCatC | checkCatD | checkAltura | checkCosteros) {
 
     // Get data from categories
-    var catDataAux = $('#catVesselNameInput').material_chip('data');
-    var catLenAux = catDataAux.length;
-    var catVesselNameAux = "";
+    var catData = $('#catVesselNameInput').material_chip('data');
+    var catLen = catData.length;
+    var catVesselName = "";
+    var catVesselNameOld = sessionStorage.getItem("catVesselName");
 
-    for (var jAux = 0; jAux < catLenAux; jAux = jAux + 1) {
-      catVesselNameAux += catDataAux[jAux].tag + "\n";
+    var j = 0;
+
+    for (j; j < catLen; j = j + 1) {
+      catVesselName += catData[j].tag + "\n";
     }
 
-    if (catVesselName != catVesselNameAux) {
+    if (catVesselName != catVesselNameOld) {
       differentSettings = true;
-      catVesselName = catVesselNameAux;
+      sessionStorage.setItem("catVesselName", catVesselName);
     }
   }
 
@@ -446,10 +474,14 @@ function sendDataToServer() {
   // Logs
   console.log("Different settings: " + differentSettings);
   console.log("Different query: " + differentQuery);
-  console.log("Search vessels: \n" + searchVesselName);
-  console.log("Vessels from categories: \n" + catVesselName);
 
   if (differentSettings) {
+
+    // Get session data 
+    var opacity = sessionStorage.getItem("opacity");
+    var radius = sessionStorage.getItem("radius");
+    var color = sessionStorage.getItem("color");
+    var blur = sessionStorage.getItem("blur");
 
     // Send config data to server
     Shiny.onInputChange("opacity", opacity);
@@ -460,18 +492,33 @@ function sendDataToServer() {
 
   if (differentQuery) {
 
+    // Get session data 
+    var thresholdPoints = sessionStorage.getItem("thresholdPoints");
+    var dateFrom = sessionStorage.getItem("dateFrom");
+    var dateUntil = sessionStorage.getItem("dateUntil");
+    var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
+    var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
+    var catA = (sessionStorage.getItem("checkCatA") == 'true');
+    var catB = (sessionStorage.getItem("checkCatB") == 'true');
+    var catC = (sessionStorage.getItem("checkCatC") == 'true');
+    var catD = (sessionStorage.getItem("checkCatD") == 'true');
+    var catAltura = (sessionStorage.getItem("checkAltura") == 'true');
+    var catCosteros = (sessionStorage.getItem("checkCosteros") == 'true');
+    var searchVesselName = sessionStorage.getItem("searchVesselName");
+    var catVesselName = sessionStorage.getItem("catVesselName");
+
     // Send query data to server
     Shiny.onInputChange("thresholdPoints", thresholdPoints);
     Shiny.onInputChange("dateFrom", dateFrom);
     Shiny.onInputChange("dateUntil", dateUntil);
     Shiny.onInputChange("vesselSpeedMin", vesselSpeedMin);
     Shiny.onInputChange("vesselSpeedMax", vesselSpeedMax);
-    Shiny.onInputChange("catA", checkCatA);
-    Shiny.onInputChange("catB", checkCatB);
-    Shiny.onInputChange("catC", checkCatC);
-    Shiny.onInputChange("catD", checkCatD);
-    Shiny.onInputChange("catAltura", checkAltura);
-    Shiny.onInputChange("catCosteros", checkCosteros);
+    Shiny.onInputChange("catA", catA);
+    Shiny.onInputChange("catB", catB);
+    Shiny.onInputChange("catC", catC);
+    Shiny.onInputChange("catD", catD);
+    Shiny.onInputChange("catAltura", catAltura);
+    Shiny.onInputChange("catCosteros", catCosteros);
     Shiny.onInputChange("searchVesselName", searchVesselName);
     Shiny.onInputChange("catVesselName", catVesselName);
   }
@@ -503,30 +550,6 @@ function showFormCat() {
   }
 }
 
-// Add shapefiles
-function addShapefile() {
-  
-  var limURYshpfile = new L.Shapefile('limitesURY.zip', {
-			onEachFeature: function(feature, layer) {
-				if (feature.properties) {
-					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
-						return k + ": " + feature.properties[k];
-					}).join("<br />"), {
-						maxHeight: 200
-					});
-				}
-			}
-		});
-		
-		limURYshpfile.addTo(map);
-		limURYshpfile.once("data:loaded", function() {
-			console.log("finished loaded shapefile");
-		});
-  
-  console.log(limURYshpfile);
-
-}
-
 function showMapFullScreen() {
 
   var inputVisible = $('#input').is(":visible");
@@ -543,3 +566,121 @@ function showMapFullScreen() {
   }
 
 }
+
+// Session Storage
+function setSessionStorage() {
+
+  // Check browser support
+  if (typeof(Storage) !== "undefined") {
+
+    var opacity = $('#opacitySlider span').html();
+    var radius = $('#radiusSlider span').html();
+    var color = $('#colorSelect select').val();
+    var blur = $('#blurSlider span').html();
+    var thresholdPoints = $('#thresholdPointsInput').val();
+    var dateFrom = $('input[name=dateFrom_submit]').attr('value');
+    var dateUntil = $('input[name=_submit]').attr('value');
+    var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
+    var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+    var checkCatA = $('#checkCatA').prop('checked');
+    var checkCatB = $('#checkCatB').prop('checked');
+    var checkCatC = $('#checkCatC').prop('checked');
+    var checkCatD = $('#checkCatD').prop('checked');
+    var checkAltura = $('#checkAltura').prop('checked');
+    var checkCosteros = $('#checkCosteros').prop('checked');
+    var searchVesselName = "ALDEBARAN I";
+    var catVesselName = "";
+
+    // Store
+    sessionStorage.setItem("opacity", opacity);
+    sessionStorage.setItem("radius", radius);
+    sessionStorage.setItem("color", color);
+    sessionStorage.setItem("blur", blur);
+    sessionStorage.setItem("thresholdPoints", thresholdPoints);
+    sessionStorage.setItem("dateFrom", dateFrom);
+    sessionStorage.setItem("dateUntil", dateUntil);
+    sessionStorage.setItem("vesselSpeedMin", vesselSpeedMin);
+    sessionStorage.setItem("vesselSpeedMax", vesselSpeedMax);
+    sessionStorage.setItem("checkCatA", checkCatA);
+    sessionStorage.setItem("checkCatB", checkCatB);
+    sessionStorage.setItem("checkCatC", checkCatC);
+    sessionStorage.setItem("checkCatD", checkCatD);
+    sessionStorage.setItem("checkAltura", checkAltura);
+    sessionStorage.setItem("checkCosteros", checkCosteros);
+    sessionStorage.setItem("searchVesselName", searchVesselName);
+    sessionStorage.setItem("catVesselName", catVesselName);
+
+    // Retrieve
+    //alert(sessionStorage.getItem("lastname"));
+
+  } else {
+    alert("Disculpas, tú navegador no soporta Almacenamiento Web... =(");
+  }
+}
+
+function showModalQueryInfo() {
+  
+  var opacity = $('#opacitySlider span').html();
+  var radius = $('#radiusSlider span').html();
+  var color = $('#colorSelect select').val();
+  var blur = $('#blurSlider span').html();
+  var thresholdPoints = $('#thresholdPointsInput').val();
+  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
+  var dateUntil = $('input[name=_submit]').attr('value');
+  var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
+  var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+  var checkCatA = $('#checkCatA').prop('checked');
+  var checkCatB = $('#checkCatB').prop('checked');
+  var checkCatC = $('#checkCatC').prop('checked');
+  var checkCatD = $('#checkCatD').prop('checked');
+  var checkAltura = $('#checkAltura').prop('checked');
+  var checkCosteros = $('#checkCosteros').prop('checked');
+  var searchVesselName = "ALDEBARAN I";
+  var catVesselName = "";
+  
+  $('#modal2').modal("open");
+  $('#modal2DbInput').html('<i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; <b>Base de Datos:</b> AIS / <b>Límite de posiciones:</b> ' + thresholdPoints)
+  $('#modal2TimeInput').html('<i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; <b>Fechas:</b> ' + dateFrom + ' / ' + dateUntil)
+  $('#modal2SearchInput').html('<i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; <b>Búsqueda:</b> ' + searchVesselName)
+
+ 
+}
+
+
+// Cookies
+/*
+function setCookie(cname, cvalue, exdays) {
+var d = new Date();
+d.setTime(d.getTime() + (exdays*24*60*60*1000));
+var expires = "expires=" + d.toGMTString();
+document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+var name = cname + "=";
+var decodedCookie = decodeURIComponent(document.cookie);
+var ca = decodedCookie.split(';');
+for(var i = 0; i < ca.length; i++) {
+var c = ca[i];
+while (c.charAt(0) == ' ') {
+c = c.substring(1);
+}
+if (c.indexOf(name) == 0) {
+return c.substring(name.length, c.length);
+}
+}
+return "";
+}
+
+function checkCookie() {
+var user = getCookie("username");
+if (user != "") {
+alert("Welcome again " + user);
+} else {
+user = prompt("Please enter your name:","");
+if (user != "" && user != null) {
+setCookie("username", user, 30);
+}
+}
+}
+*/
