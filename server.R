@@ -53,12 +53,14 @@ shinyServer(function(input, output, session) {
     else {
       catD <- catDCli
     }
+    
     if (is.null(catAlturaCli) || catAlturaCli == "") {
       catAltura <- qryVal.df$catAltura
     } 
     else {
       catAltura <- catAlturaCli
     }
+    
     if (is.null(catCosterosCli) || catCosterosCli == "") {
       catCosteros <- qryVal.df$catCosteros
     } 
@@ -89,18 +91,6 @@ shinyServer(function(input, output, session) {
       dateUntilQuery <- dateUntilCli
     }
     
-    # Query vessel name
-    if(!any(catA, catB, catC, catD, catAltura, catCosteros)) {
-      if (searchVesselNameCli == "" || is.null(searchVesselNameCli) || length(searchVesselNameCli) == 0) {
-        vesselNameQuery <- qryVal.df$searchVesselName
-      }
-      else {
-        vesselNameQuery <- searchVesselNameCli
-      }
-    } else {
-      vesselNameQuery <- as.character(catVesselNameCli)
-    }
-    
     # Query vessel speed Min / Max
     if (vesselSpeedMinCli == "" || is.null(vesselSpeedMinCli)) {
       vesselSpeedMinQuery <- qryVal.df$vesselSpeedMin * 10
@@ -108,11 +98,27 @@ shinyServer(function(input, output, session) {
     else {
       vesselSpeedMinQuery <- as.numeric(vesselSpeedMinCli) * 10
     }
+    
     if (vesselSpeedMaxCli == "" || is.null(vesselSpeedMaxCli)) {
       vesselSpeedMaxQuery <- qryVal.df$vesselSpeedMax * 10
     }
     else {
       vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli) * 10
+    }
+    
+    # Query vessel name
+    if(!any(catA, catB, catC, catD, catAltura, catCosteros)) {
+      
+      if (searchVesselNameCli == "" || is.null(searchVesselNameCli) || length(searchVesselNameCli) == 0) {
+        vesselNameQuery <- qryVal.df$searchVesselName
+      }
+      
+      else {
+        vesselNameQuery <- searchVesselNameCli
+      }
+    } 
+    else {
+      vesselNameQuery <- as.character(catVesselNameCli)
     }
     
     df <- data.frame('thresholdPoints' = thresholdQuery,
@@ -145,7 +151,7 @@ shinyServer(function(input, output, session) {
     # Update searchVessels input
     searchVessels <- vesselNameQuery
     session$sendCustomMessage(type = "searchVessels", message = toJSON(vesselNameQuery))
-  
+    
     return(df)
     
   })
@@ -714,5 +720,6 @@ shinyServer(function(input, output, session) {
     return(ggHistogramTop)
     
   })
+  
   
 })
