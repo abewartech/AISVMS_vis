@@ -7,7 +7,7 @@ library(jsonlite)
 library(wkb)
 library(sf)
 library(leaflet)
-
+library(ggplot2)
 
 # Disable scientific notation 
 options(scipen = 999)
