@@ -102,3 +102,27 @@ layerControl = L.control.layers(baseMaps, null, {
   position: 'topleft'
 });
 layerControl.addTo(map);
+
+// Add shapefiles
+function addShapefile() {
+  
+  var limURYshpfile = new L.Shapefile('js/limitesURY.zip', {
+			onEachFeature: function(feature, layer) {
+				if (feature.properties) {
+					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+						return k + ": " + feature.properties[k];
+					}).join("<br />"), {
+						maxHeight: 200
+					});
+				}
+			}
+		});
+		
+		limURYshpfile.addTo(map);
+		limURYshpfile.once("data:loaded", function() {
+			console.log("finished loaded shapefile");
+		});
+		
+		console.log(limURYshpfile);
+
+}
