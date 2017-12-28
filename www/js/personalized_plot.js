@@ -13,6 +13,12 @@ function loadPage() {
   $('.tooltipped').tooltip({
     delay: 50
   });
+  
+  // Get session data
+  var dateFrom = sessionStorage.getItem("dateFrom");
+  var dateUntil = sessionStorage.getItem("dateUntil");
+  var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
+  var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
 
   // datetime
   $('.datepicker').pickadate({
@@ -51,11 +57,15 @@ function loadPage() {
   });
   
   // noUiSlider - plot.html
+  if (vesselSpeedMin !== null | vesselSpeedMax !== null) {
   var sliderVesselSpeed = document.getElementById('vesselSpeedSlider');
+  //sliderVesselSpeed.noUiSlider.destroy();
   noUiSlider.create(sliderVesselSpeed, {
-    start: [0, 15],
+    start: [parseFloat(vesselSpeedMin), parseFloat(vesselSpeedMax)],
     connect: true,
     step: 0.1,
+    margin: 0.1,
+    behaviour: 'drag',
     range: {
       'min': 0,
       'max': 30
@@ -65,6 +75,7 @@ function loadPage() {
     })
 
   });
+  }
 
   // Modal
   $('.modal').modal({
