@@ -219,13 +219,13 @@ shinyServer(function(input, output, session) {
     
     # Vessel speed Min / Max
     if (vesselSpeedMinCli == "" || is.null(vesselSpeedMinCli)) {
-      vesselSpeedMinQuery <- qryVal.df$vesselSpeedMin * 10
+      vesselSpeedMinQuery <- as.numeric(as.character(qryVal.df$vesselSpeedMin)) 
     }
     else {
       vesselSpeedMinQuery <- as.numeric(vesselSpeedMinCli)
     }
     if (vesselSpeedMaxCli == "" || is.null(vesselSpeedMaxCli)) {
-      vesselSpeedMaxQuery <- qryVal.df$vesselSpeedMax * 10
+      vesselSpeedMaxQuery <- as.numeric(as.character(qryVal.df$vesselSpeedMax)) 
     }
     else {
       vesselSpeedMaxQuery <- as.numeric(vesselSpeedMaxCli)
