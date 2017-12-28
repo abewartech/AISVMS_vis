@@ -1,7 +1,7 @@
 $(document).ready(loadPage);
 
 function loadPage() {
-
+  
   //****** Materialize Design ******//
 
   $('select').material_select();
@@ -109,14 +109,6 @@ function loadPage() {
     })
   });
 
-  // Load vessels data
-  var vesselsData = "";
-  vesselsData = JSON.parse(vessels);
-
-  //$('.chips').on('chip.add', function(e, chip) {});
-  //$('.chips').on('chip.delete', function(e, chip) {});
-  //$('.chips').on('chip.select', function(e, chip) {});
-
   // Categories
   $('#checkCatA').click(changeVesselsNamesByCat);
   $('#checkCatB').click(changeVesselsNamesByCat);
@@ -156,12 +148,21 @@ function loadPage() {
 
     });
 
+  // Load vessels data
+  var vesselsData = JSON.parse(vessels);
+  var vesselsCatA = JSON.parse(catA);
+  
+  //$('.chips').on('chip.add', function(e, chip) {});
+  //$('.chips').on('chip.delete', function(e, chip) {});
+  //$('.chips').on('chip.select', function(e, chip) {});
+
   Shiny.addCustomMessageHandler("searchVessels",
     function(searchVessels) {
 
       var searchVesselsData = [];
+      var i = 0;
 
-      for (var i = 0; i < searchVessels.length; i++) {
+      for (i; i < searchVessels.length; i++) {
         var obj = {};
         obj.tag = searchVessels[i];
         searchVesselsData.push(obj);
@@ -179,13 +180,43 @@ function loadPage() {
       });
 
     });
+    
+  Shiny.addCustomMessageHandler("catVessels",
+    function(catVessels) {
+
+      var catVesselsData = [];
+      var i = 0;
+
+      for (i; i < catVessels.length; i++) {
+        var obj = {};
+        obj.tag = catVessels[i];
+        catVesselsData.push(obj);
+      }
+
+      // Search vessel by name
+      $('#catVesselNameInput').material_chip({
+        data: catVesselsData,
+        autocompleteOptions: {
+          data: vesselsCatA,
+          limit: 20,
+          minLength: 1
+        }
+
+      });
+
+    });
+
+
 
   // Modal query Info
   $('#btnQueryInfo').click(showModalQueryInfo);
   
   // Set session storage
   //setSessionStorage();
-  getSessionStorage();
+  
+   getSessionStorage();
+
+
 
 }
 
@@ -629,11 +660,8 @@ function setSessionStorage() {
     sessionStorage.setItem("searchVesselName", searchVesselName);
     sessionStorage.setItem("catVesselName", catVesselName);
 
-    // Retrieve
-    //alert(sessionStorage.getItem("lastname"));
-
   } else {
-    alert("Disculpas, tú navegador no soporta Almacenamiento Web... =(");
+    alert("Disculpas, tú navegador no soporta Almacenamiento Web... =( ");
   }
 }
 
@@ -645,8 +673,12 @@ function getSessionStorage() {
   var dateUntil = sessionStorage.getItem("dateUntil");
   var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
   var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
-  
   var catA = (sessionStorage.getItem("checkCatA") == 'true');
+  var catB = (sessionStorage.getItem("checkCatB") == 'true');
+  var catC = (sessionStorage.getItem("checkCatC") == 'true');
+  var catD = (sessionStorage.getItem("checkCatD") == 'true');
+  var catCosteros = (sessionStorage.getItem("checkCosteros") == 'true');
+  var catAltura = (sessionStorage.getItem("checkAltura") == 'true');
   
   var opacity = sessionStorage.getItem("opacity");
   var radius = sessionStorage.getItem("radius");
@@ -678,9 +710,13 @@ function getSessionStorage() {
   });
   }
   
-  
   $('#checkCatA').prop('checked', catA);
-  
+  $('#checkCatB').prop('checked', catB);
+  $('#checkCatC').prop('checked', catC);
+  $('#checkCatD').prop('checked', catD);
+  $('#checkCosteros').prop('checked', catCosteros);
+  $('#checkAltura').prop('checked', catAltura);
+
   if (opacity !== null) {
   var sliderOpacity = document.getElementById('opacitySlider');
   sliderOpacity.noUiSlider.destroy();
@@ -732,8 +768,4 @@ function getSessionStorage() {
   });
   }
 
-  
-  
 }
-
-

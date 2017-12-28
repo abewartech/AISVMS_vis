@@ -116,9 +116,30 @@ shinyServer(function(input, output, session) {
       else {
         vesselNameQuery <- searchVesselNameCli
       }
+      
+      # Update search vessels input
+      session$sendCustomMessage(type = "searchVessels", message = toJSON(vesselNameQuery))
+      session$sendCustomMessage(type = "catVessels", message = toJSON(NULL))
+      print("SEARCH VESSELS")
+      print(vesselNameQuery)
+      
     } 
     else {
-      vesselNameQuery <- as.character(catVesselNameCli)
+      
+      if (catVesselNameCli == "" || is.null(catVesselNameCli) || length(catVesselNameCli) == 0) {
+        vesselNameQuery <- qryVal.df$searchVesselName
+      } 
+      
+      else {
+        vesselNameQuery <- as.character(catVesselNameCli)
+        }
+      
+      # Update category vessels input
+      session$sendCustomMessage(type = "catVessels", message = toJSON(vesselNameQuery))
+      session$sendCustomMessage(type = "searchVessels", message = toJSON(NULL))
+      print("CATEGORY VESSELS")
+      print(vesselNameQuery)
+      
     }
     
     df <- data.frame('thresholdPoints' = thresholdQuery,
@@ -147,10 +168,6 @@ shinyServer(function(input, output, session) {
                              'catD' = catD,
                              'catAltura' = catAltura,
                              'catCosteros' = catCosteros)
-    
-    # Update searchVessels input
-    searchVessels <- vesselNameQuery
-    session$sendCustomMessage(type = "searchVessels", message = toJSON(vesselNameQuery))
     
     return(df)
     
