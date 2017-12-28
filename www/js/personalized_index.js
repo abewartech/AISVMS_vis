@@ -56,6 +56,7 @@ function loadPage() {
     start: [0, 15],
     connect: true,
     step: 0.1,
+    behaviour: 'drag',
     range: {
       'min': 0,
       'max': 30
@@ -65,7 +66,7 @@ function loadPage() {
     })
 
   });
-
+  
   var sliderOpacity = document.getElementById('opacitySlider');
   noUiSlider.create(sliderOpacity, {
     start: [0.8],
@@ -155,9 +156,6 @@ function loadPage() {
 
     });
 
-  // Set session storage
-  setSessionStorage();
-
   Shiny.addCustomMessageHandler("searchVessels",
     function(searchVessels) {
 
@@ -184,7 +182,10 @@ function loadPage() {
 
   // Modal query Info
   $('#btnQueryInfo').click(showModalQueryInfo);
-
+  
+  // Set session storage
+  //setSessionStorage();
+  getSessionStorage();
 
 }
 
@@ -382,8 +383,8 @@ function query() {
   var thresholdPoints = $('#thresholdPointsInput').val();
   var dateFrom = $('input[name=dateFrom_submit]').attr('value');
   var dateUntil = $('input[name=_submit]').attr('value');
-  var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
-  var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+  var vesselSpeedMin = document.getElementById('vesselSpeedSlider').noUiSlider.get()[0];
+  var vesselSpeedMax = document.getElementById('vesselSpeedSlider').noUiSlider.get()[1];
   var checkCatA = $('#checkCatA').prop('checked');
   var checkCatB = $('#checkCatB').prop('checked');
   var checkCatC = $('#checkCatC').prop('checked');
@@ -567,6 +568,24 @@ function showMapFullScreen() {
 
 }
 
+function showModalQueryInfo() {
+  
+  var thresholdPoints = sessionStorage.getItem("thresholdPoints");
+  var dateFrom = sessionStorage.getItem("dateFrom");
+  var dateUntil = sessionStorage.getItem("dateUntil");
+  var searchVesselName = sessionStorage.getItem("searchVesselName");
+  var checkCatA = sessionStorage.getItem("checkCatA");
+  var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
+  var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
+  
+  $('#modal2').modal("open");
+  $('#modal2DbInput').html('<i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; <b>Base de Datos:</b> AIS / <b>Límite de posiciones:</b> ' + thresholdPoints)
+  $('#modal2TimeInput').html('<i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; <b>Fechas:</b> ' + dateFrom + ' / ' + dateUntil)
+  $('#modal2SearchInput').html('<i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; <b>Búsqueda:</b> ' + searchVesselName)
+  $('#modal2FisheriesInput').html('<i class="fa fa-industry fa-fw" aria-hidden="true"></i>&nbsp; <b>Flota de Pesca:</b> ' + 'Categoría A: ' + checkCatA)
+  
+}
+
 // Session Storage
 function setSessionStorage() {
 
@@ -580,8 +599,8 @@ function setSessionStorage() {
     var thresholdPoints = $('#thresholdPointsInput').val();
     var dateFrom = $('input[name=dateFrom_submit]').attr('value');
     var dateUntil = $('input[name=_submit]').attr('value');
-    var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
-    var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
+    var vesselSpeedMin = document.getElementById('vesselSpeedSlider').noUiSlider.get()[0];
+    var vesselSpeedMax = document.getElementById('vesselSpeedSlider').noUiSlider.get()[1];
     var checkCatA = $('#checkCatA').prop('checked');
     var checkCatB = $('#checkCatB').prop('checked');
     var checkCatC = $('#checkCatC').prop('checked');
@@ -618,69 +637,103 @@ function setSessionStorage() {
   }
 }
 
-function showModalQueryInfo() {
+function getSessionStorage() {
   
-  var opacity = $('#opacitySlider span').html();
-  var radius = $('#radiusSlider span').html();
-  var color = $('#colorSelect select').val();
-  var blur = $('#blurSlider span').html();
-  var thresholdPoints = $('#thresholdPointsInput').val();
-  var dateFrom = $('input[name=dateFrom_submit]').attr('value');
-  var dateUntil = $('input[name=_submit]').attr('value');
-  var vesselSpeedMin = $('#vesselSpeedSlider .noUi-handle-lower .range-label span').html();
-  var vesselSpeedMax = $('#vesselSpeedSlider .noUi-handle-upper .range-label span').html();
-  var checkCatA = $('#checkCatA').prop('checked');
-  var checkCatB = $('#checkCatB').prop('checked');
-  var checkCatC = $('#checkCatC').prop('checked');
-  var checkCatD = $('#checkCatD').prop('checked');
-  var checkAltura = $('#checkAltura').prop('checked');
-  var checkCosteros = $('#checkCosteros').prop('checked');
-  var searchVesselName = "ALDEBARAN I";
-  var catVesselName = "";
+  // Get session data 
+  var thresholdPoints = sessionStorage.getItem("thresholdPoints");
+  var dateFrom = sessionStorage.getItem("dateFrom");
+  var dateUntil = sessionStorage.getItem("dateUntil");
+  var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
+  var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
   
-  $('#modal2').modal("open");
-  $('#modal2DbInput').html('<i class="fa fa-database fa-fw" aria-hidden="true"></i>&nbsp; <b>Base de Datos:</b> AIS / <b>Límite de posiciones:</b> ' + thresholdPoints)
-  $('#modal2TimeInput').html('<i class="fa fa-calendar fa-fw" aria-hidden="true"></i>&nbsp; <b>Fechas:</b> ' + dateFrom + ' / ' + dateUntil)
-  $('#modal2SearchInput').html('<i class="fa fa-search fa-fw" aria-hidden="true"></i>&nbsp; <b>Búsqueda:</b> ' + searchVesselName)
+  var catA = (sessionStorage.getItem("checkCatA") == 'true');
+  
+  var opacity = sessionStorage.getItem("opacity");
+  var radius = sessionStorage.getItem("radius");
+  var color = sessionStorage.getItem("color");
+  var blur = sessionStorage.getItem("blur");
+  
+  // Set inputs
+  if (thresholdPoints !== null) {
+    $('#thresholdPointsInput').attr('value', thresholdPoints);
+  }
+  
+  if (vesselSpeedMin !== null | vesselSpeedMax !== null) {
+  var sliderVesselSpeed = document.getElementById('vesselSpeedSlider');
+  sliderVesselSpeed.noUiSlider.destroy();
+  noUiSlider.create(sliderVesselSpeed, {
+    start: [parseFloat(vesselSpeedMin), parseFloat(vesselSpeedMax)],
+    connect: true,
+    step: 0.1,
+    margin: 0.1,
+    behaviour: 'drag',
+    range: {
+      'min': 0,
+      'max': 30
+    },
+    format: wNumb({
+      decimals: 0
+    })
 
- 
+  });
+  }
+  
+  
+  $('#checkCatA').prop('checked', catA);
+  
+  if (opacity !== null) {
+  var sliderOpacity = document.getElementById('opacitySlider');
+  sliderOpacity.noUiSlider.destroy();
+  noUiSlider.create(sliderOpacity, {
+    start: [parseFloat(opacity)],
+    connect: false,
+    step: 0.01,
+    range: {
+      'min': 0,
+      'max': 1
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
+  }
+  
+  if (radius !== null) {
+  var sliderRadius = document.getElementById('radiusSlider');
+  sliderRadius.noUiSlider.destroy();
+  noUiSlider.create(sliderRadius, {
+    start: [parseFloat(radius)],
+    connect: false,
+    step: 0.1,
+    range: {
+      'min': 1,
+      'max': 20
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
+  }
+  
+  if (blur !== null) {
+  var sliderBlur = document.getElementById('blurSlider');
+  sliderBlur.noUiSlider.destroy();
+  noUiSlider.create(sliderBlur, {
+    start: [parseFloat(blur)],
+    connect: false,
+    step: 0.25,
+    range: {
+      'min': 1,
+      'max': 15
+    },
+    format: wNumb({
+      decimals: 0
+    })
+  });
+  }
+
+  
+  
 }
 
 
-// Cookies
-/*
-function setCookie(cname, cvalue, exdays) {
-var d = new Date();
-d.setTime(d.getTime() + (exdays*24*60*60*1000));
-var expires = "expires=" + d.toGMTString();
-document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-var name = cname + "=";
-var decodedCookie = decodeURIComponent(document.cookie);
-var ca = decodedCookie.split(';');
-for(var i = 0; i < ca.length; i++) {
-var c = ca[i];
-while (c.charAt(0) == ' ') {
-c = c.substring(1);
-}
-if (c.indexOf(name) == 0) {
-return c.substring(name.length, c.length);
-}
-}
-return "";
-}
-
-function checkCookie() {
-var user = getCookie("username");
-if (user != "") {
-alert("Welcome again " + user);
-} else {
-user = prompt("Please enter your name:","");
-if (user != "" && user != null) {
-setCookie("username", user, 30);
-}
-}
-}
-*/
