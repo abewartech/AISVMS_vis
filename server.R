@@ -120,8 +120,6 @@ shinyServer(function(input, output, session) {
       # Update search vessels input
       session$sendCustomMessage(type = "searchVessels", message = toJSON(vesselNameQuery))
       session$sendCustomMessage(type = "catVessels", message = toJSON(NULL))
-      print("SEARCH VESSELS")
-      print(vesselNameQuery)
       
     } 
     else {
@@ -137,8 +135,6 @@ shinyServer(function(input, output, session) {
       # Update category vessels input
       session$sendCustomMessage(type = "catVessels", message = toJSON(vesselNameQuery))
       session$sendCustomMessage(type = "searchVessels", message = toJSON(NULL))
-      print("CATEGORY VESSELS")
-      print(vesselNameQuery)
       
     }
     
@@ -675,7 +671,7 @@ shinyServer(function(input, output, session) {
     
     # ggplot
     ggHistogramRight <- ggplot(plotInputs$plotData) + 
-      geom_histogram(aes(Velocidad, fill = ..count..), alpha = 0.75, breaks = seq(speedMin, speedMax, by = 0.2), show.legend = FALSE) + 
+      geom_histogram(aes(Velocidad, fill = ..count..), alpha = 0.75, breaks = seq(speedMin, speedMax, by = 0.1), show.legend = FALSE) + 
       scale_x_continuous(name = "Velocidad (kn)", breaks = seq(speedMin, speedMax, by = 0.5), limits = c(speedMin, speedMax), labels = waiver()) +
       scale_y_continuous(name = "Frecuencia") + 
       scale_fill_distiller("Frecuencia velocidades", palette = "PuBu", direction = 1) + 
@@ -737,6 +733,5 @@ shinyServer(function(input, output, session) {
     return(ggHistogramTop)
     
   })
-  
   
 })
