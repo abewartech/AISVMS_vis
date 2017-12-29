@@ -150,7 +150,6 @@ function loadPage() {
 
   // Load vessels data
   var vesselsData = JSON.parse(vessels);
-  var vesselsCatA = JSON.parse(catA);
   
   //$('.chips').on('chip.add', function(e, chip) {});
   //$('.chips').on('chip.delete', function(e, chip) {});
@@ -192,31 +191,20 @@ function loadPage() {
         obj.tag = catVessels[i];
         catVesselsData.push(obj);
       }
-
-      // Search vessel by name
-      $('#catVesselNameInput').material_chip({
-        data: catVesselsData,
-        autocompleteOptions: {
-          data: vesselsCatA,
-          limit: 20,
-          minLength: 1
-        }
-
-      });
+      
+      updateVesselsNamesByCat(catVesselsData);
 
     });
 
-
-
   // Modal query Info
   $('#btnQueryInfo').click(showModalQueryInfo);
+  
+  $('#searchVesselNameInput').click(clearCategoriesInputs);
   
   // Set session storage
   //setSessionStorage();
   
    getSessionStorage();
-
-
 
 }
 
@@ -359,6 +347,139 @@ function changeVesselsNamesByCat() {
   sessionStorage.setItem("checkAltura", checkAltura);
   sessionStorage.setItem("checkCosteros", checkCosteros);
 
+}
+
+function updateVesselsNamesByCat(catVesselsData) {
+
+  // Get session data
+  var checkCatA = (sessionStorage.getItem("checkCatA") == 'true');
+  var checkCatB = (sessionStorage.getItem("checkCatB") == 'true');
+  var checkCatC = (sessionStorage.getItem("checkCatC") == 'true');
+  var checkCatD = (sessionStorage.getItem("checkCatD") == 'true');
+  var checkCosteros = (sessionStorage.getItem("checkCosteros") == 'true');
+  var checkAltura = (sessionStorage.getItem("checkAltura") == 'true');
+
+  var vesselsCat = "{";
+
+  if (checkCatA) {
+
+    // Load catA vessels data
+    var vesselsCatA = JSON.parse(catA);
+    var keyA;
+
+    for (keyA in vesselsCatA) {
+      var valA = vesselsCatA[keyA];
+      var objA = {};
+      vesselsCat = vesselsCat + '\"' + keyA + '\":\"' + valA + '\",';
+
+    }
+
+  }
+  if (checkCatB) {
+
+    // Load catB vessels data
+    var vesselsCatB = JSON.parse(catB);
+    var keyB;
+
+    for (keyB in vesselsCatB) {
+      var valB = vesselsCatB[keyB];
+      var objB = {};
+      vesselsCat = vesselsCat + '\"' + keyB + '\":\"' + valB + '\",';
+
+    }
+
+  }
+  if (checkCatC) {
+
+    // Load catC vessels data
+    var vesselsCatC = JSON.parse(catC);
+    var keyC;
+
+    for (keyC in vesselsCatC) {
+      var valC = vesselsCatC[keyC];
+      var objC = {};
+      vesselsCat = vesselsCat + '\"' + keyC + '\":\"' + valC + '\",';
+
+    }
+
+  }
+  if (checkCatD) {
+
+    // Load catC vessels data
+    var vesselsCatD = JSON.parse(catD);
+    var keyD;
+
+    for (keyD in vesselsCatD) {
+      var valD = vesselsCatD[keyD];
+      var objD = {};
+      vesselsCat = vesselsCat + '\"' + keyD + '\":\"' + valD + '\",';
+
+    }
+
+  }
+  if (checkAltura) {
+
+    // Load catC vessels data
+    var vesselsAltura = JSON.parse(altura);
+    var keyAltura;
+
+    for (keyAltura in vesselsAltura) {
+      var valAltura = vesselsAltura[keyAltura];
+      var objAltura = {};
+      vesselsCat = vesselsCat + '\"' + keyAltura + '\":\"' + valAltura + '\",';
+
+    }
+
+  }
+  if (checkCosteros) {
+
+    // Load catC vessels data
+    var vesselsCosteros = JSON.parse(costeros);
+    var keyCosteros;
+
+    for (keyCosteros in vesselsCosteros) {
+      var valCosteros = vesselsCosteros[keyCosteros];
+      var objCosteros = {};
+      vesselsCat = vesselsCat + '\"' + keyCosteros + '\":\"' + valCosteros + '\",';
+
+    }
+  }
+
+  vesselsCat = vesselsCat + '\" \":\ null\}';
+  objVesselsCat = JSON.parse(vesselsCat);
+
+  // Clear chips
+  //$('#catVesselNameInput').material_chip({});
+  //$('#searchVesselNameInput').material_chip({});
+
+  // Search vessel by name
+  $('#catVesselNameInput').material_chip({
+    data: catVesselsData,
+    autocompleteOptions: {
+      data: objVesselsCat,
+      limit: 20,
+      minLength: 1
+    }
+  });
+}
+
+function clearCategoriesInputs() {
+  
+  $('#catVesselNameInput').material_chip({});
+  $('#checkCatA').prop('checked', false);
+  $('#checkCatB').prop('checked', false);
+  $('#checkCatC').prop('checked', false);
+  $('#checkCatD').prop('checked', false);
+  $('#checkCosteros').prop('checked', false);
+  $('#checkAltura').prop('checked', false);
+  
+  sessionStorage.setItem("checkCatA", checkCatA);
+  sessionStorage.setItem("checkCatB", checkCatB);
+  sessionStorage.setItem("checkCatC", checkCatC);
+  sessionStorage.setItem("checkCatD", checkCatD);
+  sessionStorage.setItem("checkAltura", checkAltura);
+  sessionStorage.setItem("checkCosteros", checkCosteros);
+  
 }
 
 // Check for settings in heatmap
@@ -606,6 +727,8 @@ function showModalQueryInfo() {
   var dateUntil = sessionStorage.getItem("dateUntil");
   var searchVesselName = sessionStorage.getItem("searchVesselName");
   var checkCatA = sessionStorage.getItem("checkCatA");
+  var checkCatB = sessionStorage.getItem("checkCatB");
+  
   var vesselSpeedMin = sessionStorage.getItem("vesselSpeedMin");
   var vesselSpeedMax = sessionStorage.getItem("vesselSpeedMax");
   
@@ -768,4 +891,30 @@ function getSessionStorage() {
   });
   }
 
+}
+
+// Add shapefiles
+function addShapefile() {
+  
+  var limURYshpfile = new L.Shapefile('js/limitesURY.zip', {
+			onEachFeature: function(feature, layer) {
+				if (feature.properties) {
+					layer.bindPopup(Object.keys(feature.properties).map(function(k) {
+						return k + ": " + feature.properties[k];
+					}).join("<br />"), {
+						maxHeight: 200
+					});
+				}
+			}
+		});
+		
+		limURYshpfile.addTo(map);
+		limURYshpfile.once("data:loaded", function() {
+			console.log("finished loaded shapefile");
+		});
+		
+		console.log(limURYshpfile);
+		
+		alert("SHP")
+		
 }
