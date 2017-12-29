@@ -45,4 +45,4 @@ configCustom.df <- config.df
 positionsQry.df <- data.frame()
 
 # Shapefiles
-limitesURY <- read_sf("data/shp/c100Polygon.shp")
+# limitesURY <- read_sf("data/shp/c100Polygon.shp")
