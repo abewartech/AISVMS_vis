@@ -115,21 +115,6 @@
           </form>
         </div>
       </div>
-
-      <!--
-                <div class="row">
-                <div class="col s12">
-                <div class="switch">
-                <label>
-                <img src="img/vms.png" alt="vms logo" width="36px">
-                <input id="vmsData" name="vmsData" type="checkbox">
-                <span class="lever"></span>
-                <label for="vmsData">VMS</label>
-              </label>
-            </div>
-          </div>
-        </div>
-      -->
       </span>
     </div>
     </li>
@@ -162,18 +147,6 @@
         </div>
       </div>
     </div>
-    
-    <!--<div class="row">
-    <div class="col s12">
-    <div id="selectVesselType2" class="input-field col s12">
-    <select multiple name="selectVesselType" disabled>
-    <option value="fishingVesselType" selected>Pesca</option>
-    <option value="cargoVesselType">Carga</option>
-  </select>
-  <label for="selectVesselType2">Tipo de barco</label>
-</div>
-</div>
-</div>-->
 
 </span>
       </div>
@@ -419,7 +392,8 @@
   <!-- Main Panel -->
   <div id="mainPanel" class="col s12 m8 l9" style="padding: 0;">
     <section>
-      <div class="z-index-" id="map" style="position: fixed;"></div>
+      <!--<div class="z-index-" id="map" style="position: fixed;"></div>-->
+      <div id="map" style="position: fixed;" class="leaflet html-widget html-widget-output"></div>
       <script src="js/makeLeafletMap.js"></script>
       <div id="divHtml" class="shiny-html-output"></div>
     </section>
@@ -437,7 +411,7 @@
   </a>
     <ul>
       <li id="btnInput"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Pantalla completa">zoom_out_map</i></a></li>
-      <li id="btnQueryInfo"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Información de consulta">info_outline</i></a></li>
+      <li hidden id="btnQueryInfo"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Información de consulta">info_outline</i></a></li>
       <li id="btnReplay"><a class="btn-floating blue-grey darken-3"><i class="material-icons tooltipped" data-position="left" data-delay="1000" data-tooltip="Mostrar">play_arrow</i></a></li>
     </ul>
   </div>
