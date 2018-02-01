@@ -377,7 +377,8 @@ shinyServer(function(input, output, session) {
       Sys.sleep(time = 1)
       message("    *** Positions > thresholdQuery: Get positions ***")
       
-      sql.positions <- paste0("SELECT posiciones.wkb_geometry,
+      sql.positions <- paste0("SELECT ST_X(posiciones.wkb_geometry::geometry) AS x, 
+                                      ST_Y(posiciones.wkb_geometry::geometry) AS y,
                                barcos.name,
                                posiciones.mmsi,
                                posiciones.status,
@@ -404,21 +405,22 @@ shinyServer(function(input, output, session) {
       
       # Evaluate expression
       progress$set(message = "Obteniendo muestra aleatoria", value = 3)
-      Sys.sleep(time = 1)
+      Sys.sleep(time = 0.5)
       getquery.positions <- dbGetQuery(conn, eval(query.positions.expr))
       
     }
     else {
       
       message("   *** Positions < thresholdQuery: Get positions ***")
-      sql.positions <- paste0("SELECT posiciones.wkb_geometry,
-                               barcos.name,
-                              posiciones.mmsi,
-                              posiciones.status,
-                              posiciones.speed,
-                              posiciones.course,
-                              posiciones.heading,
-                              posiciones.timestamp
+      sql.positions <- paste0("SELECT ST_X(posiciones.wkb_geometry::geometry) AS x, 
+                                      ST_Y(posiciones.wkb_geometry::geometry) AS y,
+                                      barcos.name,
+                                      posiciones.mmsi,
+                                      posiciones.status,
+                                      posiciones.speed,
+                                      posiciones.course,
+                                      posiciones.heading,
+                                      posiciones.timestamp
                               FROM posiciones, barcos 
                               WHERE posiciones.mmsi = barcos.mmsi
                               AND barcos.name IN ", vessels, " AND posiciones.speed BETWEEN ?vesselSpeedMin AND ?vesselSpeedMax
@@ -448,8 +450,9 @@ shinyServer(function(input, output, session) {
       
       progress$set(message = "Construyendo mapa", value = 6)
       message("> Creating heatmap <")
-      points <- cbind(readWKB(hex2raw(getquery.positions$wkb_geometry))@coords, 
-                      getquery.positions[,-1])
+      points <-
+        cbind(st_coordinates(st_as_sf(getquery.positions, coords = c("x", "y"), crs = 4326, dim = "XY")),
+              getquery.positions[, -c(1,2)])
     } 
     else {
       points <- NULL
@@ -541,7 +544,7 @@ shinyServer(function(input, output, session) {
       toast2 <- paste("Materialize.toast('<i class=material-icons>info_outline </i>", 
                       numberOfVessels, "  ", stringBarco, "', 9500, 'rounded'); \n", sep = "")
       
-      j <- paste0("[", render.df$y, ",", render.df$x,"]", collapse = ",")
+      j <- paste0("[", render.df$Y, ",", render.df$X,"]", collapse = ",")
       j <- paste0("[", j, "]")
       
       mapa <- HTML(paste0("<script> \n", 
