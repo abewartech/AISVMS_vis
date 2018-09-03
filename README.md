@@ -9,17 +9,19 @@ Aplicación web interactiva de R con la librería Shiny, mapas de Leaflet y con 
 ### Dependencias
 
 ```R
-library("shiny")
-library("DBI")
-library("RPostgreSQL")
-library("sf")
-library("wkb")
-library("plotly")
+library(shiny)
+library(DBI)
+library(RPostgreSQL)
+library(sf)
+library(ggplot2)
+
 ```
 
 ## Demo
 
 ![demo](https://github.com/guzmanlopez/AISVMS_vis/blob/master/screenshots/AIS_vis-shinyapp-demo.gif)
+
+![Video](https://drive.google.com/file/d/1ogtGnG1EB5UUqNCO7vRRe36yGPvhjLeU/view)
 
 ## Futuros desarrollos
 
