@@ -3,9 +3,9 @@
 library(shiny)
 library(DBI)
 library(RPostgreSQL)
-library(jsonlite)
+#library(jsonlite)
 library(sf)
-library(leaflet)
+#library(leaflet)
 library(ggplot2)
 
 # Disable scientific notation 
