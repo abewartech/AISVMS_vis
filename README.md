@@ -23,7 +23,7 @@ library(ggplot2)
 
 Video más detallado:
 
-![Video](https://drive.google.com/open?id=1ogtGnG1EB5UUqNCO7vRRe36yGPvhjLeU)
+![video](https://drive.google.com/file/d/1ogtGnG1EB5UUqNCO7vRRe36yGPvhjLeU)
 
 ## Futuros desarrollos
 
