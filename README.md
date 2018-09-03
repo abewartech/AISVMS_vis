@@ -21,7 +21,9 @@ library(ggplot2)
 
 ![demo](https://github.com/guzmanlopez/AISVMS_vis/blob/master/screenshots/AIS_vis-shinyapp-demo.gif)
 
-![Video](https://drive.google.com/file/d/1ogtGnG1EB5UUqNCO7vRRe36yGPvhjLeU/view)
+Video más detallado:
+
+![Video](https://drive.google.com/open?id=1ogtGnG1EB5UUqNCO7vRRe36yGPvhjLeU)
 
 ## Futuros desarrollos
 
